@@ -60,6 +60,15 @@ export const siteSchema = z.object({
     })
     .optional(),
   footer: z.string(),
+  hero: z.object({
+    /** The credibility strip under the standfirst. Empty list hides the row. */
+    stats: z.array(pair).default([]),
+    cta: z.object({
+      primary: link,
+      /** Delete this to show only the primary button. */
+      secondary: link.optional(),
+    }),
+  }),
 })
 
 /* ---- one file per sheet -------------------------------------------------- */
