@@ -61,6 +61,8 @@ export const siteSchema = z.object({
     .optional(),
   footer: z.string(),
   hero: z.object({
+    /** The secondary headline under her name. A pipe character is a line break. */
+    tagline: z.string(),
     /** The credibility strip under the standfirst. Empty list hides the row. */
     stats: z.array(pair).default([]),
     cta: z.object({
