@@ -1,0 +1,46 @@
+# =============================================================================
+#  CONTACT — sheet 07
+# =============================================================================
+
+lead: Let’s put on the next show.
+
+# The small print under the title block. Delete these lines, or edit them,
+# once the resume link below is switched on.
+note: >-
+  For a more detailed overview of my experience, projects, and skills, you can
+  download my resume.
+
+# The panel on the right, drawn like the title block of a real drawing.
+block:
+  drawn: A. Kale
+  discipline: Production
+  revision: "01"
+  scale: "1:1"
+
+# Every way to get in touch. Order here is the order on the page.
+#   label — the small grey word on the left
+#   value — what the visitor sees
+#   href  — where it goes. Use mailto: for email and tel: for a phone number.
+#
+# TO ADD THE RESUME: put the PDF at  public/Anushka_Kale_Resume.pdf  then
+# delete the two "# " marks from the last two lines of this file. It is left
+# switched off so the site never ships a download link that leads nowhere.
+links:
+  - label: Email
+    value: hello.anushkakale@gmail.com
+    href: mailto:hello.anushkakale@gmail.com
+  - label: LinkedIn
+    value: anushka-kale
+    href: https://www.linkedin.com/in/anushka-kale-a697661b8
+  - label: Instagram
+    value: "@nushsometimes"
+    href: https://www.instagram.com/nushsometimes/
+  - label: Substack
+    value: "@kyayaarnush"
+    href: https://substack.com/@kyayaarnush
+  - label: X
+    value: "@kyayaarnush"
+    href: https://x.com/kyayaarnush
+  - label: Resume
+    value: Download PDF
+    href: Anushka_Kale_Resume.pdf

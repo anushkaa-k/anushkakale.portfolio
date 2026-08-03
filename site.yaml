@@ -1,0 +1,96 @@
+# =============================================================================
+#  SITE — who you are, and what order the page runs in.
+#
+#  This file is plain text. Edit it on GitHub in the browser, press "Commit
+#  changes", and the site rebuilds itself. Nothing else needs touching.
+#
+#  Rules of thumb:
+#    · Keep the words to the LEFT of a colon exactly as they are.
+#    · Change the words to the RIGHT of a colon freely.
+#    · Keep the indentation (spaces, never tabs).
+#    · If your text contains a colon or starts with a symbol, wrap it in
+#      "double quotes".
+# =============================================================================
+
+meta:
+  name: Anushka Kale
+  role: Production Manager
+
+  # Shown in the browser tab and in Google results.
+  title: Anushka Kale — Production Manager
+  description: >-
+    Production Manager — theatre festivals, performances, shoots and
+    large-scale live experiences. Mumbai.
+
+  # The big headline on the banner. The | character is a line break.
+  headline: Hi, I’m|Anushka
+
+  # The small line underneath it.
+  standfirst: >-
+    Production Manager · Theatre festivals, performances, shoots &
+    large-scale live experiences.
+
+  location: Mumbai, India
+
+# -----------------------------------------------------------------------------
+#  THE ORDER OF THE PAGE
+#
+#  Each entry becomes one numbered sheet, in this order. Sheet numbers are
+#  worked out automatically, so you can reorder or remove sections here
+#  without renumbering anything by hand.
+#
+#  `id`    which content file it draws from — do not change these
+#  `label` the wording in the top navigation
+#  `title` the big heading on the sheet itself
+#  `scale` the small note in the top-right corner of the sheet
+#
+#  To hide a section, delete its four lines (or put a # in front of each).
+# -----------------------------------------------------------------------------
+
+sections:
+  - id: about
+    label: About
+    title: About
+    scale: Scale 1:1
+
+  - id: projects
+    label: Projects
+    title: Selected Projects
+    scale: Plates
+
+  - id: skills
+    label: Skills
+    title: Skills
+    scale: Spec
+
+  - id: experience
+    label: Experience
+    title: Experience
+    scale: Run of Show
+
+  - id: testimonials
+    label: Testimonials
+    title: Testimonials
+    scale: Show Reports
+
+  - id: gallery
+    label: Gallery
+    title: Festival Gallery
+    scale: Plates
+
+  - id: contact
+    label: Contact
+    title: Contact
+    scale: Title Block
+
+# -----------------------------------------------------------------------------
+#  The pull-quote that sits between Testimonials and the Gallery.
+#  Delete these three lines to remove it.
+# -----------------------------------------------------------------------------
+
+quote:
+  text: Pay attention. Be astonished. Tell about it.
+  author: Mary Oliver
+
+# The small line at the very bottom of the page.
+footer: Anushka Kale · Production Manager · Mumbai

@@ -1,0 +1,65 @@
+# =============================================================================
+#  GALLERY — the festival photographs
+#
+#  This sheet stays hidden until at least one photo is listed below, so the
+#  site looks finished while the pictures are still being gathered.
+#
+#  HOW TO ADD PHOTOS
+#  1. Put the image files into the folder  public/img/
+#  2. Add a "- src:" block below and change the filename to match.
+#
+#  `src` is the filename, written as  img/your-file-name.jpeg
+#  `alt` describes the picture for screen readers and search engines, and is
+#        also the caption shown under the photo and in the lightbox.
+#
+#  A photo that is listed but missing from public/img/ quietly drops out, so a
+#  typo can never leave a broken image on the page.
+# =============================================================================
+
+items:
+  - src: img/vasant-2026-flowers.jpeg
+    alt: "Vasant, 2026 — flowers built to glow, right at the Tata Theatre gate"
+  - src: img/vasant-2026-viraj-soldout.jpeg
+    alt: "Vasant, 2026 — Viraj Ghelani's show, sold out and taped over to prove it"
+  - src: img/pratibimb-2026-tech-desk.jpeg
+    alt: "Pratibimb, 2026 — the view from the lighting desk, minutes before the opening play"
+  - src: img/pratibimb-2026-dressing-table.jpeg
+    alt: "Pratibimb, 2026 — a dressing table dressed for the part"
+  - src: img/vasant-2026-lineup-boxes.jpeg
+    alt: "Vasant, 2026 — a festival's whole lineup, stacked one play at a time"
+  - src: img/karunashtake-team-pratibimb-2026.jpeg
+    alt: "Karunashtake — the company, together, after the last show of Pratibimb 2026"
+  - src: img/patchworks-gentlemens-club.jpg
+    alt: "Patchworks Ensemble x NCPA — The Gentlemen's Club, houseful in Mumbai and again at Soho Theatre London"
+  - src: img/ncpa-meta-awards.jpg
+    alt: "NCPA x META Awards — four winning plays making their Mumbai debut, carrying stories from rural northeast India onto this stage"
+  - src: img/yatri-theatre-25-years.jpg
+    alt: "25 years of Yatri Theatre — still finding new audiences at NCPA, a quarter-century on"
+  - src: img/akvarious-25-garland.jpg
+    alt: "Akvarious at 25 — garlands up, gratitude down, the people who built it standing under both"
+  - src: img/akvarious-25-courtyard.jpg
+    alt: "Akvarious at 25 — an evening under the courtyard lights, one of three nights of the anniversary festival"
+  - src: img/akvarious-25-two-hander.jpg
+    alt: "Akvarious at 25 — a quiet two-hander against the old stone wall"
+  - src: img/vasant-lanterns.jpg
+    alt: "Vasant Gujarati Theatre Festival — lanterns in the trees, after dark"
+  - src: img/vasant-frontage.jpg
+    alt: "Vasant Gujarati Theatre Festival — the frontage lit up, a banner for every play in the lineup"
+  - src: img/vasant-house-lights.jpg
+    alt: "Vasant Gujarati Theatre Festival — house lights down, a few minutes before curtain"
+  - src: img/pratibimb-press-day.jpg
+    alt: "Pratibimb Marathi Natya Utsav — press day, Sandesh Kulkarni fielding questions, Amruta Subhash close by"
+  - src: img/pratibimb-press-backstage.jpg
+    alt: "Pratibimb Marathi Natya Utsav — backstage at the press conference, festival in full swing"
+  - src: img/fundamentals-sachin-shinde.jpg
+    alt: "Fundamentals, with Sachin Shinde — a morning spent going back to basics on acting and directing"
+  - src: img/ghashiram-kotwal.jpg
+    alt: "Ghashiram Kotwal — red light, checkerboard floor, seventy-plus artists sharing one stage"
+  - src: img/kalgitura-25-shows.jpg
+    alt: "Kalgitura — 25 shows in, still worth a cake"
+  - src: img/alive-tech-run-pune.jpg
+    alt: "Alive — tech run, Pune, lighting cues, one actor, a couple of stray balloons"
+  - src: img/alive-before-show-pune.jpg
+    alt: "Alive — before the show, Pune, ticket in hand, backstage"
+  - src: img/alive-zee-natya-gaurav.jpg
+    alt: "Alive, nominated — Zee Natya Gaurav 2026"

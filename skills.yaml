@@ -1,0 +1,50 @@
+# =============================================================================
+#  SKILLS — sheet 03
+#
+#  Each "- name:" block is one column. Add a column by copying a block.
+# =============================================================================
+
+groups:
+  - name: Production ops
+    items:
+      - Run of show + execution
+      - Pre-production planning
+      - Scheduling + space allocation
+      - Multi-stage programming
+
+  - name: Budget + vendors
+    items:
+      - Budget planning + tracking
+      - Vendor procurement + negotiation
+      - Contracts + reconciliation
+      - Cost control under pressure
+
+  - name: People + stakeholders
+    items:
+      - Cross-functional crews (10–30)
+      - Calm escalation handling
+      - Visiting company coordination
+      - Stakeholder alignment
+
+  - name: Digital
+    items:
+      - Excel
+      - PowerPoint
+      - Canva
+      - Notion
+      - Figma
+      - WebFlow
+      - Premiere Pro
+
+# The list underneath the columns. Delete this whole block to remove it.
+applies:
+  label: Where my experience applies
+  items:
+    - k: Live execution
+      v: shoot days, event days, live launches
+    - k: Multi-crew coordination
+      v: departments, agencies, vendors
+    - k: Publishing timelines
+      v: content calendars, campaign schedules
+    - k: Budget ownership
+      v: production budgets, PO/invoices, reconciliation

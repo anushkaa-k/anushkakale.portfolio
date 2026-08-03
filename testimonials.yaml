@@ -1,0 +1,34 @@
+# =============================================================================
+#  TESTIMONIALS — sheet 05
+#
+#  Each "- name:" block is one quote card.
+# =============================================================================
+
+items:
+  - name: Rajeshri Shinde
+    role: Sr. Manager (Theatre & Films), NCPA
+    quote: >-
+      I had the pleasure of working with Anushka for over a year at the
+      National Centre for the Performing Arts, Mumbai. She is a creative,
+      dedicated, and highly dependable professional who consistently delivers
+      quality work, even under pressure and tight deadlines. Anushka is a smart
+      and honest team player with excellent attention to detail and a strong
+      sense of responsibility. Her positive attitude, composure, and commitment
+      made her an invaluable support to our team, and I wholeheartedly
+      recommend her for any future endeavor.
+
+  - name: Rohit Kanwankar
+    role: Executive Producer (Production), NCPA
+    quote: >-
+      It was truly a pleasure working with Anushka. Her professionalism and
+      calm approach were incredibly helpful while working together and made
+      every project more enjoyable. I learned a lot from working alongside her,
+      and I’m always grateful to get all her support and guidance.
+
+  - name: Rutvik Vyas
+    role: Writer, Director (Darpan 24-25 Winner)
+    quote: >-
+      Working with Anushka was a wonderful experience. She was always
+      approachable, easy to communicate with, and genuinely supportive whenever
+      anything came up. She kept things organized and made collaboration
+      effortless. Everyone would be happy to work with her again anytime.

@@ -1,0 +1,67 @@
+# =============================================================================
+#  PROJECTS — sheet 02
+#
+#  Each "- title:" block below is one card. To add a project, copy an entire
+#  block (from "- title:" down to its last line), paste it, and edit it.
+#  Order here is the order on the page.
+# =============================================================================
+
+items:
+  - title: Vasant Gujarati Theatre Festival
+    org: NCPA
+    year: 2025 & 2026
+    # The figures shown in the card. `k` is the label, `v` is the number.
+    # Any number of rows; delete them all if a project has no figures.
+    metrics:
+      - k: Budget
+        v: ₹40L
+      - k: Crew
+        v: 20+
+      - k: Theatres
+        v: "5"
+      - k: Audience
+        v: 2000+
+      - k: Duration
+        v: 4 days
+    # Optional. Delete both lines if there is nothing to link to.
+    link:
+      label: Watch on Instagram
+      href: https://www.instagram.com/reel/DWA5j97jGRh/
+
+  - title: Pratibimb Marathi Theatre Festival
+    org: NCPA
+    year: 2025 & 2026
+    metrics:
+      - k: Budget
+        v: ₹50L
+      - k: Crew
+        v: 20+
+      - k: Theatres
+        v: "5"
+      - k: Audience
+        v: 1500+
+      - k: Duration
+        v: 4 days
+    link:
+      label: Watch on Instagram
+      href: https://www.instagram.com/reel/DXgX8LHjOol/
+
+  - title: Alive
+    org: NCPA Production
+    year: 2025–26
+    metrics:
+      - k: Run
+        v: Multiple runs
+    link:
+      label: View on Instagram
+      href: https://www.instagram.com/p/DUf3CSqjF17/
+
+  - title: Kalgitura
+    org: NCPA Production
+    year: 2023–2025
+    metrics:
+      - k: Run
+        v: Multiple runs
+    link:
+      label: Watch on Instagram
+      href: https://www.instagram.com/reel/DOyfZ0UDD8E/
