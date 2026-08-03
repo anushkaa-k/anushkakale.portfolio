@@ -22,20 +22,21 @@ meta:
     Production Manager — theatre festivals, performances, shoots and
     large-scale live experiences. Mumbai.
 
-  # The big headline on the banner. The | character is a line break.
-  headline: Production Manager for|Theatre, Festivals & Live Experiences
+  # The big headline on the banner — the largest thing on the page.
+  # The | character is a line break.
+  headline: Hi, I’m Anushka
 
   # The short line underneath the headline and her name.
   standfirst: >-
-    I specialise in planning and executing theatre productions, festivals
-    and live experiences through thoughtful logistics, production systems
-    and collaborative leadership.
+    I plan theatre productions, festivals and live experiences — from
+    logistics to collaborative leadership.
 
   location: Mumbai, India
 
 # -----------------------------------------------------------------------------
-#  HERO — the credibility strip and the two buttons under the standfirst.
+#  HERO — the secondary headline, credibility strip and the two buttons.
 #
+#  `tagline`   the smaller headline under her name. | is a line break.
 #  `stats`     `k` is the small caption, `v` is the big number above it.
 #              Add, remove or reorder freely. Leave the list empty to hide
 #              the whole row.
@@ -44,6 +45,8 @@ meta:
 # -----------------------------------------------------------------------------
 
 hero:
+  tagline: Production Manager for|Theatre, Festivals & Live Experiences
+
   stats:
     - k: Years
       v: "5+"

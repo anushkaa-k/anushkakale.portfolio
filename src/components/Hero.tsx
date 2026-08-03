@@ -9,8 +9,9 @@ import { asset, isExternal } from '../lib/asset'
    title sits inside the border of a real drawing.
 
    The drawing leaves an empty band across its middle for the title; a soft
-   paper wash on top only takes the edge off whatever strays into it, so the
-   linework still appears to run underneath rather than being cut away. */
+   radial paper wash on top only takes the edge off whatever strays into it,
+   feathered over a wide radius, so the linework keeps running underneath
+   rather than being cut away. */
 
 /** A `#section` anchor is used as-is; anything else is a /public path. */
 function ctaHref(href: string): string {
@@ -20,14 +21,15 @@ function ctaHref(href: string): string {
 export function Hero(): ReactElement {
   const compact = useMediaQuery('(max-width: 767px)')
   const first = sections[0]?.id ?? 'about'
-  const lines = site.meta.headline.split('|')
+  const nameLines = site.meta.headline.split('|')
+  const taglineLines = site.hero.tagline.split('|')
   const { stats, cta } = site.hero
 
   return (
     <section
       id="top"
-      className={`gutter relative grid place-items-center overflow-hidden border-b border-ink-25 pt-14 pb-28 ${
-        compact ? 'min-h-[44rem]' : 'min-h-[clamp(34rem,48vw,46rem)]'
+      className={`gutter relative grid place-items-center overflow-hidden border-b border-ink-25 pt-12 pb-28 ${
+        compact ? 'min-h-[42rem]' : 'min-h-[clamp(32rem,44vw,42rem)]'
       }`}
     >
       <Banner compact={compact} />
@@ -35,45 +37,48 @@ export function Hero(): ReactElement {
       <div className="relative">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -inset-6 bg-paper md:-inset-10 [box-shadow:0_0_70px_55px_var(--paper)]"
+          className="pointer-events-none absolute top-1/2 left-1/2 h-[44rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 md:h-[52rem] md:w-[68rem] [background:radial-gradient(ellipse_at_center,var(--paper)_0%,var(--paper)_40%,color-mix(in_srgb,var(--paper)_92%,transparent)_55%,color-mix(in_srgb,var(--paper)_75%,transparent)_70%,color-mix(in_srgb,var(--paper)_45%,transparent)_82%,color-mix(in_srgb,var(--paper)_15%,transparent)_93%,transparent_100%)]"
         />
 
         <div className="relative text-center">
-          <div className="mx-auto max-w-[46ch]">
-            <p className="lift label text-ink-70" style={{ animationDelay: '0.3s' }}>
-              {site.meta.location}
-            </p>
+          <p className="lift label text-ink-70" style={{ animationDelay: '0.3s' }}>
+            {site.meta.location}
+          </p>
 
-            <hr className="rule lift mt-5" style={{ animationDelay: '0.36s' }} />
+          <hr className="rule lift mt-5" style={{ animationDelay: '0.36s' }} />
 
-            <h1
-              className="lift mt-3 font-display text-[clamp(1.9rem,4.6vw,3.3rem)] leading-[1.1] font-extrabold tracking-tight"
-              style={{ animationDelay: '0.45s' }}
-            >
-              {lines.map((line, i) => (
-                <Fragment key={i}>
-                  {i > 0 && <br />}
-                  {line}
-                </Fragment>
-              ))}
-            </h1>
+          <h1
+            className="lift mt-3 font-display text-[clamp(2.6rem,7.2vw,4.9rem)] leading-[1.02] font-extrabold tracking-tight"
+            style={{ animationDelay: '0.45s' }}
+          >
+            {nameLines.map((line, i) => (
+              <Fragment key={i}>
+                {i > 0 && <br />}
+                {line}
+              </Fragment>
+            ))}
+          </h1>
 
-            <p
-              className="lift mt-2 font-display text-[clamp(1.05rem,2.2vw,1.35rem)] tracking-wide text-ink"
-              style={{ animationDelay: '0.52s' }}
-            >
-              {site.meta.name}
-            </p>
+          <p
+            className="lift mt-2 font-display text-[clamp(1.15rem,2.6vw,1.7rem)] leading-[1.25] font-bold text-ink-70"
+            style={{ animationDelay: '0.52s' }}
+          >
+            {taglineLines.map((line, i) => (
+              <Fragment key={i}>
+                {i > 0 && <br />}
+                {line}
+              </Fragment>
+            ))}
+          </p>
 
-            <hr className="rule lift mt-5" style={{ animationDelay: '0.58s' }} />
+          <hr className="rule lift mt-5" style={{ animationDelay: '0.58s' }} />
 
-            <p
-              className="lift mx-auto mt-4 max-w-[42ch] text-[0.95rem] leading-[1.75] text-ink-70"
-              style={{ animationDelay: '0.64s' }}
-            >
-              {site.meta.standfirst}
-            </p>
-          </div>
+          <p
+            className="lift mx-auto mt-4 max-w-[36ch] text-[0.95rem] leading-[1.75] text-ink-70"
+            style={{ animationDelay: '0.64s' }}
+          >
+            {site.meta.standfirst}
+          </p>
 
           {stats.length > 0 && (
             <dl
@@ -95,12 +100,12 @@ export function Hero(): ReactElement {
           )}
 
           <div
-            className="lift mt-8 flex flex-wrap items-center justify-center gap-3.5"
+            className="lift mt-18 flex flex-wrap items-center justify-center gap-3.5"
             style={{ animationDelay: '0.76s' }}
           >
             <a
               href={ctaHref(cta.primary.href)}
-              className="label border-2 border-ink px-6 py-2.5 text-ink no-underline transition-colors hover:bg-ink hover:text-paper"
+              className="label border-2 border-ink px-6 py-2.5 whitespace-nowrap text-ink no-underline transition-colors hover:bg-ink hover:text-paper"
             >
               {cta.primary.label}
             </a>
@@ -111,7 +116,7 @@ export function Hero(): ReactElement {
                 {...(isExternal(cta.secondary.href)
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
-                className="label border border-ink-25 px-6 py-2.5 text-ink-70 no-underline transition-colors hover:border-ink-45 hover:text-ink"
+                className="label border border-ink-25 px-6 py-2.5 whitespace-nowrap text-ink-70 no-underline transition-colors hover:border-ink-45 hover:text-ink"
               >
                 {cta.secondary.label}
               </a>
