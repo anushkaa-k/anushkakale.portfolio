@@ -23,14 +23,44 @@ meta:
     large-scale live experiences. Mumbai.
 
   # The big headline on the banner. The | character is a line break.
-  headline: Hi, I’m|Anushka
+  headline: Production Manager for|Theatre, Festivals & Live Experiences
 
-  # The small line underneath it.
+  # The short line underneath the headline and her name.
   standfirst: >-
-    Production Manager · Theatre festivals, performances, shoots &
-    large-scale live experiences.
+    I specialise in planning and executing theatre productions, festivals
+    and live experiences through thoughtful logistics, production systems
+    and collaborative leadership.
 
   location: Mumbai, India
+
+# -----------------------------------------------------------------------------
+#  HERO — the credibility strip and the two buttons under the standfirst.
+#
+#  `stats`     `k` is the small caption, `v` is the big number above it.
+#              Add, remove or reorder freely. Leave the list empty to hide
+#              the whole row.
+#  `cta`       `primary` always shows. Delete `secondary` (all three of its
+#              lines) to show only the one button.
+# -----------------------------------------------------------------------------
+
+hero:
+  stats:
+    - k: Years
+      v: "5+"
+    - k: Budgets Managed
+      v: "₹50L+"
+    - k: Productions
+      v: "100+"
+    - k: Audience Reached
+      v: "1200+"
+
+  cta:
+    primary:
+      label: View Projects
+      href: "#projects"
+    secondary:
+      label: Download Resume
+      href: Anushka_Kale_Resume.pdf
 
 # -----------------------------------------------------------------------------
 #  THE ORDER OF THE PAGE
