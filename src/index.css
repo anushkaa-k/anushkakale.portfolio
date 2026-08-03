@@ -25,10 +25,10 @@
   /* Drawing-only line weights — separate from the --ink-* text/border
      scale above so darkening the banner's linework never touches text,
      borders or anything outside the drawings themselves. */
-  --line-construct: rgba(22, 50, 79, 0.22);
-  --line-hair: rgba(22, 50, 79, 0.72);
-  --line-thin: rgba(22, 50, 79, 0.86);
-  --line-med: rgba(22, 50, 79, 0.96);
+  --line-construct: rgba(22, 50, 79, 0.32);
+  --line-hair: rgba(22, 50, 79, 0.88);
+  --line-thin: rgba(22, 50, 79, 0.95);
+  --line-med: rgba(22, 50, 79, 1);
 }
 
 html[data-mode="blueprint"] {
@@ -42,10 +42,10 @@ html[data-mode="blueprint"] {
   --construct: rgba(213, 230, 247, 0.09);
   --redline: #f0a289;
 
-  --line-construct: rgba(213, 230, 247, 0.24);
-  --line-hair: rgba(213, 230, 247, 0.74);
-  --line-thin: rgba(213, 230, 247, 0.88);
-  --line-med: rgba(213, 230, 247, 0.96);
+  --line-construct: rgba(213, 230, 247, 0.34);
+  --line-hair: rgba(213, 230, 247, 0.9);
+  --line-thin: rgba(213, 230, 247, 0.96);
+  --line-med: rgba(213, 230, 247, 1);
 }
 
 /* `inline` so the utilities resolve to the live custom properties above —
