@@ -21,6 +21,14 @@
   --ink-12: rgba(22, 50, 79, 0.12);
   --construct: rgba(22, 50, 79, 0.07);
   --redline: #a4402a;
+
+  /* Drawing-only line weights — separate from the --ink-* text/border
+     scale above so darkening the banner's linework never touches text,
+     borders or anything outside the drawings themselves. */
+  --line-construct: rgba(22, 50, 79, 0.14);
+  --line-hair: rgba(22, 50, 79, 0.5);
+  --line-thin: rgba(22, 50, 79, 0.68);
+  --line-med: rgba(22, 50, 79, 0.85);
 }
 
 html[data-mode="blueprint"] {
@@ -33,6 +41,11 @@ html[data-mode="blueprint"] {
   --ink-12: rgba(213, 230, 247, 0.14);
   --construct: rgba(213, 230, 247, 0.09);
   --redline: #f0a289;
+
+  --line-construct: rgba(213, 230, 247, 0.16);
+  --line-hair: rgba(213, 230, 247, 0.52);
+  --line-thin: rgba(213, 230, 247, 0.7);
+  --line-med: rgba(213, 230, 247, 0.84);
 }
 
 /* `inline` so the utilities resolve to the live custom properties above —
@@ -105,13 +118,13 @@ html[data-mode="blueprint"] {
   svg {
     fill: none;
   }
-  svg .l-construct { stroke: var(--construct); stroke-width: 1; }
-  svg .l-hair      { stroke: var(--ink-25);    stroke-width: 1; }
-  svg .l-thin      { stroke: var(--ink-45);    stroke-width: 1.25; }
-  svg .l-med       { stroke: var(--ink-70);    stroke-width: 1.7; }
-  svg .l-bold      { stroke: var(--ink);       stroke-width: 2.6; }
-  svg .l-center    { stroke: var(--ink-25);    stroke-width: 1; stroke-dasharray: 20 5 3 5; }
-  svg .l-hidden    { stroke: var(--ink-45);    stroke-width: 1; stroke-dasharray: 6 4; }
+  svg .l-construct { stroke: var(--line-construct); stroke-width: 1; }
+  svg .l-hair      { stroke: var(--line-hair);       stroke-width: 1; }
+  svg .l-thin      { stroke: var(--line-thin);       stroke-width: 1.25; }
+  svg .l-med       { stroke: var(--line-med);        stroke-width: 1.7; }
+  svg .l-bold      { stroke: var(--ink);             stroke-width: 2.6; }
+  svg .l-center    { stroke: var(--line-hair);       stroke-width: 1; stroke-dasharray: 20 5 3 5; }
+  svg .l-hidden    { stroke: var(--line-thin);       stroke-width: 1; stroke-dasharray: 6 4; }
   svg .fill-ink    { fill: var(--ink); stroke: none; }
   svg .fill-paper  { fill: var(--paper); }
 
