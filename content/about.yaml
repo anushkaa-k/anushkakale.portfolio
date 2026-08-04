@@ -52,16 +52,17 @@ owns:
     - Production Planning
     - Technical Coordination
 
-# Three short working principles. `k` is the principle, `v` is a one-line note.
+# Three short working principles. Keep `k` to one or two words so it always
+# fits on a single line, and `v` short enough to hold to two lines.
 approach:
   label: My Approach
   items:
     - k: Plan thoroughly
-      v: A schedule that accounts for the unexpected is the one that actually holds.
-    - k: Communicate clearly, stay curious
-      v: The best fixes come from asking one more question before reacting.
+      v: A schedule built for the unexpected holds up.
+    - k: Communicate clearly
+      v: The best fixes come from asking one more question first.
     - k: Adapt quickly
-      v: No two show days go exactly to plan — the job is staying two steps ahead anyway.
+      v: No two show days go to plan. Stay two steps ahead anyway.
 
 # The understated line at the very end of the section.
 status: >-
