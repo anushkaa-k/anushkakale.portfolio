@@ -9,30 +9,50 @@ export function About({ meta }: { meta: SectionMeta }): ReactElement {
     <Sheet meta={meta}>
       <Reveal className="grid gap-[clamp(2rem,5vw,4rem)] lg:grid-cols-[minmax(0,1.65fr)_minmax(15rem,0.85fr)]">
         <div>
-          <p className="mb-6 font-display text-[clamp(1.35rem,2.5vw,1.85rem)] leading-tight">
+          <p className="mb-7 max-w-[58ch] font-display text-[clamp(1.35rem,2.5vw,1.85rem)] leading-tight">
             {about.lead}
           </p>
 
           {about.body.map((paragraph, i) => (
-            <p key={i} className="mt-4 max-w-[60ch] first:mt-0">
+            <p key={i} className="mt-5 max-w-[58ch] first:mt-0">
               {paragraph}
             </p>
           ))}
 
+          {about.approach && (
+            <div className="mt-9 border-t border-dashed border-ink-25 pt-7">
+              <h3 className="label mb-4 text-ink-45">{about.approach.label}</h3>
+              <ul className="grid gap-5 sm:grid-cols-3">
+                {about.approach.items.map((item) => (
+                  <li key={item.k}>
+                    <p className="font-display text-[1.02rem] font-bold">{item.k}</p>
+                    <p className="mt-1 text-[0.86rem] leading-snug text-ink-70">{item.v}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {about.owns && (
-            <div className="mt-8 border-t border-dashed border-ink-25 pt-6">
-              <span className="label mb-3.5 block text-ink-45">{about.owns.label}</span>
+            <div className="mt-9 border-t border-dashed border-ink-25 pt-7">
+              <h3 className="label mb-3.5 block text-ink-45">{about.owns.label}</h3>
               <ul className="flex flex-wrap gap-2">
                 {about.owns.items.map((item) => (
                   <li
                     key={item}
-                    className="border border-ink-25 px-3 py-1.5 font-mono text-[0.78rem] text-ink-70"
+                    className="border border-ink-25 px-3 py-1.5 font-mono text-[0.78rem] text-ink-70 transition-colors hover:border-ink-45 hover:bg-paper-warm hover:text-ink"
                   >
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
+          )}
+
+          {about.status && (
+            <p className="mt-9 max-w-[58ch] font-mono text-[0.78rem] tracking-wide text-ink-45">
+              {about.status}
+            </p>
           )}
         </div>
 
@@ -44,10 +64,10 @@ export function About({ meta }: { meta: SectionMeta }): ReactElement {
             {about.facts.map((fact) => (
               <div
                 key={fact.k}
-                className="grid gap-0.5 border-b border-dashed border-ink-25 px-3.5 py-3 last:border-b-0"
+                className="flex flex-col-reverse gap-0.5 border-b border-dashed border-ink-25 px-3.5 py-3.5 last:border-b-0"
               >
                 <dt className="label text-[0.6rem] text-ink-45">{fact.k}</dt>
-                <dd className="font-display text-[1.15rem]">{fact.v}</dd>
+                <dd className="font-display text-[1.65rem] leading-none font-bold">{fact.v}</dd>
               </div>
             ))}
           </dl>

@@ -4,32 +4,34 @@
 
 # The large opening sentence.
 lead: >-
-  Managed ₹50L+ festival budgets, 1,200+ audiences, and 100+ collaborations
-  with crews of 10–30 across theatre, events and live experiences.
+  I've always been fascinated by what happens behind the curtain. While
+  audiences remember the performance, I build the systems, schedules and
+  collaborations that make those moments possible.
 
 # Ordinary paragraphs. Add or remove "- >-" blocks to add or remove paragraphs.
 body:
   - >-
-    I’m a theatre and event professional with experience across production,
-    artist management, content, and project coordination. From festivals and
-    performances to campaigns and creative collaborations, I enjoy building
-    experiences that bring people together.
+    That curiosity has carried me through theatre, festivals and large-scale
+    live productions — from managing budgets and crews to coordinating the
+    hundred small decisions a show depends on. Production management, to me,
+    sits exactly where creativity meets operations: the craft is in making
+    the complicated look effortless.
   - >-
-    What I’ve learned is that the best work happens where storytelling meets
-    meticulous execution. I’m drawn to systems that let creative ideas land
-    cleanly, at scale, without losing what made them exciting in the first
-    place.
+    I'm drawn to problems that need both a plan and quick thinking — a
+    schedule that has to bend, a vendor that falls through two days out, a
+    cue that has to land anyway. That mix of structure and improvisation is
+    what keeps me in this work.
 
 # The boxed "At a glance" panel beside the text.
 # `k` is the small label, `v` is the value. Add as many rows as you like.
 facts:
-  - k: Experience
-    v: 5+ years
-  - k: Budgets
-    v: ₹50L+ festival budgets
-  - k: Collaborations
-    v: 100+ productions
-  - k: Crew size
+  - k: Production Budgets
+    v: "₹50L+"
+  - k: Productions
+    v: "100+"
+  - k: Years
+    v: "5+"
+  - k: Crew Size
     v: 10–30
 
 # The row of tags under the paragraphs.
@@ -37,8 +39,31 @@ owns:
   label: What I own
   items:
     - Budgeting
+    - Scheduling
     - Vendors
     - Contracts
-    - Scheduling
     - Logistics
     - On-ground execution
+    - Artist Relations
+    - Risk Management
+    - Cross-functional Coordination
+    - Show Calling
+    - Stakeholder Management
+    - Production Planning
+    - Technical Coordination
+
+# Three short working principles. `k` is the principle, `v` is a one-line note.
+approach:
+  label: My Approach
+  items:
+    - k: Plan thoroughly
+      v: A schedule that accounts for the unexpected is the one that actually holds.
+    - k: Communicate clearly, stay curious
+      v: The best fixes come from asking one more question before reacting.
+    - k: Adapt quickly
+      v: No two show days go exactly to plan — the job is staying two steps ahead anyway.
+
+# The understated line at the very end of the section.
+status: >-
+  Currently freelancing as a Production Manager — open to opportunities
+  across theatre, entertainment and live experiences.
