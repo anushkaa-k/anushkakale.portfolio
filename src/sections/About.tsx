@@ -16,8 +16,8 @@ export function About({ meta }: { meta: SectionMeta }): ReactElement {
     <Sheet meta={meta}>
       <div className="grid gap-[clamp(2rem,5vw,4rem)] lg:grid-cols-[minmax(0,1.65fr)_minmax(15rem,0.85fr)]">
         <div>
-          <Reveal className="max-w-[58ch]">
-            <p className="font-display text-[clamp(1.35rem,2.5vw,1.85rem)] leading-tight">
+          <Reveal className="max-w-[63ch]">
+            <p className="font-display text-[clamp(1.3rem,2.4vw,1.8rem)] leading-tight">
               {about.lead}
             </p>
           </Reveal>
