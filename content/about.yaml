@@ -34,35 +34,19 @@ facts:
   - k: Crew Size
     v: 10–30
 
-# The row of tags under the paragraphs.
+# The grid of competencies under the paragraphs. Keep this list short —
+# it's meant to be scanned at a glance, not read as a full skill inventory.
 owns:
   label: What I own
   items:
+    - Production Planning
     - Budgeting
     - Scheduling
-    - Vendors
-    - Contracts
-    - Logistics
-    - On-ground execution
-    - Artist Relations
-    - Risk Management
-    - Cross-functional Coordination
-    - Show Calling
-    - Stakeholder Management
-    - Production Planning
+    - Vendor Management
+    - On-ground Execution
     - Technical Coordination
-
-# Three short working principles. Keep `k` to one or two words so it always
-# fits on a single line, and `v` short enough to hold to two lines.
-approach:
-  label: My Approach
-  items:
-    - k: Plan thoroughly
-      v: A schedule built for the unexpected holds up.
-    - k: Communicate clearly
-      v: The best fixes come from asking one more question first.
-    - k: Adapt quickly
-      v: No two show days go to plan. Stay two steps ahead anyway.
+    - Stakeholder Management
+    - Artist Relations
 
 # The understated line at the very end of the section.
 status: >-

@@ -85,13 +85,6 @@ export const aboutSchema = z.object({
       items: z.array(z.string()),
     })
     .optional(),
-  /** Three working principles. `k` is the principle, `v` is its one-line note. */
-  approach: z
-    .object({
-      label: z.string(),
-      items: z.array(pair),
-    })
-    .optional(),
   /** The understated note at the very end of the section. */
   status: z.string().optional(),
 })
