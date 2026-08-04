@@ -11,9 +11,9 @@ import { asset, isExternal } from '../lib/asset'
    The drawing leaves an empty band across its middle for the title; a soft
    paper wash on top only takes the edge off whatever strays into it, so the
    linework keeps running underneath rather than being cut away. The wash
-   spans the sheet and fades in gradually from both edges (`.hero-wash`);
-   its height is what holds it clear of the plans above and below, so that
-   is the number to touch if the drawing needs more or less air. */
+   spans the sheet and fades in gradually from both edges (`.hero-wash`).
+   It is anchored by its top edge and runs off the bottom, so the offset
+   below is what sets where it starts clearing the truss elevation. */
 
 /** A `#section` anchor is used as-is; anything else is a /public path. */
 function ctaHref(href: string): string {
@@ -39,7 +39,7 @@ export function Hero(): ReactElement {
       <div className="relative">
         <div
           aria-hidden="true"
-          className="hero-wash pointer-events-none absolute top-1/2 left-1/2 h-[38rem] w-screen -translate-x-1/2 -translate-y-1/2 md:h-[44rem]"
+          className="hero-wash pointer-events-none absolute top-1/2 left-1/2 h-[60rem] w-screen -translate-x-1/2 -translate-y-[19rem] md:-translate-y-[22rem]"
         />
 
         <div className="relative text-center">
