@@ -10,8 +10,9 @@ import { asset, isExternal } from '../lib/asset'
 
    The drawing leaves an empty band across its middle for the title; a soft
    radial paper wash on top only takes the edge off whatever strays into it,
-   feathered over a wide radius, so the linework keeps running underneath
-   rather than being cut away. */
+   so the linework keeps running underneath rather than being cut away. The
+   wash is sized to the title block, not to the sheet — grow it much past
+   that and it reaches the plans either side and fades them out. */
 
 /** A `#section` anchor is used as-is; anything else is a /public path. */
 function ctaHref(href: string): string {
@@ -37,7 +38,7 @@ export function Hero(): ReactElement {
       <div className="relative">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 h-[44rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 md:h-[52rem] md:w-[68rem] [background:radial-gradient(ellipse_at_center,var(--paper)_0%,var(--paper)_40%,color-mix(in_srgb,var(--paper)_92%,transparent)_55%,color-mix(in_srgb,var(--paper)_75%,transparent)_70%,color-mix(in_srgb,var(--paper)_45%,transparent)_82%,color-mix(in_srgb,var(--paper)_15%,transparent)_93%,transparent_100%)]"
+          className="pointer-events-none absolute top-1/2 left-1/2 h-[38rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 md:h-[44rem] md:w-[42rem] [background:radial-gradient(ellipse_at_center,var(--paper)_0%,var(--paper)_40%,color-mix(in_srgb,var(--paper)_92%,transparent)_55%,color-mix(in_srgb,var(--paper)_75%,transparent)_70%,color-mix(in_srgb,var(--paper)_45%,transparent)_82%,color-mix(in_srgb,var(--paper)_15%,transparent)_93%,transparent_100%)]"
         />
 
         <div className="relative text-center">
@@ -100,7 +101,7 @@ export function Hero(): ReactElement {
           )}
 
           <div
-            className="lift mt-18 flex flex-wrap items-center justify-center gap-3.5"
+            className="lift mt-9 flex flex-wrap items-center justify-center gap-3.5"
             style={{ animationDelay: '0.76s' }}
           >
             <a
