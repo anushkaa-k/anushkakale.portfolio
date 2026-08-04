@@ -9,10 +9,11 @@ import { asset, isExternal } from '../lib/asset'
    title sits inside the border of a real drawing.
 
    The drawing leaves an empty band across its middle for the title; a soft
-   radial paper wash on top only takes the edge off whatever strays into it,
-   so the linework keeps running underneath rather than being cut away. The
-   wash is sized to the title block, not to the sheet — grow it much past
-   that and it reaches the plans either side and fades them out. */
+   paper wash on top only takes the edge off whatever strays into it, so the
+   linework keeps running underneath rather than being cut away. The wash
+   spans the sheet and fades in gradually from both edges (`.hero-wash`);
+   its height is what holds it clear of the plans above and below, so that
+   is the number to touch if the drawing needs more or less air. */
 
 /** A `#section` anchor is used as-is; anything else is a /public path. */
 function ctaHref(href: string): string {
@@ -38,7 +39,7 @@ export function Hero(): ReactElement {
       <div className="relative">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 h-[38rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 md:h-[44rem] md:w-[42rem] [background:radial-gradient(ellipse_at_center,var(--paper)_0%,var(--paper)_40%,color-mix(in_srgb,var(--paper)_92%,transparent)_55%,color-mix(in_srgb,var(--paper)_75%,transparent)_70%,color-mix(in_srgb,var(--paper)_45%,transparent)_82%,color-mix(in_srgb,var(--paper)_15%,transparent)_93%,transparent_100%)]"
+          className="hero-wash pointer-events-none absolute top-1/2 left-1/2 h-[38rem] w-screen -translate-x-1/2 -translate-y-1/2 md:h-[44rem]"
         />
 
         <div className="relative text-center">
