@@ -3,7 +3,11 @@
 #
 #  Each "- title:" block below is one card. To add a project, copy an entire
 #  block (from "- title:" down to its last line), paste it, and edit it.
-#  Order here is the order on the page.
+#
+#  Order matters: the first two cards show as Featured Case Studies (a
+#  bigger CTA, a heavier frame); everything after that shows as a Supporting
+#  Production (understated, a plain "Project Summary" link). Put the two
+#  you want leading the sheet first.
 # =============================================================================
 
 items:
@@ -28,6 +32,16 @@ items:
       label: Watch on Instagram
       href: https://www.instagram.com/reel/DWA5j97jGRh/
 
+  - title: Alive
+    org: NCPA Production
+    year: 2025–26
+    metrics:
+      - k: Run
+        v: Multiple runs
+    link:
+      label: View on Instagram
+      href: https://www.instagram.com/p/DUf3CSqjF17/
+
   - title: Pratibimb Marathi Theatre Festival
     org: NCPA
     year: 2025 & 2026
@@ -45,16 +59,6 @@ items:
     link:
       label: Watch on Instagram
       href: https://www.instagram.com/reel/DXgX8LHjOol/
-
-  - title: Alive
-    org: NCPA Production
-    year: 2025–26
-    metrics:
-      - k: Run
-        v: Multiple runs
-    link:
-      label: View on Instagram
-      href: https://www.instagram.com/p/DUf3CSqjF17/
 
   - title: Kalgitura
     org: NCPA Production
