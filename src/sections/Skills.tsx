@@ -54,7 +54,7 @@ export function Skills({ meta }: { meta: SectionMeta }): ReactElement {
             {cols.map((group) => (
               <div
                 key={`head-${group.name}`}
-                className="border-r border-b border-ink-25 bg-paper-warm px-3.5 py-3 font-display text-[0.98rem] leading-tight font-bold last:border-r-0"
+                className="border-r border-b border-ink-25 bg-paper-warm px-3.5 py-3 font-display text-[0.98rem] leading-tight font-bold text-accent-orange last:border-r-0"
               >
                 {group.name}
               </div>
@@ -69,7 +69,7 @@ export function Skills({ meta }: { meta: SectionMeta }): ReactElement {
                 {cols.map((group) => (
                   <div
                     key={`${group.name}-${r}`}
-                    className="border-r border-b border-ink-25 px-3.5 py-2.5 text-[0.86rem] text-ink-70 last:border-r-0"
+                    className="border-r border-b border-ink-25 bg-paper px-3.5 py-2.5 text-[0.86rem] text-ink-70 last:border-r-0"
                   >
                     {group.items[r] ?? ''}
                   </div>

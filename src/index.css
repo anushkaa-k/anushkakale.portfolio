@@ -21,6 +21,8 @@
   --ink-12: rgba(22, 50, 79, 0.12);
   --construct: rgba(22, 50, 79, 0.07);
   --redline: #a4402a;
+  /* Used only for the skills.xlsx column headers. */
+  --accent-orange: #c2540c;
 
   /* Drawing-only line weights — separate from the --ink-* text/border
      scale above so darkening the banner's linework never touches text,
@@ -41,6 +43,7 @@ html[data-mode="blueprint"] {
   --ink-12: rgba(213, 230, 247, 0.14);
   --construct: rgba(213, 230, 247, 0.09);
   --redline: #f0a289;
+  --accent-orange: #f2984d;
 
   --line-construct: rgba(213, 230, 247, 0.34);
   --line-hair: rgba(213, 230, 247, 0.9);
@@ -60,6 +63,7 @@ html[data-mode="blueprint"] {
   --color-ink-12: var(--ink-12);
   --color-construct: var(--construct);
   --color-redline: var(--redline);
+  --color-accent-orange: var(--accent-orange);
 
   --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
