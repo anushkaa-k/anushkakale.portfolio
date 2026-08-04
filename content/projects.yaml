@@ -36,8 +36,12 @@ items:
     org: NCPA Production
     year: 2025–26
     metrics:
-      - k: Run
-        v: Multiple runs
+      - k: Shows
+        v: 5+
+      - k: Cities
+        v: 3+
+      - k: Recognition
+        v: Nominated, ZEE Natya Gaurav 2026
     link:
       label: View on Instagram
       href: https://www.instagram.com/p/DUf3CSqjF17/
@@ -64,8 +68,12 @@ items:
     org: NCPA Production
     year: 2023–2025
     metrics:
-      - k: Run
-        v: Multiple runs
+      - k: Shows
+        v: 25+
+      - k: Cities
+        v: 5+
+      - k: Recognition
+        v: Winner, Best Play – ZEE Natya Gaurav 2024
     link:
       label: Watch on Instagram
       href: https://www.instagram.com/reel/DOyfZ0UDD8E/

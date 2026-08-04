@@ -33,7 +33,7 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
                   {featured && (
                     <>
                       <span className="mx-1.5 text-ink-25">/</span>
-                      <span className="text-redline">Featured</span>
+                      <span className="font-bold text-redline">Featured</span>
                     </>
                   )}
                 </span>
@@ -49,14 +49,21 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
 
               {project.metrics.length > 0 && (
                 <dl className="my-6 grid gap-x-4 gap-y-3.5 border-t border-ink-12 pt-5 [grid-template-columns:repeat(auto-fit,minmax(5.5rem,1fr))]">
-                  {project.metrics.map((metric) => (
-                    <div key={metric.k}>
-                      <dt className="label text-[0.58rem] text-ink-45">{metric.k}</dt>
-                      <dd className="mt-1 font-display text-[1.3rem] leading-none font-bold">
-                        {metric.v}
-                      </dd>
-                    </div>
-                  ))}
+                  {project.metrics.map((metric) => {
+                    const long = metric.v.length > 14
+                    return (
+                      <div key={metric.k} className={long ? 'col-span-full' : undefined}>
+                        <dt className="label text-[0.58rem] text-ink-45">{metric.k}</dt>
+                        <dd
+                          className={`mt-1 font-display font-bold ${
+                            long ? 'text-[1rem] leading-snug' : 'text-[1.3rem] leading-none'
+                          }`}
+                        >
+                          {metric.v}
+                        </dd>
+                      </div>
+                    )
+                  })}
                 </dl>
               )}
 
@@ -66,7 +73,7 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
                     href={project.link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="label mt-auto flex items-center gap-1.5 self-start border-b-2 border-ink pb-1 font-semibold text-ink no-underline transition-colors hover:border-redline hover:text-redline"
+                    className="label mt-auto inline-flex w-fit items-center gap-2 self-start border-2 border-ink/70 px-4 py-2 font-semibold text-ink no-underline transition-colors hover:border-redline hover:text-redline"
                   >
                     View Case Study
                     <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
