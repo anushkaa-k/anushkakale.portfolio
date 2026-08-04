@@ -62,18 +62,25 @@ export function About({ meta }: { meta: SectionMeta }): ReactElement {
               <div className="label border-b border-ink-45 bg-[repeating-linear-gradient(45deg,transparent_0_5px,var(--ink-12)_5px_6px)] px-3.5 py-2.5 text-ink-70">
                 At a glance
               </div>
-              <dl>
-                {about.facts.map((fact) => (
-                  <div
-                    key={fact.k}
-                    className="flex flex-col-reverse gap-0.5 border-b border-dashed border-ink-25 px-3.5 py-3.5 last:border-b-0"
-                  >
-                    <dt className="label text-[0.6rem] text-ink-45">{fact.k}</dt>
-                    <dd className="font-display text-[1.65rem] leading-none font-bold">
-                      {fact.v}
-                    </dd>
-                  </div>
-                ))}
+              <dl className="grid grid-cols-2">
+                {about.facts.map((fact, i) => {
+                  const rows = Math.ceil(about.facts.length / 2)
+                  const lastCol = i % 2 === 1
+                  const lastRow = i >= (rows - 1) * 2
+                  return (
+                    <div
+                      key={fact.k}
+                      className={`flex flex-col-reverse gap-0.5 border-dashed border-ink-25 px-3.5 py-4 ${
+                        lastCol ? '' : 'border-r'
+                      } ${lastRow ? '' : 'border-b'}`}
+                    >
+                      <dt className="label text-[0.6rem] text-ink-45">{fact.k}</dt>
+                      <dd className="font-display text-[1.55rem] leading-none font-bold">
+                        {fact.v}
+                      </dd>
+                    </div>
+                  )
+                })}
               </dl>
             </aside>
           </Reveal>
