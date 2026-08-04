@@ -108,12 +108,6 @@ export const skillsSchema = z.object({
       items: z.array(z.string()),
     }),
   ),
-  applies: z
-    .object({
-      label: z.string(),
-      items: z.array(pair),
-    })
-    .optional(),
 })
 
 export const experienceSchema = z.object({

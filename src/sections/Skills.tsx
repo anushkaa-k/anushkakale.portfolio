@@ -54,7 +54,7 @@ export function Skills({ meta }: { meta: SectionMeta }): ReactElement {
             {cols.map((group) => (
               <div
                 key={`head-${group.name}`}
-                className="border-r border-b border-ink-25 bg-paper-warm px-3.5 py-3 font-display text-[0.98rem] leading-tight font-bold text-accent-orange last:border-r-0"
+                className="border-r border-b border-ink-25 bg-paper-warm px-3.5 py-3 font-display text-[0.98rem] leading-tight font-bold last:border-r-0"
               >
                 {group.name}
               </div>
@@ -78,26 +78,6 @@ export function Skills({ meta }: { meta: SectionMeta }): ReactElement {
             ))}
           </div>
         </div>
-
-        {skills.applies && (
-          <div className="mt-10">
-            <h3 className="label mb-4 text-ink-45">{skills.applies.label}</h3>
-            <ul className="grid gap-px border border-ink-25 bg-ink-25">
-              {skills.applies.items.map((item) => (
-                <li
-                  key={item.k}
-                  className="flex flex-wrap items-baseline gap-x-3.5 gap-y-2 bg-paper px-4.5 py-3.5"
-                >
-                  <b className="font-display text-[1.1rem] font-bold">{item.k}</b>
-                  <span aria-hidden="true" className="text-redline">
-                    →
-                  </span>
-                  <i className="text-[0.92rem] not-italic text-ink-70">{item.v}</i>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </Reveal>
     </Sheet>
   )
