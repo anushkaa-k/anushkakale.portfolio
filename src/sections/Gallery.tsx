@@ -13,9 +13,12 @@ import { asset } from '../lib/asset'
   Presented as a contact sheet, run as one horizontal filmstrip rather than
   a filtered grid: Pratibimb, then Vasant, then Behind the Scenes, each
   block introduced by a rotated blueprint divider tag. Scrolling — by
-  drag, wheel, touch or the arrow — moves through the whole roll in one
-  motion, and a "Now Viewing" readout tracks whichever block currently
-  leads the viewport.
+  drag, wheel, touch or the arrows — moves through the whole roll in one
+  motion. The three squares above double as both a position readout
+  (whichever block leads the viewport lights up as you scroll) and a
+  quick jump — click one to scroll straight to that block. The back arrow
+  only appears once you've scrolled past the start; the forward arrow
+  hides the same way at the end.
 
   Frame numbers are a stable identity (hashed from the filename, not the
   on-screen position), so a photo keeps its number regardless of where it
@@ -41,6 +44,8 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
   const [failed, setFailed] = useState<ReadonlySet<string>>(new Set())
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const [activeGroup, setActiveGroup] = useState(GROUP_ORDER[0])
+  const [atStart, setAtStart] = useState(true)
+  const [atEnd, setAtEnd] = useState(false)
   const stripRef = useRef<HTMLDivElement>(null)
 
   const shown: Frame[] = gallery.items
@@ -76,6 +81,8 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
         }
       })
       setActiveGroup(current)
+      setAtStart(strip.scrollLeft <= 4)
+      setAtEnd(strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 4)
     }
     const onScroll = () => {
       if (ticking) return
@@ -99,6 +106,22 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
     stripRef.current?.scrollBy({ left: stripRef.current.clientWidth * 0.8, behavior: 'smooth' })
   }
 
+  const scrollBack = () => {
+    stripRef.current?.scrollBy({ left: -stripRef.current.clientWidth * 0.8, behavior: 'smooth' })
+  }
+
+  const scrollToGroup = (group: string) => {
+    const strip = stripRef.current
+    if (!strip) return
+    const markers = strip.querySelectorAll<HTMLElement>('[data-group-marker]')
+    for (const marker of markers) {
+      if (marker.dataset.groupMarker === group) {
+        strip.scrollTo({ left: Math.max(0, marker.offsetLeft - 4), behavior: 'smooth' })
+        break
+      }
+    }
+  }
+
   return (
     <section id={meta.id} className="gutter py-[clamp(3.5rem,8vw,6rem)]">
       <SheetHead meta={meta} />
@@ -113,9 +136,25 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
             </span>
           </div>
 
-          <div className="label flex items-center gap-2 text-ink-45">
-            Now Viewing
-            <span className="text-accent-orange">{activeGroup}</span>
+          <div role="group" aria-label="Jump to a section of the photo strip" className="flex flex-wrap gap-2">
+            {GROUP_ORDER.map((group) => {
+              const isActive = group === activeGroup
+              return (
+                <button
+                  key={group}
+                  type="button"
+                  onClick={() => scrollToGroup(group)}
+                  aria-current={isActive}
+                  className={`label cursor-pointer border px-2.5 py-1 transition-colors duration-200 ${
+                    isActive
+                      ? 'border-accent-orange text-accent-orange'
+                      : 'border-ink-25 text-ink-45 hover:border-ink-45 hover:text-ink-70'
+                  }`}
+                >
+                  {group}
+                </button>
+              )
+            })}
           </div>
         </div>
 
@@ -125,7 +164,7 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
             tabIndex={0}
             role="group"
             aria-label="Photo strip, scrollable left to right"
-            className="no-scrollbar flex snap-x snap-mandatory gap-x-8 overflow-x-auto scroll-smooth pt-6 pr-14 pb-8 pl-1"
+            className="no-scrollbar flex gap-x-8 overflow-x-auto scroll-smooth pt-6 pr-14 pb-8 pl-14"
           >
             {GROUP_ORDER.map((group) => {
               const photos = ordered.filter((p) => p.project === group)
@@ -134,7 +173,7 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
                 <div key={group} className="flex shrink-0 gap-x-8">
                   <div
                     data-group-marker={group}
-                    className="flex w-12 shrink-0 snap-start flex-col items-center justify-center gap-3 self-stretch border-x border-dashed border-ink-25"
+                    className="flex w-12 shrink-0 flex-col items-center justify-center gap-3 self-stretch border-x border-dashed border-ink-25"
                   >
                     <span
                       className="label whitespace-nowrap text-ink-45"
@@ -146,7 +185,7 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
                   </div>
 
                   {photos.map((photo) => (
-                    <div key={photo.src} className="shrink-0 snap-start">
+                    <div key={photo.src} className="shrink-0">
                       <GalleryCard
                         photo={photo}
                         onOpen={() => setOpenIndex(ordered.indexOf(photo))}
@@ -161,9 +200,28 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
 
           <button
             type="button"
+            onClick={scrollBack}
+            aria-label="Scroll photos back"
+            aria-hidden={atStart}
+            tabIndex={atStart ? -1 : 0}
+            className={`absolute top-1/2 left-0 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-ink-25 bg-paper/90 text-ink-70 shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[opacity,color,border-color] duration-300 hover:border-accent-orange hover:text-accent-orange ${
+              atStart ? 'pointer-events-none opacity-0' : 'opacity-100'
+            }`}
+          >
+            <span aria-hidden="true" className="text-lg">
+              ‹
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={scrollForward}
             aria-label="Scroll photos forward"
-            className="absolute top-1/2 right-0 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-ink-25 bg-paper/90 text-ink-70 shadow-[0_8px_18px_-10px_var(--ink-45)] transition-colors hover:border-accent-orange hover:text-accent-orange"
+            aria-hidden={atEnd}
+            tabIndex={atEnd ? -1 : 0}
+            className={`absolute top-1/2 right-0 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-ink-25 bg-paper/90 text-ink-70 shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[opacity,color,border-color] duration-300 hover:border-accent-orange hover:text-accent-orange ${
+              atEnd ? 'pointer-events-none opacity-0' : 'opacity-100'
+            }`}
           >
             <span aria-hidden="true" className="text-lg">
               ›
