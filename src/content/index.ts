@@ -18,6 +18,7 @@ import {
   siteSchema,
   skillsSchema,
   testimonialsSchema,
+  type Photo,
   type SectionId,
   type SectionMeta,
 } from './schema'
@@ -78,4 +79,4 @@ export const sections: SectionMeta[] = site.sections
   .filter((s) => populated[s.id]())
   .map((s, i) => ({ ...s, sheet: String(i + 1).padStart(2, '0') }))
 
-export type { SectionId, SectionMeta }
+export type { Photo, SectionId, SectionMeta }

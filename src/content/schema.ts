@@ -136,6 +136,12 @@ export const gallerySchema = z.object({
     z.object({
       src: z.string(),
       alt: z.string(),
+      /** Filter-tab bucket: a festival name, or "Behind the Scenes". */
+      project: z.string(),
+      /** Short title shown on hover and in the lightbox. */
+      title: z.string(),
+      year: z.string().optional(),
+      location: z.string().optional(),
     }),
   ),
 })
@@ -171,5 +177,6 @@ export type Skills = z.infer<typeof skillsSchema>
 export type Experience = z.infer<typeof experienceSchema>
 export type Testimonials = z.infer<typeof testimonialsSchema>
 export type Gallery = z.infer<typeof gallerySchema>
+export type Photo = Gallery['items'][number]
 export type Contact = z.infer<typeof contactSchema>
 export type Pair = z.infer<typeof pair>
