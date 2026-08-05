@@ -1,34 +1,41 @@
 # =============================================================================
 #  EXPERIENCE — sheet 04
 #
-#  Listed newest first. Each "- period:" block is one role.
+#  Listed oldest first — the timeline reads as a rising staircase, left to
+#  right, so this file's order is the order the steps climb in.
+#  Each "- period:" block is one role/step.
 # =============================================================================
 
 items:
-  - period: Present
-    title: Asst. Production Manager (Freelancing)
-    org: NCPA
+  - period: 2022–23
+    title: Production Intern
+    org: Metamorphosis Theatre
     notes:
-      - End-to-end production for festivals + full-scale productions
-      - ₹50L budgets · vendors · contracts · reconciliation
-      - 50+ visiting productions · scheduling + logistics
-      - BTS video content for social + archiving
-
-  - period: 2024–2026
-    title: Junior Officer, Theatre & Films
-    org: NCPA
-    notes:
-      - Operations for Alive + Kalgitura
-      - Vendor follow-ups · scheduling · logistics
+      - Assisted the production team across pre-production, rehearsals and live show execution
+      - Gained foundational experience in stage management, crew coordination, props and logistics
+      - First exposure to professional theatre production in a real performance environment
 
   - period: "2023"
     title: Project Manager
     org: Become Shakespeare
     notes:
-      - Editorial + print production timelines; authors/editors/designers/printers
+      - Managed editorial and production timelines across authors, editors, designers and printers
+      - Oversaw vendor relationships and print production schedules
+      - Built strong project planning and deadline management skills in a fast-paced environment
 
-  - period: 2022–2023
-    title: Production Intern
-    org: Metamorphosis Theatre
+  - period: 2024–26
+    title: Junior Officer, Theatre & Films
+    org: NCPA
     notes:
-      - Pre-prod → rehearsal → live show support
+      - Ran two NCPA Marathi productions, Alive and Kalgitura, for two years
+      - Ground-level coordination, vendor follow-ups, scheduling and logistics
+      - Built a strong operational foundation at one of India's oldest theatre institutions
+
+  - period: Present
+    title: Asst. Production Manager (Freelancing)
+    org: NCPA
+    notes:
+      - Lead end-to-end production management, from pre-production through on-ground execution
+      - Manage budgets up to ₹50L per festival — vendor procurement, contracts, reconciliation
+      - Coordinate multi-disciplinary crews of 10–30 across technical and creative functions
+      - Primary operational contact for 50+ visiting productions at the venue
