@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactElement } from 'react'
+import { useEffect, useRef, useState, type ReactElement } from 'react'
 
 import { gallery, type Photo } from '../content'
 import type { SectionMeta } from '../content'
@@ -10,87 +10,94 @@ import { asset } from '../lib/asset'
   public/img/ drops itself out, and if none of them load the sheet removes
   itself entirely — so the site looks finished before the photos arrive.
 
-  Presented as a contact sheet: each print mounted on its own card, given a
-  small alternating tilt as if pinned up for review, numbered like frames on
-  a roll — that frame number is a stable identity (hashed from the filename,
-  not the on-screen position), so it never changes when a filter reorders
-  the grid. Clicking a frame opens a lightbox with Previous/Next and the
-  full caption, never truncated.
+  Presented as a contact sheet, run as one horizontal filmstrip rather than
+  a filtered grid: Pratibimb, then Vasant, then Behind the Scenes, each
+  block introduced by a rotated blueprint divider tag. Scrolling — by
+  drag, wheel, touch or the arrow — moves through the whole roll in one
+  motion, and a "Now Viewing" readout tracks whichever block currently
+  leads the viewport.
 
-  Only a curated 12 frames — atmosphere, backstage, crew, venue detail —
-  show by default under "All", favouring the shots that don't already
-  appear as hero images on the project cards above. "View Complete Contact
-  Sheet" expands the rest in place. Switching to a specific festival tab
-  shows everything in that bucket immediately, since each bucket is already
-  a handful of frames.
+  Frame numbers are a stable identity (hashed from the filename, not the
+  on-screen position), so a photo keeps its number regardless of where it
+  falls in the strip. Clicking a frame opens a lightbox with Previous/Next
+  and the full caption, never truncated.
 */
 
-const FILTERS = ['All', 'Vasant Gujarati Theatre Festival', 'Pratibimb Marathi Theatre Festival', 'Behind the Scenes']
-
-/** Curated for atmosphere/backstage/venue/crew — deliberately skipping the
-    more "hero" shots (lineup boards, press day, awards) that read closer to
-    what already fronts the project cards above. */
-const CURATED = new Set([
-  'img/pratibimb-2026-tech-desk.jpeg',
-  'img/pratibimb-2026-dressing-table.jpeg',
-  'img/karunashtake-team-pratibimb-2026.jpeg',
-  'img/vasant-2026-flowers.jpeg',
-  'img/vasant-lanterns.jpg',
-  'img/vasant-house-lights.jpg',
-  'img/pratibimb-press-backstage.jpg',
-  'img/akvarious-25-courtyard.jpg',
-  'img/alive-tech-run-pune.jpg',
-  'img/fundamentals-sachin-shinde.jpg',
-  'img/ghashiram-kotwal.jpg',
-  'img/vasant-frontage.jpg',
-])
+const GROUP_ORDER = ['Pratibimb Marathi Theatre Festival', 'Vasant Gujarati Theatre Festival', 'Behind the Scenes']
 
 const STAGE_MARKS = ['Stage Left', 'Stage Right', 'House Left', 'Upstage', 'Downstage', 'House Right']
 
 /** A small, stable pseudo-random tilt in [-1, 1] degrees, seeded from the
-    filename so a photo's tilt never changes as filters reorder the grid. */
+    filename so a photo's tilt never changes as the strip reorders. */
 function tiltFor(src: string): number {
   let hash = 0
   for (let i = 0; i < src.length; i++) hash = (hash * 31 + src.charCodeAt(i)) | 0
-  return ((Math.abs(hash) % 200) / 100 - 1) * 1
+  return (Math.abs(hash) % 200) / 100 - 1
 }
 
 type Frame = Photo & { frame: number }
 
 export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
   const [failed, setFailed] = useState<ReadonlySet<string>>(new Set())
-  const [filter, setFilter] = useState(FILTERS[0])
-  const [expanded, setExpanded] = useState(false)
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [activeGroup, setActiveGroup] = useState(GROUP_ORDER[0])
+  const stripRef = useRef<HTMLDivElement>(null)
 
   const shown: Frame[] = gallery.items
     .filter((photo) => !failed.has(photo.src))
     .map((photo, i) => ({ ...photo, frame: i + 1 }))
 
-  const byFilter = filter === 'All' ? shown : shown.filter((p) => p.project === filter)
-  const curatedFrames = filter === 'All' ? byFilter.filter((p) => CURATED.has(p.src)) : byFilter
-  const restFrames = filter === 'All' ? byFilter.filter((p) => !CURATED.has(p.src)) : []
-  const hasMore = restFrames.length > 0
-  const visible = hasMore && !expanded ? curatedFrames : byFilter
+  const ordered: Frame[] = GROUP_ORDER.flatMap((group) => shown.filter((p) => p.project === group))
 
   useEffect(() => {
     if (openIndex === null) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpenIndex(null)
-      if (e.key === 'ArrowRight') setOpenIndex((v) => (v === null ? v : (v + 1) % visible.length))
-      if (e.key === 'ArrowLeft') setOpenIndex((v) => (v === null ? v : (v - 1 + visible.length) % visible.length))
+      if (e.key === 'ArrowRight') setOpenIndex((v) => (v === null ? v : (v + 1) % ordered.length))
+      if (e.key === 'ArrowLeft') setOpenIndex((v) => (v === null ? v : (v - 1 + ordered.length) % ordered.length))
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openIndex, visible.length])
+  }, [openIndex, ordered.length])
+
+  useEffect(() => {
+    const strip = stripRef.current
+    if (!strip) return
+
+    let ticking = false
+    const update = () => {
+      ticking = false
+      const markers = strip.querySelectorAll<HTMLElement>('[data-group-marker]')
+      let current = GROUP_ORDER[0]
+      markers.forEach((marker) => {
+        if (marker.offsetLeft - strip.scrollLeft <= strip.clientWidth * 0.35) {
+          current = marker.dataset.groupMarker ?? current
+        }
+      })
+      setActiveGroup(current)
+    }
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(update)
+    }
+
+    update()
+    strip.addEventListener('scroll', onScroll, { passive: true })
+    return () => strip.removeEventListener('scroll', onScroll)
+  }, [ordered.length])
 
   if (shown.length === 0) return null
 
   const step = (delta: number) =>
-    setOpenIndex((v) => (v === null ? v : (v + delta + visible.length) % visible.length))
+    setOpenIndex((v) => (v === null ? v : (v + delta + ordered.length) % ordered.length))
 
-  const active = openIndex !== null ? visible[openIndex] : null
+  const active = openIndex !== null ? ordered[openIndex] : null
+
+  const scrollForward = () => {
+    stripRef.current?.scrollBy({ left: stripRef.current.clientWidth * 0.8, behavior: 'smooth' })
+  }
 
   return (
     <section id={meta.id} className="gutter py-[clamp(3.5rem,8vw,6rem)]">
@@ -106,78 +113,63 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
             </span>
           </div>
 
-          <div role="tablist" aria-label="Filter photos by project" className="flex flex-wrap gap-2">
-            {FILTERS.map((f) => {
-              const isActive = f === filter
-              const count = f === 'All' ? shown.length : shown.filter((p) => p.project === f).length
-              if (f !== 'All' && count === 0) return null
+          <div className="label flex items-center gap-2 text-ink-45">
+            Now Viewing
+            <span className="text-accent-orange">{activeGroup}</span>
+          </div>
+        </div>
+
+        <div className="relative">
+          <div
+            ref={stripRef}
+            tabIndex={0}
+            role="group"
+            aria-label="Photo strip, scrollable left to right"
+            className="no-scrollbar flex snap-x snap-mandatory gap-x-8 overflow-x-auto scroll-smooth pt-6 pr-14 pb-8 pl-1"
+          >
+            {GROUP_ORDER.map((group) => {
+              const photos = ordered.filter((p) => p.project === group)
+              if (photos.length === 0) return null
               return (
-                <button
-                  key={f}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => {
-                    setFilter(f)
-                    setExpanded(false)
-                  }}
-                  className={`label cursor-pointer border px-2.5 py-1 transition-colors duration-200 ${
-                    isActive
-                      ? 'border-accent-orange text-accent-orange'
-                      : 'border-ink-25 text-ink-45 hover:border-ink-45 hover:text-ink-70'
-                  }`}
-                >
-                  {f} <span className={isActive ? 'text-accent-orange/60' : 'text-ink-25'}>{count}</span>
-                </button>
+                <div key={group} className="flex shrink-0 gap-x-8">
+                  <div
+                    data-group-marker={group}
+                    className="flex w-12 shrink-0 snap-start flex-col items-center justify-center gap-3 self-stretch border-x border-dashed border-ink-25"
+                  >
+                    <span
+                      className="label whitespace-nowrap text-ink-45"
+                      style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+                    >
+                      {group}
+                    </span>
+                    <span aria-hidden="true" className="size-2 shrink-0 rotate-45 border border-ink-25" />
+                  </div>
+
+                  {photos.map((photo) => (
+                    <div key={photo.src} className="shrink-0 snap-start">
+                      <GalleryCard
+                        photo={photo}
+                        onOpen={() => setOpenIndex(ordered.indexOf(photo))}
+                        onImgError={() => setFailed((prev) => new Set(prev).add(photo.src))}
+                      />
+                    </div>
+                  ))}
+                </div>
               )
             })}
           </div>
-        </div>
 
-        <div className="grid gap-x-10 gap-y-12 [grid-template-columns:repeat(auto-fit,minmax(12.5rem,1fr))]">
-          {curatedFrames.map((photo) => (
-            <GalleryCard
-              key={photo.src}
-              photo={photo}
-              onOpen={() => setOpenIndex(visible.indexOf(photo))}
-              onImgError={() => setFailed((prev) => new Set(prev).add(photo.src))}
-            />
-          ))}
-        </div>
-
-        {hasMore && (
-          <div
-            className="grid transition-[grid-template-rows] duration-500 ease-in-out"
-            style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+          <button
+            type="button"
+            onClick={scrollForward}
+            aria-label="Scroll photos forward"
+            className="absolute top-1/2 right-0 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-ink-25 bg-paper/90 text-ink-70 shadow-[0_8px_18px_-10px_var(--ink-45)] transition-colors hover:border-accent-orange hover:text-accent-orange"
           >
-            <div className="overflow-hidden">
-              <div className="grid gap-x-10 gap-y-12 pt-12 [grid-template-columns:repeat(auto-fit,minmax(12.5rem,1fr))]">
-                {restFrames.map((photo) => (
-                  <GalleryCard
-                    key={photo.src}
-                    photo={photo}
-                    inert={!expanded}
-                    onOpen={() => setOpenIndex(visible.indexOf(photo))}
-                    onImgError={() => setFailed((prev) => new Set(prev).add(photo.src))}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {hasMore && (
-          <div className="mt-10 flex justify-center">
-            <button
-              type="button"
-              onClick={() => setExpanded((v) => !v)}
-              className="label inline-flex cursor-pointer items-center gap-2 border border-ink-25 px-4 py-2 text-ink-45 transition-colors hover:border-ink hover:text-ink"
-            >
-              <span aria-hidden="true" className="size-2 shrink-0 rotate-45 border border-current" />
-              {expanded ? 'Show Fewer Frames' : `View Complete Contact Sheet (${shown.length} Frames)`}
-            </button>
-          </div>
-        )}
+            <span aria-hidden="true" className="text-lg">
+              ›
+            </span>
+          </button>
+        </div>
       </Reveal>
 
       {active && (
@@ -212,7 +204,7 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
                 className="mx-auto max-h-[62vh] w-auto max-w-full object-contain p-3"
               />
 
-              {visible.length > 1 && (
+              {ordered.length > 1 && (
                 <>
                   <button
                     type="button"
@@ -264,24 +256,18 @@ function GalleryCard({
   photo,
   onOpen,
   onImgError,
-  inert = false,
 }: {
   photo: Frame
   onOpen: () => void
   onImgError: () => void
-  /** True while this card sits in the collapsed (0-height) expand panel —
-      keeps it out of tab order so hidden cards can't steal keyboard focus. */
-  inert?: boolean
 }): ReactElement {
   return (
     <button
       type="button"
       onClick={onOpen}
-      tabIndex={inert ? -1 : 0}
-      aria-hidden={inert}
       aria-label={`Open frame ${String(photo.frame).padStart(2, '0')}: ${photo.title}`}
       style={{ transform: `rotate(${tiltFor(photo.src)}deg)` }}
-      className="group relative cursor-pointer border border-ink-25 bg-paper p-2.5 text-left shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[transform,box-shadow] duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:rotate-0 hover:shadow-[0_20px_36px_-14px_var(--ink-45)] focus-visible:z-10 focus-visible:rotate-0"
+      className="group relative w-52 cursor-pointer border border-ink-25 bg-paper p-2.5 text-left shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[transform,box-shadow] duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:rotate-0 hover:shadow-[0_20px_36px_-14px_var(--ink-45)] focus-visible:z-10 focus-visible:rotate-0"
     >
       <span className="label absolute top-0.5 left-0.5 z-30 bg-paper/90 px-1 text-[0.55rem] text-ink-45">
         {String(photo.frame).padStart(2, '0')}

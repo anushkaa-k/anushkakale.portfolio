@@ -279,6 +279,17 @@ html[data-mode="blueprint"] {
     transform: none;
   }
 
+  /* Keeps the horizontal contact-sheet strip scrollable by drag, wheel,
+     touch and the arrow control, without a visible scrollbar competing
+     with the drafting furniture around it. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   /* A line that draws itself in, left to right, the moment its Reveal
      wrapper scrolls into view — used on the lighting-plot divider so the
      batten looks struck rather than simply faded up. */
