@@ -187,6 +187,23 @@ export const caseStudySchema = z.object({
       alt: z.string(),
     })
     .optional(),
+  /** The Ownership Matrix cards — also drives the hub-and-spoke diagram
+      beside them, so the two never list different domains. */
+  ownership: z.array(
+    z.object({
+      domain: z.string(),
+      summary: z.string(),
+    }),
+  ),
+  /** The Operations Risk Register rows — also drives the convergence
+      diagram's input labels. */
+  risks: z.array(
+    z.object({
+      item: z.string(),
+      impact: z.string(),
+      mitigation: z.string(),
+    }),
+  ),
 })
 
 /* ---- inferred types ------------------------------------------------------ */
