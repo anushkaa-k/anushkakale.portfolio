@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState, type ReactElement } from 'react'
 
 import type { CaseStudy } from '../content'
 import { Reveal } from '../components/Sheet'
-import { Bubble, Crosshair, Note } from '../lib/draft'
+import { Crosshair, DimH, Grid, LanternRun, Note, RakeSection, Truss } from '../lib/draft'
 
 /* Four pillars, each a full-width row split roughly 45/55 — a short
    explanation and a hand-built operational artifact — alternating which
@@ -145,155 +145,182 @@ function BudgetWorksheetArtifact(): ReactElement {
    that one. */
 
 const FLOWS: { label: string; y: number; dir: 'right' | 'both' }[] = [
-  { label: 'Approvals', y: 52, dir: 'right' },
-  { label: 'Payments', y: 90, dir: 'both' },
-  { label: 'Materials & Logistics', y: 170, dir: 'right' },
-  { label: 'Communication', y: 208, dir: 'both' },
+  { label: 'Approvals', y: 62, dir: 'right' },
+  { label: 'Payments', y: 108, dir: 'both' },
+  { label: 'Materials & Logistics', y: 196, dir: 'right' },
+  { label: 'Communication', y: 242, dir: 'both' },
 ]
 
 function FlowArrow({ x, y, dir }: { x: number; y: number; dir: 'left' | 'right' }): ReactElement {
   const s = dir === 'right' ? 1 : -1
   return (
     <g>
-      <line x1={x} y1={y} x2={x - 6 * s} y2={y - 3} className="l-thin" />
-      <line x1={x} y1={y} x2={x - 6 * s} y2={y + 3} className="l-thin" />
+      <line x1={x} y1={y} x2={x - 7 * s} y2={y - 3.5} className="l-thin" />
+      <line x1={x} y1={y} x2={x - 7 * s} y2={y + 3.5} className="l-thin" />
     </g>
   )
 }
 
 function CrossCityWorkflowArtifact(): ReactElement {
-  const hubL = 62
-  const hubR = 398
-  const lineL = 94
-  const lineR = 366
+  const hubL = 76
+  const hubR = 404
+  const lineL = 132
+  const lineR = 348
 
   return (
-    <svg
-      viewBox="0 0 460 260"
-      className="h-auto w-full"
-      role="img"
-      aria-label="Diagram: production flows between the Mumbai NCPA team and the Pune creative team"
-    >
-      <g style={{ opacity: 0.3 }} aria-hidden="true">
-        <Crosshair x={20} y={20} size={7} />
-        <Crosshair x={440} y={240} size={7} />
-      </g>
-
-      <circle cx={hubL} cy={130} r={27} className="l-med fill-paper" />
-      <Note x={hubL} y={134} size={11}>
-        MUMBAI
-      </Note>
-
-      <circle cx={hubR} cy={130} r={27} className="l-med fill-paper" />
-      <Note x={hubR} y={134} size={11}>
-        PUNE
-      </Note>
-
-      {FLOWS.map((f) => (
-        <g key={f.label}>
-          <line x1={lineL} y1={f.y} x2={lineR} y2={f.y} className="l-thin draw-in-line" />
-          <FlowArrow x={lineR} y={f.y} dir="right" />
-          {f.dir === 'both' && <FlowArrow x={lineL} y={f.y} dir="left" />}
-          <Note x={230} y={f.y - 7} size={9} tone="dim">
-            {f.label}
-          </Note>
+    <div className="border border-ink-25 bg-paper">
+      <div className="label border-b border-ink-25 bg-paper-warm px-3 py-2 text-ink-45">
+        Cross-City Workflow — Mumbai ↔ Pune
+      </div>
+      <svg
+        viewBox="0 0 480 300"
+        className="h-auto w-full"
+        role="img"
+        aria-label="Diagram: production flows between the Mumbai NCPA team and the Pune creative team"
+      >
+        <g style={{ opacity: 0.5 }} aria-hidden="true">
+          <Grid width={480} height={300} step={40} />
         </g>
-      ))}
-    </svg>
+        <g style={{ opacity: 0.35 }} aria-hidden="true">
+          <Crosshair x={22} y={22} size={8} />
+          <Crosshair x={458} y={278} size={8} />
+        </g>
+
+        <circle cx={hubL} cy={150} r={34} className="l-med fill-paper" />
+        <Note x={hubL} y={155} size={13}>
+          MUMBAI
+        </Note>
+
+        <circle cx={hubR} cy={150} r={34} className="l-med fill-paper" />
+        <Note x={hubR} y={155} size={13}>
+          PUNE
+        </Note>
+
+        {FLOWS.map((f) => (
+          <g key={f.label}>
+            <line x1={lineL} y1={f.y} x2={lineR} y2={f.y} className="l-thin draw-in-line" />
+            <FlowArrow x={lineR} y={f.y} dir="right" />
+            {f.dir === 'both' && <FlowArrow x={lineL} y={f.y} dir="left" />}
+            <Note x={240} y={f.y - 8} size={10} tone="dim">
+              {f.label}
+            </Note>
+          </g>
+        ))}
+      </svg>
+    </div>
   )
 }
 
-/* ---- 03. Stage Layout ---------------------------------------------------
+/* ---- 03. Technical Production — Stage Elevation -------------------------
 
-   Plan view (looking straight down at the stage), not an elevation —
-   projection surface upstage, three lighting zones as grid-bubble
-   references (the same datum-marker convention draft.tsx uses on real
-   arrangement drawings), and two cue points with hover notes standing
-   in for a cue sheet. */
+   A section cut through the house, not a plan — the audience rake
+   (RakeSection, the same stepped-profile primitive a real section
+   drawing uses), the screen seen edge-on as a thin vertical line, and
+   the projector's throw drawn as an actual cone back to it, because
+   that relationship — sightline and throw sharing the room — is the
+   real technical constraint a projection-heavy show has to design
+   around, not just a list of equipment. */
 
-const CUES = [
-  { x: 150, y: 126, label: '12', note: 'Projection sync, blackout' },
-  { x: 250, y: 126, label: '18', note: 'Lighting cross-fade cue' },
-]
+function TechnicalElevationArtifact(): ReactElement {
+  const screenX = 60
+  const screenTop = 55
+  const screenBottom = 195
+  const rakeStart = { x: 145, y: 200 }
+  const rakeSteps = 6
+  const rakeRun = 23
+  const rakeRise = 9
+  const projector = {
+    x: rakeStart.x + rakeSteps * rakeRun,
+    y: rakeStart.y - rakeSteps * rakeRise - 22,
+  }
 
-function StageLayoutArtifact(): ReactElement {
   return (
-    <svg
-      viewBox="0 0 400 300"
-      className="h-auto w-full overflow-visible"
-      role="img"
-      aria-label="Blueprint stage plan: projection surface, lighting zones and cue points"
-    >
-      <g style={{ opacity: 0.3 }} aria-hidden="true">
-        <Crosshair x={18} y={18} size={7} />
-        <Crosshair x={382} y={282} size={7} />
-      </g>
-
-      <rect x={40} y={44} width={320} height={176} className="l-med" />
-      <rect x={70} y={54} width={260} height={28} className="l-thin" style={{ strokeDasharray: '4 3' }} />
-      <Note x={200} y={73} size={8.5} tone="dim">
-        PROJECTION SURFACE
-      </Note>
-
-      <Note x={48} y={135} anchor="start" size={8} tone="dim">
-        SL
-      </Note>
-      <Note x={352} y={135} anchor="end" size={8} tone="dim">
-        SR
-      </Note>
-
-      <Bubble x={130} y={150} label="1" />
-      <Bubble x={200} y={172} label="2" />
-      <Bubble x={270} y={150} label="3" />
-      <Note x={200} y={200} size={8} tone="dim">
-        LIGHTING ZONES
-      </Note>
-
-      {CUES.map((c) => (
-        <g key={c.label} className="group/cue">
-          {/* A generous invisible hit area — the visible triangle/label
-              alone is too small a target to hover reliably. */}
-          <rect x={c.x - 16} y={c.y - 34} width={32} height={34} fill="transparent" />
-          <line x1={c.x} y1={c.y - 14} x2={c.x} y2={c.y - 4} className="l-hidden" />
-          <polygon
-            points={`${c.x - 5},${c.y - 22} ${c.x + 5},${c.y - 22} ${c.x},${c.y - 14}`}
-            className="l-thin fill-paper"
-          />
-          <Note x={c.x} y={c.y - 26} size={7.5} tone="dim">
-            {`CUE ${c.label}`}
-          </Note>
-          <rect
-            x={c.x - 45}
-            y={c.y - 58}
-            width={90}
-            height={26}
-            className="pointer-events-none fill-paper stroke-ink-25 opacity-0 transition-opacity duration-200 group-hover/cue:opacity-100"
-            style={{ filter: 'drop-shadow(0 6px 10px rgba(0,0,0,0.18))' }}
-          />
-          <text
-            x={c.x}
-            y={c.y - 43}
-            textAnchor="middle"
-            className="note dim pointer-events-none opacity-0 transition-opacity duration-200 group-hover/cue:opacity-100"
-            fontSize={6.5}
-          >
-            {c.note}
-          </text>
+    <div className="border border-ink-25 bg-paper">
+      <div className="label border-b border-ink-25 bg-paper-warm px-3 py-2 text-ink-45">
+        Technical Production — Stage Elevation
+      </div>
+      <svg
+        viewBox="0 0 480 300"
+        className="h-auto w-full"
+        role="img"
+        aria-label="Blueprint stage elevation: screen, audience rake, projector throw, and lighting rig"
+      >
+        <g style={{ opacity: 0.5 }} aria-hidden="true">
+          <Grid width={480} height={300} step={40} />
         </g>
-      ))}
+        <g style={{ opacity: 0.35 }} aria-hidden="true">
+          <Crosshair x={22} y={22} size={8} />
+          <Crosshair x={458} y={278} size={8} />
+        </g>
 
-      <rect x={130} y={244} width={140} height={26} className="l-thin" />
-      <Note x={165} y={261} size={7.5} tone="dim">
-        LX OP
-      </Note>
-      <line x1={200} y1={244} x2={200} y2={270} className="l-hair" />
-      <Note x={235} y={261} size={7.5} tone="dim">
-        PROJ OP
-      </Note>
-      <Note x={200} y={286} size={8} tone="dim">
-        OPERATOR BOOTH
-      </Note>
-    </svg>
+        {/* Projection throw — the projector's actual cone to the screen,
+            drawn first so the rig and rake sit visually on top of it. */}
+        <line
+          x1={projector.x}
+          y1={projector.y + 7}
+          x2={screenX}
+          y2={screenTop + 3}
+          className="l-hidden"
+        />
+        <line
+          x1={projector.x}
+          y1={projector.y + 7}
+          x2={screenX}
+          y2={screenBottom - 3}
+          className="l-hidden"
+        />
+
+        {/* Lighting rig, FOH over the stage */}
+        <Truss x={78} y={28} length={186} depth={9} bays={6} />
+        <LanternRun x={78} y={37} length={186} count={4} scale={0.9} />
+        <Note x={171} y={20} size={9} tone="dim">
+          LX RIG
+        </Note>
+
+        {/* Screen, seen edge-on */}
+        <line
+          x1={screenX}
+          y1={screenTop}
+          x2={screenX}
+          y2={screenBottom}
+          className="l-med"
+          style={{ strokeDasharray: '5 3' }}
+        />
+        <Note x={screenX} y={screenBottom + 16} size={9} tone="dim">
+          SCREEN
+        </Note>
+
+        {/* Stage floor + audience rake */}
+        <line x1={40} y1={rakeStart.y} x2={rakeStart.x} y2={rakeStart.y} className="l-med" />
+        <RakeSection x={rakeStart.x} y={rakeStart.y} steps={rakeSteps} run={rakeRun} rise={rakeRise} />
+        <Note x={215} y={182} size={9} tone="dim">
+          AUDIENCE
+        </Note>
+
+        {/* Projector */}
+        <rect x={projector.x - 10} y={projector.y} width={20} height={14} className="l-thin fill-paper" />
+        <line x1={projector.x} y1={projector.y} x2={projector.x} y2={projector.y - 18} className="l-hair" />
+        <rect x={projector.x - 7} y={projector.y - 24} width={14} height={6} className="l-thin fill-paper" />
+        <Note x={projector.x} y={projector.y - 30} size={9}>
+          PROJECTOR
+        </Note>
+        <Note x={projector.x} y={projector.y + 26} size={8} tone="dim">
+          OPERATOR
+        </Note>
+        <Note x={projector.x} y={projector.y + 37} size={8} tone="dim">
+          CUES CALLED LIVE
+        </Note>
+
+        <DimH
+          x1={screenX}
+          x2={projector.x}
+          y={262}
+          from={projector.y + 7}
+          label="PROJECTION THROW"
+          size={9}
+        />
+      </svg>
+    </div>
   )
 }
 
@@ -347,11 +374,132 @@ function ProductionCalendarArtifact(): ReactElement {
 const ARTIFACTS: (() => ReactElement)[] = [
   BudgetWorksheetArtifact,
   CrossCityWorkflowArtifact,
-  StageLayoutArtifact,
+  TechnicalElevationArtifact,
   ProductionCalendarArtifact,
 ]
 
-const ARTIFACT_TITLES = ['Budget Worksheet', 'Cross-City Workflow', 'Stage Layout', 'Production Calendar']
+const ARTIFACT_TITLES = ['Budget Worksheet', 'Cross-City Workflow', 'Technical Elevation', 'Production Calendar']
+
+/* ---- Pillars 02 + 03: the engineering board ------------------------------
+
+   Cross-city Coordination and Technical Production sit side by side as
+   one two-column board — roughly one desktop screen — rather than two
+   more full-width rows, so scanning "how the production actually ran"
+   doesn't take four screens of scrolling. Each column keeps its own
+   visual/text order (diagram-first on the left, text-first on the
+   right) for a little rhythm, matching how the standalone pillar rows
+   alternate sides.
+
+   Hover is scoped to the whole column, not just the diagram: a single
+   unnamed `group` per column drives the title's colour, the diagram's
+   brightness, and the column's own elevation together, since all three
+   are meant to read as "this column is active," not three independent
+   affordances. The diagram's own nested `group/art` only gates its
+   "Click to Enlarge" overlay — the one interaction that should stay
+   scoped to hovering the artifact itself. */
+
+function BoardColumn({
+  index,
+  title,
+  body,
+  onOpen,
+  visualFirst,
+  children,
+}: {
+  index: number
+  title: string
+  body: string
+  onOpen: () => void
+  visualFirst: boolean
+  children: ReactElement
+}): ReactElement {
+  const visual = (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`Open the ${title} artifact`}
+      className="group/art relative block w-full cursor-pointer text-left transition-[filter] duration-300 ease-out group-hover:brightness-110"
+    >
+      {children}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center gap-1.5 bg-gradient-to-t from-ink/90 to-transparent py-2.5 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover/art:translate-y-0 group-hover/art:opacity-100"
+      >
+        <span className="label text-paper">Click to Enlarge</span>
+      </span>
+    </button>
+  )
+
+  const text = (
+    <div>
+      <div className="mb-2.5 flex items-baseline gap-3">
+        <span aria-hidden="true" className="size-2 shrink-0 rotate-45 border border-ink-45" />
+        <span className="label text-ink-45">Pillar {String(index + 1).padStart(2, '0')}</span>
+      </div>
+      <h3 className="mb-3 font-display text-[1.4rem] leading-tight font-bold transition-colors duration-300 group-hover:text-accent-orange">
+        {title}
+      </h3>
+      <p className="text-[0.88rem] leading-snug text-ink-70">{body}</p>
+    </div>
+  )
+
+  return (
+    <div className="group border border-transparent p-4 transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_18px_38px_-20px_var(--ink-45)]">
+      {visualFirst ? (
+        <>
+          <div className="mb-6">{visual}</div>
+          {text}
+        </>
+      ) : (
+        <>
+          {text}
+          <div className="mt-6">{visual}</div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function EngineeringBoard({
+  pillars,
+  onOpenLeft,
+  onOpenRight,
+}: {
+  pillars: [CaseStudy['pillars'][number], CaseStudy['pillars'][number]]
+  onOpenLeft: () => void
+  onOpenRight: () => void
+}): ReactElement {
+  const [left, right] = pillars
+
+  return (
+    <Reveal className="mb-14 lg:flex lg:min-h-screen lg:flex-col lg:justify-center">
+      <svg viewBox="0 0 1000 4" preserveAspectRatio="none" className="h-1 w-full" aria-hidden="true">
+        <line x1={0} y1={2} x2={1000} y2={2} className="l-thin draw-in-line" />
+      </svg>
+
+      <div className="relative mt-8 grid grid-cols-1 gap-x-12 gap-y-14 lg:grid-cols-2 lg:gap-y-0">
+        {/* Vertical blueprint divider — dashed centreline with a drafting
+            tick at each end, desktop only. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-2 left-1/2 hidden w-px -translate-x-1/2 lg:block"
+        >
+          <div className="h-full border-l border-dashed border-ink-25" />
+          <span className="absolute -top-1 left-1/2 size-1.5 -translate-x-1/2 rotate-45 border border-ink-25 bg-paper" />
+          <span className="absolute -bottom-1 left-1/2 size-1.5 -translate-x-1/2 rotate-45 border border-ink-25 bg-paper" />
+        </div>
+
+        <BoardColumn index={1} title={left.title} body={left.body} onOpen={onOpenLeft} visualFirst>
+          <CrossCityWorkflowArtifact />
+        </BoardColumn>
+
+        <BoardColumn index={2} title={right.title} body={right.body} onOpen={onOpenRight} visualFirst={false}>
+          <TechnicalElevationArtifact />
+        </BoardColumn>
+      </div>
+    </Reveal>
+  )
+}
 
 export function FromScriptToStage({ pillars }: { pillars: CaseStudy['pillars'] }): ReactElement {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
@@ -377,6 +525,21 @@ export function FromScriptToStage({ pillars }: { pillars: CaseStudy['pillars'] }
       </p>
 
       {pillars.map((p, i) => {
+        // Pillars 02 and 03 (Cross-city Coordination, Technical Production)
+        // render together as the engineering board below, once, keyed off
+        // pillar 02 — pillar 03 is skipped here rather than rendered twice.
+        if (i === 2) return null
+        if (i === 1) {
+          return pillars[2] ? (
+            <EngineeringBoard
+              key="engineering-board"
+              pillars={[p, pillars[2]]}
+              onOpenLeft={() => setOpenIndex(1)}
+              onOpenRight={() => setOpenIndex(2)}
+            />
+          ) : null
+        }
+
         const Artifact = ARTIFACTS[i]
         if (!Artifact) return null
         const visualLeft = i % 2 === 1
