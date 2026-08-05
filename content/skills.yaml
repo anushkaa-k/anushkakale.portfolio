@@ -5,29 +5,37 @@
 # =============================================================================
 
 groups:
-  - name: Production ops
+  - name: Production Planning
     items:
-      - Run of show + execution
-      - Pre-production planning
-      - Scheduling + space allocation
-      - Multi-stage programming
-      - Anushka Kale
+      - Pre Production Planning
+      - Production Scheduling
+      - Stage & Venue Coordination
+      - Technical Coordination
+      - Resource Allocation
+      - Run of Show Management
+      - Production Documentation
 
-  - name: Budget + vendors
+  - name: Operations & Delivery
     items:
-      - Budget planning + tracking
-      - Vendor procurement + negotiation
-      - Contracts + reconciliation
-      - Cost control under pressure
+      - Budget Planning & Tracking
+      - Vendor Management
+      - Logistics Coordination
+      - Contract Administration
+      - Procurement & Reconciliation
+      - Risk & Contingency Planning
+      - Operational Execution
 
-  - name: People + stakeholders
+  - name: Leadership & Communication
     items:
-      - Cross-functional crews (10–30)
+      - Cross-functional Collaboration
+      - Stakeholder Management
       - Calm escalation handling
-      - Visiting company coordination
-      - Stakeholder alignment
+      - Conflict Resolution
+      - Crew Leadership
+      - Decision Making
+      - Adaptability
 
-  - name: Digital
+  - name: Systems & Tools
     items:
       - Excel
       - PowerPoint
