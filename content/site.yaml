@@ -102,8 +102,8 @@ sections:
     scale: Run of Show
 
   - id: testimonials
-    label: Testimonials
-    title: Testimonials
+    label: Recommendations
+    title: Recommendations
     scale: Show Reports
 
   - id: gallery
