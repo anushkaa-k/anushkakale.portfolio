@@ -5,6 +5,7 @@ import { useLights } from '../hooks/useLights'
 import { useReveal } from '../hooks/useReveal'
 import { asset } from '../lib/asset'
 import { CaseStudyHeader } from './CaseStudyHeader'
+import { FromScriptToStage } from './FromScriptToStage'
 
 /* Alive is a narrative case study, not a dashboard one: the opening is a
    Project Overview (40% of the viewport — a short narrative, a photograph,
@@ -356,6 +357,10 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
             <ProductionLifecycle stations={data.journey} />
           </div>
         </div>
+      </div>
+
+      <div className="gutter bg-paper pb-[clamp(3rem,6vw,5rem)] text-ink">
+        <FromScriptToStage pillars={data.pillars} />
       </div>
 
       {lightboxOpen && photoOk && (

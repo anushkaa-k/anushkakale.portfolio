@@ -256,6 +256,18 @@ export const caseStudySchema = z.object({
       }),
     )
     .default([]),
+  /** The "From Script to Stage" pillars (see Alive) — each one's
+      supporting artifact (budget worksheet, workflow diagram, stage
+      layout, production calendar) is drawn in code, not stored here;
+      this is the prose half only. */
+  pillars: z
+    .array(
+      z.object({
+        title: z.string(),
+        body: z.string(),
+      }),
+    )
+    .default([]),
 })
 
 /* ---- inferred types ------------------------------------------------------ */

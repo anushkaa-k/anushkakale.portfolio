@@ -105,3 +105,67 @@ journey:
   - label: Bharat Rang Mahotsav Selection
     description: Selected for the National School of Drama's Bharat Rang Mahotsav.
     phase: Recognition
+
+# The "From Script to Stage" pillars — the operational framework behind
+# the production. Each one's supporting artifact (budget worksheet,
+# workflow diagram, stage layout, production calendar) is built in code
+# (see src/pages/FromScriptToStage.tsx); this is the prose half.
+pillars:
+  - title: Budgeting
+    body: >-
+      Alive's budget was built department by department — set,
+      projection, costumes, transport, hospitality — before a single
+      rupee was committed. I gathered vendor quotations, compared
+      options against the creative brief, and built each line item into
+      a working worksheet rather than a single lump-sum figure. Every
+      quotation went through approval before procurement began, and I
+      tracked expenses against the worksheet through the run rather than
+      reconciling at the end. Contingency was held back deliberately,
+      not folded into other lines, so a late change in one department
+      didn't force a fight for budget elsewhere. The real work was
+      balancing creative ambition — a projection-heavy production is not
+      cheap to build — against a fixed ceiling, without either side
+      losing.
+
+  - title: Cross-city Coordination (Mumbai ↔ Pune)
+    body: >-
+      Alive was produced by NCPA's Mumbai team for a creative team based
+      in Pune, so nothing about the production was in one room by
+      default. Approvals, budgets, and schedules moved between cities
+      constantly, and decisions made in Pune rehearsal rooms had to
+      reach Mumbai fast enough to act on before load-in. I ran a
+      standing communication line between both teams, coordinated
+      payments and vendor approvals from Mumbai, and organised the
+      transport of set, costume, and technical material between the two
+      cities ahead of each milestone. The job wasn't managing either
+      city's production — it was making sure neither team was ever
+      waiting on information the other already had.
+
+  - title: Technical Production
+    body: >-
+      Alive told much of its story through projection, which meant the
+      technical plan had to treat projection cues with the same rigor as
+      lighting and sound. I planned projection surfaces and operator
+      positions alongside the lighting rig, built a cue structure that
+      synchronised projection, lighting, and performance beats, and ran
+      technical rehearsals specifically to drill that synchronisation
+      rather than treat it as a lighting afterthought. Stage management
+      called cues live against a structure built during tech, not
+      improvised on the day. The goal across every rehearsal was the
+      same: a projection-heavy show has more that can go visibly wrong
+      in performance, so execution had to be rehearsed until it was
+      routine, not just possible.
+
+  - title: Rehearsal & Production Planning
+    body: >-
+      Rehearsals ran against a schedule built backward from opening
+      night — venue bookings, department coordination, and technical
+      rehearsals all sequenced so each one had what it needed from the
+      one before it. I ran daily production checklists through the
+      rehearsal period so nothing depended on memory: readiness for
+      lighting, projection, set and costume was tracked call by call,
+      not assumed. Technical rehearsals and dress rehearsals were
+      scheduled with enough separation to actually act on what tech
+      turned up, rather than running them back to back and hoping. By
+      opening night, readiness wasn't a single go/no-go decision — it
+      was the sum of every checklist cleared in the weeks before.
