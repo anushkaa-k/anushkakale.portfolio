@@ -241,12 +241,17 @@ export const caseStudySchema = z.object({
   overview: z.string().optional(),
   /** Subway-map milestones for a narrative-style opening (see Alive) —
       drawn as a horizontal line of stations rather than a vertical
-      timeline. `highlight` marks the one station drawn in accent orange. */
+      timeline. `highlight` marks the one station drawn in accent orange.
+      `phase` groups consecutive stations under one of the small phase
+      labels beneath the map (e.g. "Selection") — stations sharing a
+      phase must be adjacent in the array, since the map draws one
+      bracket per contiguous run. */
   journey: z
     .array(
       z.object({
         label: z.string(),
         description: z.string(),
+        phase: z.string(),
         highlight: z.boolean().default(false),
       }),
     )

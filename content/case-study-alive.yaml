@@ -4,10 +4,11 @@
 #  Renders as its own page (case-study-alive.html), linked from the
 #  "View Case Study" button on this project's card in content/projects.yaml.
 #
-#  Alive is a narrative-style case study — a Project Overview paragraph and
-#  a subway-style Journey Map, rather than the Executive Dashboard used on
-#  the Vasant case study. Its schema is the same shared caseStudySchema;
-#  it simply leaves the dashboard-only fields (metrics, context, poster,
+#  Alive is a narrative-style case study — a Project Overview paragraph
+#  with a photograph and a row of Blueprint Metric spec cards, plus a
+#  subway-style Production Lifecycle map, rather than the Executive
+#  Dashboard used on the Vasant case study. Its schema is the same shared
+#  caseStudySchema; it simply leaves the dashboard-only fields (context,
 #  ownership, risks, execution, decisions) unset.
 # =============================================================================
 
@@ -16,53 +17,91 @@ role: Assistant Production Manager
 org: NCPA
 year: 2025–26
 
-# A single continuous paragraph (~150–180 words), read alongside the
-# Journey Map rather than a metrics dashboard.
+# A single continuous paragraph — the story, not the scale. The scale
+# figures live in `metrics` below instead, as a row of spec cards, so the
+# paragraph isn't just restating every number. Kept tight on purpose: it
+# shares its 40% of the viewport with the metrics row and a photograph,
+# so there isn't room for a longer version alongside them.
 overview: >-
   Alive began as the winning script in Darpan, NCPA's annual Marathi
-  Scriptwriting Competition—an initiative created to discover, mentor, and
-  produce original Marathi theatre. To expand the competition's reach, I
-  led promotional and outreach efforts that helped increase submissions
-  from approximately 50 scripts in the previous edition to over 100
-  entries. The scripts were evaluated by four veteran writers and
-  directors through three rounds of selection, ultimately narrowing the
-  field to five finalists. Each finalist received development support to
-  stage their production before a jury, with the winning play earning a
-  full-scale production by NCPA. That production was Alive. As Assistant
-  Production Manager, I managed budgeting, production coordination,
-  scheduling, and cross-city collaboration between the Mumbai-based NCPA
-  team and the Pune-based creative team. Following its premiere at the
-  Pratibimb Marathi Theatre Festival, the production toured multiple
-  cities, received multiple Zee Natya Gaurav Award nominations, and was
-  selected for the prestigious Bharat Rang Mahotsav hosted by the
-  National School of Drama.
+  Scriptwriting Competition — an initiative created to discover, mentor,
+  and produce original Marathi theatre. I led the competition's
+  promotional and outreach efforts, then stayed on as the script moved
+  into full-scale production. As Assistant Production Manager, I managed
+  budgeting, production coordination, scheduling, and cross-city
+  collaboration between the Mumbai-based NCPA and Pune-based creative
+  teams, from rehearsal through opening night. Following its premiere at
+  the Pratibimb Marathi Theatre Festival, Alive toured multiple cities,
+  earned multiple Zee Natya Gaurav nominations, and was selected for the
+  Bharat Rang Mahotsav — the National School of Drama's national
+  festival. A competition script, now a nationally recognised production.
 
-# The Journey Map stations, left to right. `highlight` marks the one
-# station drawn in accent orange — the moment the script became the
-# production.
+# The production photograph beside the overview paragraph. Reuses the
+# same `poster` field the Vasant page uses for its schedule poster.
+poster:
+  src: img/alive-tech-run-pune.jpg
+  alt: Alive — tech run in Pune, the Darpan 2025 programme in hand
+
+# The Blueprint Metrics row beneath the overview — read as engineering
+# specifications (label + value), not a KPI dashboard.
+metrics:
+  - k: Script Submissions
+    v: 100+
+  - k: Industry Mentors
+    v: "4"
+  - k: Selection Rounds
+    v: "3"
+  - k: Finalist Productions
+    v: "5"
+  - k: Cast & Crew
+    v: "18"
+  - k: City Performances
+    v: Multiple
+  - k: National Selection
+    v: Bharat Rang Mahotsav
+  - k: Award Nominations
+    v: Zee Natya Gaurav
+
+# The Production Lifecycle stations, left to right. `highlight` marks
+# "Alive Selected" — the moment the script became the production, drawn
+# as the map's interchange station. `phase` groups stations under the
+# small phase labels beneath the map; entries sharing a phase must stay
+# adjacent, since the map draws one bracket per contiguous run.
 journey:
   - label: Call for Scripts
     description: Darpan opened for entries — NCPA's annual competition for original Marathi theatre.
+    phase: Competition
   - label: 100+ Script Submissions
     description: Outreach and promotion lifted entries from ~50 in the previous edition to over 100.
+    phase: Competition
   - label: 4-Mentor Evaluation
     description: Four veteran writers and directors read and assessed every submission.
+    phase: Selection
   - label: 3 Selection Rounds
     description: Three rounds of evaluation narrowed the field from over 100 scripts.
+    phase: Selection
   - label: Top 5 Finalists
     description: Five scripts advanced, each given development support to stage before a jury.
+    phase: Selection
   - label: Alive Selected
     description: Alive was named the winning script, earning a full-scale NCPA production.
+    phase: Selection
     highlight: true
   - label: Budgeting & Production Planning
     description: Budgeting, scheduling and cross-city coordination between Mumbai and Pune began.
+    phase: Production
   - label: Rehearsals
     description: The Pune-based creative team and Mumbai-based NCPA team rehearsed toward opening.
+    phase: Production
   - label: Festival Premiere
     description: Alive premiered at the Pratibimb Marathi Theatre Festival.
+    phase: Performance
   - label: Multiple City Tours
     description: The production toured beyond its premiere to multiple cities.
-  - label: Bharat Rang Mahotsav Selection
-    description: Selected for the National School of Drama's Bharat Rang Mahotsav.
+    phase: Performance
   - label: Zee Natya Gaurav Nominations
     description: The production received multiple Zee Natya Gaurav Award nominations.
+    phase: Recognition
+  - label: Bharat Rang Mahotsav Selection
+    description: Selected for the National School of Drama's Bharat Rang Mahotsav.
+    phase: Recognition
