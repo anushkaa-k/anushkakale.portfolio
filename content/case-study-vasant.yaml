@@ -168,3 +168,66 @@ execution:
       - Briefed house staff on venue-specific entry, seating and interval flow ahead of each show
       - Coordinated ticketing and house opening times against the master schedule
       - Checked signage and wayfinding at each venue rather than assuming carryover from the last
+
+# The Operational Decisions cards — Situation → Decision → Outcome. Each
+# one's supporting visual is built in code (see
+# src/pages/OperationalDecisions.tsx); this is the prose half.
+decisions:
+  - title: Multi-Venue Scheduling
+    metric: 4 Venues · 4 Days
+    situation: >-
+      Four venues ran in parallel across four days, each with its own
+      load-in and tech window feeding into a fixed curtain time — with
+      almost no slack to absorb a slip at any one of them.
+    decision: >-
+      Built one shared run-of-show instead of four separate venue
+      schedules, sequencing load-in and tech first and holding a buffered
+      changeover window between every call rather than assuming the
+      previous one would land on time.
+    outcome: >-
+      No scheduling collisions across the four-day run — a slip at one
+      venue had a buffer to absorb into instead of cascading into the
+      next call.
+
+  - title: Volunteer Deployment
+    metric: 30+ Assignments
+    situation: >-
+      30+ volunteer assignments had to cover four venues across four
+      days, with experience levels varying widely across the team and no
+      single supervisor able to watch every shift at once.
+    decision: >-
+      Assigned volunteers to fixed zones and shifts rather than floating
+      general coverage, and gave every shift one named escalation
+      contact instead of routing every issue back to a single point.
+    outcome: >-
+      Shift-level issues were resolved at the shift level — coverage
+      gaps got caught and filled without needing a festival-wide fix
+      each time.
+
+  - title: Technical Coordination
+    metric: 4 Distinct Rigs
+    situation: >-
+      Each venue arrived with a different rig, acoustic profile and
+      crew, so a technical plan written for one venue couldn't be
+      assumed to hold at the next.
+    decision: >-
+      Ran a pre-show technical walkthrough at every venue ahead of its
+      first performance and kept a venue-specific cue sheet for each,
+      instead of one standard technical plan applied everywhere.
+    outcome: >-
+      A consistent audience-facing technical standard held across all
+      four venues, despite none of them sharing the same rig.
+
+  - title: Artist Hospitality
+    metric: 1–25 Performers
+    situation: >-
+      Visiting companies ranged from a single performer to twenty-five,
+      so a fixed hospitality template would either overprovision small
+      companies or fall short for large ones.
+    decision: >-
+      Built a hospitality checklist that scaled to each company's size,
+      confirmed with them ahead of their show date rather than applying
+      one fixed plan across every production.
+    outcome: >-
+      Every company's hospitality needs were sized correctly in advance
+      — nothing scrambled together on the day regardless of group size.

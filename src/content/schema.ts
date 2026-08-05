@@ -215,6 +215,17 @@ export const caseStudySchema = z.object({
       checklist: z.array(z.string()),
     }),
   ),
+  /** The Operational Decisions cards — Situation → Decision → Outcome.
+      Each one's supporting visual is drawn in code, not stored here. */
+  decisions: z.array(
+    z.object({
+      title: z.string(),
+      metric: z.string(),
+      situation: z.string(),
+      decision: z.string(),
+      outcome: z.string(),
+    }),
+  ),
 })
 
 /* ---- inferred types ------------------------------------------------------ */

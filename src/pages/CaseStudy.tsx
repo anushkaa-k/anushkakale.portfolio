@@ -5,6 +5,7 @@ import { useLights } from '../hooks/useLights'
 import { asset } from '../lib/asset'
 import { ExecutionStrategy } from './ExecutionStrategy'
 import { OperationalComplexity } from './OperationalComplexity'
+import { OperationalDecisions } from './OperationalDecisions'
 import { OwnershipMatrix } from './OwnershipMatrix'
 
 /* Sheet one is the opening: header, Executive Dashboard, Project Context and
@@ -135,6 +136,7 @@ export function CaseStudy({
         <OwnershipMatrix ownership={data.ownership} />
         <OperationalComplexity risks={data.risks} />
         <ExecutionStrategy execution={data.execution} />
+        <OperationalDecisions decisions={data.decisions} />
       </div>
 
       {lightboxOpen && posterOk && (
