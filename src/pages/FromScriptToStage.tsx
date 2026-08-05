@@ -4,14 +4,15 @@ import type { CaseStudy } from '../content'
 import { Reveal } from '../components/Sheet'
 import { Bubble, Crosshair, Note } from '../lib/draft'
 
-/* Four pillars, each a full-width row split roughly 45/55 — a short
-   explanation and a hand-built operational artifact — alternating which
-   side the artifact sits on so the section reads with rhythm rather than
-   every row falling the same way. The artifacts are deliberately built
-   to look like documents a production manager would actually produce
-   (a worksheet, a workflow diagram, a stage plan, a calendar) rather
-   than decorative charts, following the same "artifacts over graphics"
-   principle Execution Strategy uses on the Vasant case study.
+/* Four pillars in a 2x2 grid — two pillars per row, each pillar its own
+   card (title, a short explanation, and its artifact stacked below) at
+   roughly half the page width — so the section reads as two screens'
+   worth rather than four stacked full-width rows. The artifacts are
+   deliberately built to look like documents a production manager would
+   actually produce (a worksheet, a workflow diagram, a stage plan, a
+   calendar) rather than decorative charts, following the same
+   "artifacts over graphics" principle Execution Strategy uses on the
+   Vasant case study.
 
    Diagrams that draw lines in reuse the existing `.draw-in-line` CSS
    utility (tied to the ancestor <Reveal>'s data-in state), the same
@@ -48,12 +49,10 @@ function PillarDivider({ index, title }: { index: number; title: string }): Reac
 function ArtifactCard({
   title,
   onOpen,
-  order,
   children,
 }: {
   title: string
   onOpen: () => void
-  order: 'lg:order-1' | 'lg:order-2'
   children: ReactElement
 }): ReactElement {
   return (
@@ -61,7 +60,7 @@ function ArtifactCard({
       type="button"
       onClick={onOpen}
       aria-label={`Open the ${title} artifact`}
-      className={`group relative block h-full w-full cursor-pointer border border-ink-25 bg-paper-warm p-3 pt-4 text-left shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_30px_-14px_var(--ink-45),0_0_20px_-8px_var(--accent-orange)] ${order}`}
+      className="group relative block h-full w-full cursor-pointer border border-ink-25 bg-paper-warm p-3 pt-4 text-left shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_30px_-14px_var(--ink-45),0_0_20px_-8px_var(--accent-orange)]"
     >
       <span
         aria-hidden="true"
@@ -376,31 +375,22 @@ export function FromScriptToStage({ pillars }: { pillars: CaseStudy['pillars'] }
         The operational framework behind building a touring theatre production.
       </p>
 
-      {pillars.map((p, i) => {
-        const Artifact = ARTIFACTS[i]
-        if (!Artifact) return null
-        const visualLeft = i % 2 === 1
+      <div className="grid grid-cols-1 gap-x-10 gap-y-14 lg:grid-cols-2">
+        {pillars.map((p, i) => {
+          const Artifact = ARTIFACTS[i]
+          if (!Artifact) return null
 
-        return (
-          <Reveal key={p.title} className="mb-14 last:mb-0">
-            <PillarDivider index={i} title={p.title} />
-
-            <div className="grid gap-x-10 gap-y-6 lg:grid-cols-[9fr_11fr]">
-              <div className={visualLeft ? 'lg:order-2' : 'lg:order-1'}>
-                <p className="text-[0.9rem] leading-snug text-ink-70">{p.body}</p>
-              </div>
-
-              <ArtifactCard
-                title={ARTIFACT_TITLES[i]}
-                onOpen={() => setOpenIndex(i)}
-                order={visualLeft ? 'lg:order-1' : 'lg:order-2'}
-              >
+          return (
+            <Reveal key={p.title}>
+              <PillarDivider index={i} title={p.title} />
+              <p className="mb-5 text-[0.9rem] leading-snug text-ink-70">{p.body}</p>
+              <ArtifactCard title={ARTIFACT_TITLES[i]} onOpen={() => setOpenIndex(i)}>
                 <Artifact />
               </ArtifactCard>
-            </div>
-          </Reveal>
-        )
-      })}
+            </Reveal>
+          )
+        })}
+      </div>
 
       {openIndex !== null && (
         <div
