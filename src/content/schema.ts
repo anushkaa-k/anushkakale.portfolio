@@ -204,6 +204,17 @@ export const caseStudySchema = z.object({
       mitigation: z.string(),
     }),
   ),
+  /** The Execution Strategy modules. Each one's supporting artifact
+      (schedule grid, rider, allocation sheet, hospitality timeline,
+      journey diagram) is drawn in code, not stored here — this is the
+      prose half only. */
+  execution: z.array(
+    z.object({
+      module: z.string(),
+      objective: z.string(),
+      checklist: z.array(z.string()),
+    }),
+  ),
 })
 
 /* ---- inferred types ------------------------------------------------------ */

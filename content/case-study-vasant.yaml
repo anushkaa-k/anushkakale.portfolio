@@ -105,3 +105,66 @@ risks:
   - item: Audience Experience
     impact: House readiness shapes the first impression of every show.
     mitigation: A standardised front-of-house checklist run before every curtain.
+
+# The Execution Strategy modules — how each area actually ran, not what it
+# was responsible for. Each module's supporting artifact is built in code
+# (see src/pages/ExecutionStrategy.tsx); this is the prose half.
+execution:
+  - module: Production Planning
+    objective: >-
+      Every festival day ran across multiple venues with back-to-back calls,
+      so the plan had to sequence load-in, tech and performance windows
+      without collision. The schedule was built backward from fixed curtain
+      times and held as the single source of truth for every department.
+    checklist:
+      - Built a master run-of-show mapping every venue, call time and changeover window across all four days
+      - Locked load-in and tech slots first, then fit rehearsals and briefings around fixed show times
+      - Circulated one shared schedule to all departments, updated in real time as calls shifted
+      - Flagged conflicts — double-booked crew, tight changeovers — during planning, not on the day
+
+  - module: Technical Operations
+    objective: >-
+      Each venue arrived with a different rig, so technical requirements had
+      to be confirmed and adapted show by show rather than assumed constant.
+      The goal was a consistent audience experience despite that
+      variability.
+    checklist:
+      - Ran a pre-show technical walkthrough at each venue ahead of its first performance
+      - Maintained venue-specific cue sheets rather than one generic technical plan
+      - Kept a single point of contact between visiting technical crews and the house team
+      - Built buffer time into every changeover for equipment checks before doors
+
+  - module: Volunteer Operations
+    objective: >-
+      30+ volunteer assignments had to cover four venues across four days
+      with people of varying experience, so deployment needed structure
+      rather than ad hoc assignment. Every volunteer needed a clear role and
+      a clear person to ask.
+    checklist:
+      - Assigned volunteers to fixed zones and shifts rather than floating coverage
+      - Ran a role-specific briefing before each shift, not one festival-wide briefing
+      - Set one escalation contact per shift so issues didn't wait for a festival-wide fix
+      - Tracked shift coverage against a live allocation sheet, adjusted as gaps appeared
+
+  - module: Artist Coordination & Hospitality
+    objective: >-
+      Company sizes ranged from a single performer to twenty-five, so
+      hospitality couldn't follow one fixed template. Each visiting artist
+      or company needed their specific needs confirmed before they arrived,
+      not discovered on the day.
+    checklist:
+      - Confirmed hospitality requirements with each company ahead of their show date
+      - Sized green room, catering and transport arrangements to each company individually
+      - Assigned one hospitality point of contact per company for the length of their stay
+      - Held a standing checklist scaled up or down by group size rather than rebuilt each time
+
+  - module: Audience Experience
+    objective: >-
+      House readiness shaped the first impression of every performance, so
+      front-of-house had to be consistent regardless of venue or day. The
+      goal was a predictable audience journey from arrival to their seat.
+    checklist:
+      - Ran a standardised front-of-house checklist before every curtain, at every venue
+      - Briefed house staff on venue-specific entry, seating and interval flow ahead of each show
+      - Coordinated ticketing and house opening times against the master schedule
+      - Checked signage and wayfinding at each venue rather than assuming carryover from the last

@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactElement } from 'react'
 import type { CaseStudy } from '../content'
 import { useLights } from '../hooks/useLights'
 import { asset } from '../lib/asset'
+import { ExecutionStrategy } from './ExecutionStrategy'
 import { OperationalComplexity } from './OperationalComplexity'
 import { OwnershipMatrix } from './OwnershipMatrix'
 
@@ -133,6 +134,7 @@ export function CaseStudy({
       <div className="gutter bg-paper pb-[clamp(3rem,6vw,5rem)] text-ink">
         <OwnershipMatrix ownership={data.ownership} />
         <OperationalComplexity risks={data.risks} />
+        <ExecutionStrategy execution={data.execution} />
       </div>
 
       {lightboxOpen && posterOk && (
