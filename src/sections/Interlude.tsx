@@ -47,7 +47,7 @@ export function Interlude(): ReactElement | null {
   return (
     <aside
       ref={parallaxRef}
-      className="gutter relative overflow-hidden border-y-2 border-ink bg-paper-warm py-[clamp(2.75rem,5vw,3.5rem)] text-center"
+      className="gutter relative overflow-hidden border-y-2 border-ink bg-paper-warm py-[clamp(1.25rem,2.5vw,1.75rem)] text-center"
     >
       <div
         className="pointer-events-none absolute inset-x-0 -inset-y-6 h-[calc(100%+3rem)] w-full"
@@ -57,27 +57,27 @@ export function Interlude(): ReactElement | null {
       </div>
 
       <div ref={revealRef} data-in={shown} className="reveal relative mx-auto max-w-2xl">
-        <div className="mb-4 flex items-center justify-center gap-3">
-          <svg width="44" height="10" viewBox="0 0 44 10" className="opacity-40" aria-hidden="true">
-            <line x1={0} y1={5} x2={44} y2={5} className="l-hair" />
-            <line x1={0} y1={1} x2={0} y2={9} className="l-hair" />
-            <line x1={22} y1={2} x2={22} y2={8} className="l-hair" />
-            <line x1={44} y1={1} x2={44} y2={9} className="l-hair" />
+        <div className="mb-2 flex items-center justify-center gap-2.5">
+          <svg width="32" height="8" viewBox="0 0 32 8" className="opacity-40" aria-hidden="true">
+            <line x1={0} y1={4} x2={32} y2={4} className="l-hair" />
+            <line x1={0} y1={1} x2={0} y2={7} className="l-hair" />
+            <line x1={16} y1={2} x2={16} y2={6} className="l-hair" />
+            <line x1={32} y1={1} x2={32} y2={7} className="l-hair" />
           </svg>
           <span className="label text-ink-45">Intermission</span>
-          <svg width="44" height="10" viewBox="0 0 44 10" className="opacity-40" aria-hidden="true">
-            <line x1={0} y1={5} x2={44} y2={5} className="l-hair" />
-            <line x1={0} y1={1} x2={0} y2={9} className="l-hair" />
-            <line x1={22} y1={2} x2={22} y2={8} className="l-hair" />
-            <line x1={44} y1={1} x2={44} y2={9} className="l-hair" />
+          <svg width="32" height="8" viewBox="0 0 32 8" className="opacity-40" aria-hidden="true">
+            <line x1={0} y1={4} x2={32} y2={4} className="l-hair" />
+            <line x1={0} y1={1} x2={0} y2={7} className="l-hair" />
+            <line x1={16} y1={2} x2={16} y2={6} className="l-hair" />
+            <line x1={32} y1={1} x2={32} y2={7} className="l-hair" />
           </svg>
         </div>
 
         <blockquote>
-          <p className="mx-auto max-w-[22ch] font-display text-[clamp(1.3rem,3.2vw,2rem)] leading-tight font-bold italic">
+          <p className="mx-auto font-display text-[clamp(1rem,1.8vw,1.35rem)] leading-tight font-bold italic">
             {quote.text}
           </p>
-          <cite className="label mt-4 block text-ink-45 not-italic">— {quote.author}</cite>
+          <cite className="label mt-2 block text-ink-45 not-italic">— {quote.author}</cite>
         </blockquote>
       </div>
     </aside>
