@@ -3,6 +3,7 @@ import type { ReactElement } from 'react'
 import { projects } from '../content'
 import type { SectionMeta } from '../content'
 import { Reveal, Sheet } from '../components/Sheet'
+import { asset, isExternal } from '../lib/asset'
 
 /* Each project is drawn as a plate: numbered header, the figures set as
    dimensions, and a link out to the work.
@@ -70,9 +71,10 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
               {project.link &&
                 (featured ? (
                   <a
-                    href={project.link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={isExternal(project.link.href) ? project.link.href : asset(project.link.href)}
+                    {...(isExternal(project.link.href)
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
                     className="label mt-auto inline-flex w-fit items-center gap-2 self-start border-2 border-ink/70 px-4 py-2 font-semibold text-ink no-underline transition-colors hover:border-accent-orange hover:bg-accent-orange hover:text-paper"
                   >
                     View Case Study

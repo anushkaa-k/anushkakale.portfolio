@@ -1,6 +1,7 @@
 import type { z } from 'zod'
 
 import aboutYaml from '../../content/about.yaml'
+import caseStudyVasantYaml from '../../content/case-study-vasant.yaml'
 import contactYaml from '../../content/contact.yaml'
 import experienceYaml from '../../content/experience.yaml'
 import galleryYaml from '../../content/gallery.yaml'
@@ -11,6 +12,7 @@ import testimonialsYaml from '../../content/testimonials.yaml'
 
 import {
   aboutSchema,
+  caseStudySchema,
   contactSchema,
   experienceSchema,
   gallerySchema,
@@ -18,6 +20,7 @@ import {
   siteSchema,
   skillsSchema,
   testimonialsSchema,
+  type CaseStudy,
   type Photo,
   type SectionId,
   type SectionMeta,
@@ -54,6 +57,11 @@ export const experience = parse(experienceSchema, experienceYaml, 'experience.ya
 export const testimonials = parse(testimonialsSchema, testimonialsYaml, 'testimonials.yaml')
 export const gallery = parse(gallerySchema, galleryYaml, 'gallery.yaml')
 export const contact = parse(contactSchema, contactYaml, 'contact.yaml')
+export const caseStudyVasant = parse(
+  caseStudySchema,
+  caseStudyVasantYaml,
+  'case-study-vasant.yaml',
+)
 
 /** Whether a section has anything to show yet. */
 const populated: Record<SectionId, () => boolean> = {
@@ -79,4 +87,4 @@ export const sections: SectionMeta[] = site.sections
   .filter((s) => populated[s.id]())
   .map((s, i) => ({ ...s, sheet: String(i + 1).padStart(2, '0') }))
 
-export type { Photo, SectionId, SectionMeta }
+export type { CaseStudy, Photo, SectionId, SectionMeta }

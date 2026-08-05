@@ -29,8 +29,8 @@ items:
         v: 4 days
     # Optional. Delete both lines if there is nothing to link to.
     link:
-      label: Watch on Instagram
-      href: https://www.instagram.com/reel/DWA5j97jGRh/
+      label: View Case Study
+      href: case-study-vasant.html
 
   - title: Alive
     org: NCPA Production

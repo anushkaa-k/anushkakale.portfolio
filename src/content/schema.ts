@@ -165,6 +165,30 @@ export const contactSchema = z.object({
   ),
 })
 
+/* ---- case-study-*.yaml ----------------------------------------------------
+   Each case study is its own static page (built as a separate HTML entry —
+   see vite.config.ts), one YAML file per project. The shape is generic so a
+   second case study can reuse it without a new schema. */
+
+export const caseStudySchema = z.object({
+  title: z.string(),
+  role: z.string(),
+  org: z.string(),
+  year: z.string(),
+  /** The Executive Dashboard tiles, in display order. */
+  metrics: z.array(pair),
+  /** Short paragraphs — 2 or 3, meant to fit one viewport alongside the poster. */
+  context: z.array(z.string()),
+  /** Optional: the page shows a "poster pending" placeholder until this is set
+      and the file exists in public/. */
+  poster: z
+    .object({
+      src: z.string(),
+      alt: z.string(),
+    })
+    .optional(),
+})
+
 /* ---- inferred types ------------------------------------------------------ */
 
 export type Site = z.infer<typeof siteSchema>
@@ -181,3 +205,4 @@ export type Gallery = z.infer<typeof gallerySchema>
 export type Photo = Gallery['items'][number]
 export type Contact = z.infer<typeof contactSchema>
 export type Pair = z.infer<typeof pair>
+export type CaseStudy = z.infer<typeof caseStudySchema>
