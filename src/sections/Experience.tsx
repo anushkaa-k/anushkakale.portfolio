@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from 'react'
+import { useEffect, useState, type ReactElement } from 'react'
 
 import { experience } from '../content'
 import type { SectionMeta } from '../content'
@@ -37,6 +37,24 @@ export function Experience({ meta }: { meta: SectionMeta }): ReactElement {
   const isDesktop = useMediaQuery('(min-width: 1024px)')
   const items = experience.items
   const lastIndex = items.length - 1
+
+  /* The scroll-in stagger and the hover reaction share the same style
+     objects below, so a naive `transitionDelay: shown ? '${i*240}ms' : 0`
+     would keep re-applying that entrance delay to every hover-triggered
+     colour change forever (CSS transition-delay is just whatever the style
+     says *now*, not "only on the way in") — hovering the first tread would
+     stay snappy but the last one could lag most of a second behind. Once
+     the longest-scheduled entrance transition has had time to finish,
+     `settled` flips true and every delay below collapses to 0, leaving
+     hover free to react immediately. */
+  const [settled, setSettled] = useState(false)
+  useEffect(() => {
+    if (!shown) return
+    const worstCase = 780 + Math.max(0, items.length - 1) * 220 + 600
+    const t = setTimeout(() => setSettled(true), worstCase)
+    return () => clearTimeout(t)
+  }, [shown, items.length])
+  const entering = shown && !settled
 
   /* Growing weights, not a flat step — the literal "increasing length"
      the redesign asks for. Also doubles as the fr-track list for the
@@ -106,7 +124,7 @@ export function Experience({ meta }: { meta: SectionMeta }): ReactElement {
                 strokeDasharray: t.x2 - t.x1,
                 strokeDashoffset: shown ? 0 : t.x2 - t.x1,
                 transition: 'stroke-dashoffset 0.8s ease, stroke 0.3s ease',
-                transitionDelay: shown ? `${i * 240}ms` : '0ms',
+                transitionDelay: entering ? `${i * 240}ms` : '0ms',
               }}
             />
           ))}
@@ -124,7 +142,7 @@ export function Experience({ meta }: { meta: SectionMeta }): ReactElement {
                 strokeDasharray: RISE,
                 strokeDashoffset: shown ? 0 : RISE,
                 transition: 'stroke-dashoffset 0.5s ease, stroke 0.3s ease',
-                transitionDelay: shown ? `${i * 240 + 200}ms` : '0ms',
+                transitionDelay: entering ? `${i * 240 + 200}ms` : '0ms',
               }}
             />
           ))}
@@ -141,7 +159,7 @@ export function Experience({ meta }: { meta: SectionMeta }): ReactElement {
                   opacity: shown ? 1 : 0,
                   transform: shown ? 'translateY(0)' : 'translateY(12px)',
                   transition: 'opacity 0.6s ease, transform 0.6s ease',
-                  transitionDelay: shown ? `${520 + i * 220}ms` : '0ms',
+                  transitionDelay: entering ? `${520 + i * 220}ms` : '0ms',
                 }}
               >
                 {active && (
@@ -201,7 +219,7 @@ export function Experience({ meta }: { meta: SectionMeta }): ReactElement {
                   stroke: hovered === i ? 'var(--accent-orange)' : undefined,
                   opacity: shown ? 1 : 0,
                   transition: 'opacity 0.4s ease, stroke 0.3s ease',
-                  transitionDelay: shown ? `${700 + i * 220}ms` : '0ms',
+                  transitionDelay: entering ? `${700 + i * 220}ms` : '0ms',
                 }}
               />
             ))}
@@ -234,7 +252,7 @@ export function Experience({ meta }: { meta: SectionMeta }): ReactElement {
                       : 'translateY(0)'
                     : 'translateY(14px)',
                   transition: 'opacity 0.6s ease, transform 0.35s ease, box-shadow 0.3s ease',
-                  transitionDelay: shown ? `${780 + i * 220}ms` : '0ms',
+                  transitionDelay: entering ? `${780 + i * 220}ms` : '0ms',
                   boxShadow: active
                     ? '0 10px 24px -12px var(--ink-25), 0 0 20px -6px var(--accent-orange)'
                     : undefined,
@@ -257,7 +275,13 @@ export function Experience({ meta }: { meta: SectionMeta }): ReactElement {
                 >
                   {role.title}
                 </h3>
-                <p className="mb-3 text-[0.85rem] font-semibold text-accent-orange">{role.org}</p>
+                <p
+                  className={`mb-3 text-[0.85rem] font-semibold transition-colors duration-300 ${
+                    active ? 'text-accent-orange' : 'text-ink-70'
+                  }`}
+                >
+                  {role.org}
+                </p>
                 <ul>
                   {role.notes.map((note) => (
                     <li

@@ -118,7 +118,7 @@ export function Hero(): ReactElement {
                 {...(isExternal(cta.secondary.href)
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
-                className="label border border-ink-25 px-6 py-2.5 whitespace-nowrap text-ink-70 no-underline transition-colors hover:border-ink-45 hover:text-ink"
+                className="label border border-ink-25 px-6 py-2.5 whitespace-nowrap text-ink-70 no-underline transition-[color,border-color,box-shadow] hover:border-ink-45 hover:text-ink hover:shadow-[0_8px_20px_-8px_var(--accent-orange)]"
               >
                 {cta.secondary.label}
               </a>

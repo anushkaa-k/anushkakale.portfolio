@@ -23,7 +23,7 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
           return (
             <article
               key={project.title}
-              className={`group flex flex-col bg-paper p-6 transition-[background-color,box-shadow,transform] duration-300 ease-out hover:z-10 hover:-translate-y-0.5 hover:bg-paper-warm hover:shadow-[0_10px_24px_-12px_var(--ink-25)] ${
+              className={`group flex flex-col bg-paper p-6 transition-[background-color,box-shadow,transform] duration-300 ease-out hover:z-10 hover:-translate-y-0.5 hover:bg-paper-warm hover:shadow-[0_10px_24px_-12px_var(--ink-25),0_0_22px_-8px_var(--accent-orange)] ${
                 featured ? 'ring-1 ring-inset ring-ink/70 hover:ring-ink' : 'hover:ring-1 hover:ring-inset hover:ring-ink-25'
               }`}
             >
@@ -73,7 +73,7 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
                     href={project.link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="label mt-auto inline-flex w-fit items-center gap-2 self-start border-2 border-ink/70 px-4 py-2 font-semibold text-ink no-underline transition-colors hover:border-redline hover:text-redline"
+                    className="label mt-auto inline-flex w-fit items-center gap-2 self-start border-2 border-ink/70 px-4 py-2 font-semibold text-ink no-underline transition-colors hover:border-accent-orange hover:bg-accent-orange hover:text-paper"
                   >
                     View Case Study
                     <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">

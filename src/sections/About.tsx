@@ -59,7 +59,7 @@ export function About({ meta }: { meta: SectionMeta }): ReactElement {
         <div className="flex flex-col">
           <Reveal>
             <aside className="border border-ink-45 bg-paper-warm">
-              <div className="label border-b border-ink-45 bg-[repeating-linear-gradient(45deg,transparent_0_5px,var(--ink-12)_5px_6px)] px-3.5 py-2.5 text-ink-70">
+              <div className="label border-b border-ink-45 bg-[repeating-linear-gradient(45deg,transparent_0_5px,var(--ink-12)_5px_6px)] px-3.5 py-2.5 text-center text-ink-70">
                 At a glance
               </div>
               <dl className="grid grid-cols-2">
@@ -70,12 +70,12 @@ export function About({ meta }: { meta: SectionMeta }): ReactElement {
                   return (
                     <div
                       key={fact.k}
-                      className={`flex flex-col-reverse gap-0.5 border-dashed border-ink-25 px-3.5 py-4 ${
+                      className={`group flex flex-col-reverse gap-0.5 border-dashed border-ink-25 px-3.5 py-4 transition-colors duration-300 hover:bg-paper ${
                         lastCol ? '' : 'border-r'
                       } ${lastRow ? '' : 'border-b'}`}
                     >
                       <dt className="label text-[0.6rem] text-ink-45">{fact.k}</dt>
-                      <dd className="font-display text-[1.55rem] leading-none font-bold">
+                      <dd className="font-display text-[1.55rem] leading-none font-bold transition-colors duration-300 group-hover:text-accent-orange">
                         {fact.v}
                       </dd>
                     </div>
