@@ -85,7 +85,7 @@ export function About({ meta }: { meta: SectionMeta }): ReactElement {
             </aside>
           </Reveal>
 
-          <Reveal className="mt-6 aspect-[3/4] lg:aspect-auto lg:min-h-[9rem] lg:flex-1 [transition-delay:130ms]">
+          <Reveal className="mt-6 hidden aspect-[3/4] md:block lg:aspect-auto lg:min-h-[9rem] lg:flex-1 [transition-delay:130ms]">
             <AboutDetail className="h-full w-full" />
           </Reveal>
         </div>
