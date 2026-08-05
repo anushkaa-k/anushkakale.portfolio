@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactElement } from 'react'
 import type { CaseStudy } from '../content'
 import { useLights } from '../hooks/useLights'
 import { asset } from '../lib/asset'
+import { CaseStudyHeader } from './CaseStudyHeader'
 import { ExecutionStrategy } from './ExecutionStrategy'
 import { OperationalComplexity } from './OperationalComplexity'
 import { OperationalDecisions } from './OperationalDecisions'
@@ -49,21 +50,7 @@ export function CaseStudy({
     <>
       <div className="flex h-dvh min-h-[36rem] flex-col bg-paper text-ink">
         <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
-          <header className="shrink-0">
-            <a
-              href={backHref}
-              className="label inline-flex items-center gap-1.5 text-ink-45 no-underline transition-colors hover:text-ink"
-            >
-              <span aria-hidden="true">←</span> Back to Projects
-            </a>
-            <h1 className="mt-2 font-display text-[clamp(1.35rem,2.6vw,2rem)] leading-none font-extrabold tracking-tight uppercase">
-              {data.title}
-            </h1>
-            <p className="label mt-1.5 text-ink-45">
-              {data.role} <span className="text-ink-25">•</span> {data.org}{' '}
-              <span className="text-ink-25">•</span> {data.year}
-            </p>
-          </header>
+          <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} backHref={backHref} />
 
           <hr className="my-[clamp(0.75rem,2.5vh,1.25rem)] shrink-0 border-t-2 border-ink" />
 

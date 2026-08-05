@@ -1,6 +1,7 @@
 import type { z } from 'zod'
 
 import aboutYaml from '../../content/about.yaml'
+import caseStudyAliveYaml from '../../content/case-study-alive.yaml'
 import caseStudyVasantYaml from '../../content/case-study-vasant.yaml'
 import contactYaml from '../../content/contact.yaml'
 import experienceYaml from '../../content/experience.yaml'
@@ -62,6 +63,7 @@ export const caseStudyVasant = parse(
   caseStudyVasantYaml,
   'case-study-vasant.yaml',
 )
+export const caseStudyAlive = parse(caseStudySchema, caseStudyAliveYaml, 'case-study-alive.yaml')
 
 /** Whether a section has anything to show yet. */
 const populated: Record<SectionId, () => boolean> = {

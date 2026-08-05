@@ -1,0 +1,68 @@
+# =============================================================================
+#  CASE STUDY — Alive
+#
+#  Renders as its own page (case-study-alive.html), linked from the
+#  "View Case Study" button on this project's card in content/projects.yaml.
+#
+#  Alive is a narrative-style case study — a Project Overview paragraph and
+#  a subway-style Journey Map, rather than the Executive Dashboard used on
+#  the Vasant case study. Its schema is the same shared caseStudySchema;
+#  it simply leaves the dashboard-only fields (metrics, context, poster,
+#  ownership, risks, execution, decisions) unset.
+# =============================================================================
+
+title: Alive
+role: Assistant Production Manager
+org: NCPA
+year: 2025–26
+
+# A single continuous paragraph (~150–180 words), read alongside the
+# Journey Map rather than a metrics dashboard.
+overview: >-
+  Alive began as the winning script in Darpan, NCPA's annual Marathi
+  Scriptwriting Competition—an initiative created to discover, mentor, and
+  produce original Marathi theatre. To expand the competition's reach, I
+  led promotional and outreach efforts that helped increase submissions
+  from approximately 50 scripts in the previous edition to over 100
+  entries. The scripts were evaluated by four veteran writers and
+  directors through three rounds of selection, ultimately narrowing the
+  field to five finalists. Each finalist received development support to
+  stage their production before a jury, with the winning play earning a
+  full-scale production by NCPA. That production was Alive. As Assistant
+  Production Manager, I managed budgeting, production coordination,
+  scheduling, and cross-city collaboration between the Mumbai-based NCPA
+  team and the Pune-based creative team. Following its premiere at the
+  Pratibimb Marathi Theatre Festival, the production toured multiple
+  cities, received multiple Zee Natya Gaurav Award nominations, and was
+  selected for the prestigious Bharat Rang Mahotsav hosted by the
+  National School of Drama.
+
+# The Journey Map stations, left to right. `highlight` marks the one
+# station drawn in accent orange — the moment the script became the
+# production.
+journey:
+  - label: Call for Scripts
+    description: Darpan opened for entries — NCPA's annual competition for original Marathi theatre.
+  - label: 100+ Script Submissions
+    description: Outreach and promotion lifted entries from ~50 in the previous edition to over 100.
+  - label: 4-Mentor Evaluation
+    description: Four veteran writers and directors read and assessed every submission.
+  - label: 3 Selection Rounds
+    description: Three rounds of evaluation narrowed the field from over 100 scripts.
+  - label: Top 5 Finalists
+    description: Five scripts advanced, each given development support to stage before a jury.
+  - label: Alive Selected
+    description: Alive was named the winning script, earning a full-scale NCPA production.
+    highlight: true
+  - label: Budgeting & Production Planning
+    description: Budgeting, scheduling and cross-city coordination between Mumbai and Pune began.
+  - label: Rehearsals
+    description: The Pune-based creative team and Mumbai-based NCPA team rehearsed toward opening.
+  - label: Festival Premiere
+    description: Alive premiered at the Pratibimb Marathi Theatre Festival.
+  - label: Multiple City Tours
+    description: The production toured beyond its premiere to multiple cities.
+  - label: Bharat Rang Mahotsav Selection
+    description: Selected for the National School of Drama's Bharat Rang Mahotsav.
+  - label: Zee Natya Gaurav Nominations
+    description: The production received multiple Zee Natya Gaurav Award nominations.

@@ -24,6 +24,7 @@ export default defineConfig({
       input: {
         main: entry('./index.html'),
         caseStudyVasant: entry('./case-study-vasant.html'),
+        caseStudyAlive: entry('./case-study-alive.html'),
       },
     },
   },

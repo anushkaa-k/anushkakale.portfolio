@@ -175,10 +175,11 @@ export const caseStudySchema = z.object({
   role: z.string(),
   org: z.string(),
   year: z.string(),
-  /** The Executive Dashboard tiles, in display order. */
-  metrics: z.array(pair),
+  /** The Executive Dashboard tiles, in display order. Dashboard-style case
+      studies (Vasant) use this; narrative-style ones (Alive) leave it out. */
+  metrics: z.array(pair).default([]),
   /** Short paragraphs — 2 or 3, meant to fit one viewport alongside the poster. */
-  context: z.array(z.string()),
+  context: z.array(z.string()).default([]),
   /** Optional: the page shows a "poster pending" placeholder until this is set
       and the file exists in public/. */
   poster: z
@@ -189,43 +190,67 @@ export const caseStudySchema = z.object({
     .optional(),
   /** The Ownership Matrix cards — also drives the hub-and-spoke diagram
       beside them, so the two never list different domains. */
-  ownership: z.array(
-    z.object({
-      domain: z.string(),
-      summary: z.string(),
-    }),
-  ),
+  ownership: z
+    .array(
+      z.object({
+        domain: z.string(),
+        summary: z.string(),
+      }),
+    )
+    .default([]),
   /** The Operations Risk Register rows — also drives the convergence
       diagram's input labels. */
-  risks: z.array(
-    z.object({
-      item: z.string(),
-      impact: z.string(),
-      mitigation: z.string(),
-    }),
-  ),
+  risks: z
+    .array(
+      z.object({
+        item: z.string(),
+        impact: z.string(),
+        mitigation: z.string(),
+      }),
+    )
+    .default([]),
   /** The Execution Strategy modules. Each one's supporting artifact
       (schedule grid, rider, allocation sheet, hospitality timeline,
       journey diagram) is drawn in code, not stored here — this is the
       prose half only. */
-  execution: z.array(
-    z.object({
-      module: z.string(),
-      objective: z.string(),
-      checklist: z.array(z.string()),
-    }),
-  ),
+  execution: z
+    .array(
+      z.object({
+        module: z.string(),
+        objective: z.string(),
+        checklist: z.array(z.string()),
+      }),
+    )
+    .default([]),
   /** The Operational Decisions cards — Situation → Decision → Outcome.
       Each one's supporting visual is drawn in code, not stored here. */
-  decisions: z.array(
-    z.object({
-      title: z.string(),
-      metric: z.string(),
-      situation: z.string(),
-      decision: z.string(),
-      outcome: z.string(),
-    }),
-  ),
+  decisions: z
+    .array(
+      z.object({
+        title: z.string(),
+        metric: z.string(),
+        situation: z.string(),
+        decision: z.string(),
+        outcome: z.string(),
+      }),
+    )
+    .default([]),
+  /** A single continuous narrative — the Alive-style Project Overview, used
+      instead of the Executive Dashboard + Project Context pairing when a
+      case study reads better as prose than as figures. */
+  overview: z.string().optional(),
+  /** Subway-map milestones for a narrative-style opening (see Alive) —
+      drawn as a horizontal line of stations rather than a vertical
+      timeline. `highlight` marks the one station drawn in accent orange. */
+  journey: z
+    .array(
+      z.object({
+        label: z.string(),
+        description: z.string(),
+        highlight: z.boolean().default(false),
+      }),
+    )
+    .default([]),
 })
 
 /* ---- inferred types ------------------------------------------------------ */
