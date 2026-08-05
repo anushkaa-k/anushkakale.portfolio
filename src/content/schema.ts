@@ -152,8 +152,9 @@ export const contactSchema = z.object({
   block: z.object({
     drawn: z.string(),
     discipline: z.string(),
+    status: z.string(),
     revision: z.string(),
-    scale: z.string(),
+    updated: z.string(),
   }),
   links: z.array(
     z.object({

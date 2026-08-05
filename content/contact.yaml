@@ -13,9 +13,10 @@ note: >-
 # The panel on the right, drawn like the title block of a real drawing.
 block:
   drawn: A. Kale
-  discipline: Production
+  discipline: Production Operations
+  status: Available — Freelance & Full-Time
   revision: "01"
-  scale: "1:1"
+  updated: "05 Aug 2026"
 
 # Every way to get in touch. Order here is the order on the page.
 #   label — the small grey word on the left
