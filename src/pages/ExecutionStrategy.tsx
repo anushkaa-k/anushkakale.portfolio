@@ -11,12 +11,17 @@ import { asset } from '../lib/asset'
    grow to whatever height its content needs, so nothing is clipped or
    scrolled inside a container.
 
-   Stage 3 (Volunteer Management) and Stage 4 (Artist Coordination &
-   Hospitality) share one row — the two stages with no supporting
-   photograph, so pairing them is what keeps every row feeling
-   deliberate rather than one card looking oddly bare next to a full
-   width one. The other three stages, including the two with a real
-   production-sheet photograph inside them, each get a full-width row.
+   Three rows: Stage 1 paired with Stage 2 (its Tech & Stage chart
+   stays inside its own card, unchanged), Stage 3 paired with Stage 4
+   (neither carries a photograph), and Stage 5 paired with the Games &
+   Activities chart as its own standalone card rather than nested
+   inside Stage 5 — the one place a card's "text" and "artifact" are
+   deliberately split apart, so the chart reads as document evidence
+   sitting beside the stage rather than an attachment inside it.
+
+   Every card — text-only or chart — shares the same hover lift and
+   orange glow, so the whole rectangle answers to a hover, not just the
+   image inside it.
 
    Each `Reveal` fades its own row up independently as it scrolls into
    view — this section runs long enough now that a card near the bottom
@@ -29,21 +34,24 @@ interface Visual {
   title: string
 }
 
-const VISUALS: (Visual | null)[] = [
-  null,
-  {
-    src: 'img/vasant-technical-chart.png',
-    alt: 'The Tech & Stage sheet from the production spreadsheet: date, venue, performance, stage, lights, sound and schedule columns for each show',
-    title: 'Tech & Stage Chart',
-  },
-  null,
-  null,
-  {
-    src: 'img/vasant-audience-experience.png',
-    alt: 'The Games & Activities sheet from the production spreadsheet: timing, location and activity for each audience-facing installation across the run',
-    title: 'Games & Activities Chart',
-  },
-]
+const TECH_STAGE_CHART: Visual = {
+  src: 'img/vasant-technical-chart.png',
+  alt: 'The Tech & Stage sheet from the production spreadsheet: date, venue, performance, stage, lights, sound and schedule columns for each show',
+  title: 'Tech & Stage Chart',
+}
+
+const GAMES_ACTIVITIES_CHART: Visual = {
+  src: 'img/vasant-audience-experience.png',
+  alt: 'The Games & Activities sheet from the production spreadsheet: timing, location and activity for each audience-facing installation across the run',
+  title: 'Games & Activities Chart',
+}
+
+/* Only Stage 2 keeps its chart nested inside the stage card — Stage 5's
+   chart is rendered separately as its own ChartCard. */
+const VISUALS: (Visual | null)[] = [null, TECH_STAGE_CHART, null, null, null]
+
+const CARD_HOVER =
+  'transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-accent-orange hover:shadow-[0_14px_28px_-16px_var(--ink-45),0_0_16px_-8px_var(--accent-orange)]'
 
 /* ---- one stage, always a single bordered card ---------------------------- */
 
@@ -59,7 +67,7 @@ function StageCard({
   const visual = VISUALS[index] ?? null
 
   return (
-    <div className="flex h-full flex-col border border-ink-25 bg-paper p-5 sm:p-6">
+    <div className={`flex h-full flex-col border border-ink-25 bg-paper p-5 sm:p-6 ${CARD_HOVER}`}>
       <div className="mb-3 flex items-baseline gap-2">
         <span className="label text-ink-45">Stage {String(index + 1).padStart(2, '0')}</span>
         <h3 className="font-display text-[1rem] font-bold">{mod.module}</h3>
@@ -106,6 +114,32 @@ function StageCard({
   )
 }
 
+/* ---- a chart as its own standalone card ----------------------------------- */
+
+function ChartCard({ visual, onOpenImage }: { visual: Visual; onOpenImage: (v: Visual) => void }): ReactElement {
+  return (
+    <button
+      type="button"
+      onClick={() => onOpenImage(visual)}
+      aria-label={`Open the ${visual.title} artifact`}
+      className={`group flex h-full cursor-pointer flex-col border border-ink-25 bg-paper p-5 text-left sm:p-6 ${CARD_HOVER}`}
+    >
+      <span className="label mb-2 block text-ink-45 transition-colors duration-300 group-hover:text-accent-orange">
+        {visual.title}
+      </span>
+      <span className="relative block h-44 flex-1 overflow-hidden border border-ink-25 bg-paper-warm sm:h-52">
+        <img src={asset(visual.src)} alt={visual.alt} className="h-full w-full object-contain" />
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center gap-1.5 bg-gradient-to-t from-ink/90 to-transparent py-2 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100"
+        >
+          <span className="label text-paper">Click to Enlarge</span>
+        </span>
+      </span>
+    </button>
+  )
+}
+
 /* ---- assembled sheet ------------------------------------------------------ */
 
 export function ExecutionStrategy({ execution }: { execution: CaseStudy['execution'] }): ReactElement {
@@ -132,15 +166,12 @@ export function ExecutionStrategy({ execution }: { execution: CaseStudy['executi
       </div>
 
       <div className="flex flex-col gap-8">
-        {s1 && (
+        {s1 && s2 && (
           <Reveal>
-            <StageCard index={0} mod={s1} onOpenImage={setLightbox} />
-          </Reveal>
-        )}
-
-        {s2 && (
-          <Reveal>
-            <StageCard index={1} mod={s2} onOpenImage={setLightbox} />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              <StageCard index={0} mod={s1} onOpenImage={setLightbox} />
+              <StageCard index={1} mod={s2} onOpenImage={setLightbox} />
+            </div>
           </Reveal>
         )}
 
@@ -155,7 +186,10 @@ export function ExecutionStrategy({ execution }: { execution: CaseStudy['executi
 
         {s5 && (
           <Reveal>
-            <StageCard index={4} mod={s5} onOpenImage={setLightbox} />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              <StageCard index={4} mod={s5} onOpenImage={setLightbox} />
+              <ChartCard visual={GAMES_ACTIVITIES_CHART} onOpenImage={setLightbox} />
+            </div>
           </Reveal>
         )}
       </div>
