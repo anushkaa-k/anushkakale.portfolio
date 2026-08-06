@@ -179,8 +179,17 @@ export const caseStudySchema = z.object({
   /** The Executive Dashboard tiles, in display order. Dashboard-style case
       studies (Vasant) use this; narrative-style ones (Alive) leave it out. */
   metrics: z.array(pair).default([]),
-  /** Short paragraphs — 2 or 3, meant to fit one viewport alongside the poster. */
-  context: z.array(z.string()).default([]),
+  /** Project Context, as three short blueprint-labelled sections (what it
+      is / scale / operational complexity) rather than free paragraphs —
+      sized to fit one viewport alongside the poster. */
+  context: z
+    .array(
+      z.object({
+        label: z.string(),
+        body: z.string(),
+      }),
+    )
+    .default([]),
   /** Optional: the page shows a "poster pending" placeholder until this is set
       and the file exists in public/. */
   poster: z
@@ -189,6 +198,11 @@ export const caseStudySchema = z.object({
       alt: z.string(),
     })
     .optional(),
+  /** The compact title-block panel beneath the Vasant poster — a curated,
+      poster-specific set of figures, independent of the Executive
+      Dashboard above (the two are allowed to overlap; a real engineering
+      title block repeats key figures rather than cross-referencing). */
+  posterInfo: z.array(pair).default([]),
   /** The Ownership Matrix cards — also drives the hub-and-spoke diagram
       beside them, so the two never list different domains. */
   ownership: z

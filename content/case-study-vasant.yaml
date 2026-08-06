@@ -12,38 +12,42 @@ year: 2025 & 2026
 
 # The Executive Dashboard tiles, left to right.
 metrics:
-  - k: Duration
+  - k: Festival Duration
     v: 4 Days
   - k: Venues
     v: "4"
-  - k: Programs & Activities
-    v: 8+
-  - k: Volunteer Assignments
+  - k: Productions
+    v: 7+
+  - k: Budget
+    v: ₹30L+
+  - k: Vendors
+    v: 10+
+  - k: Volunteers
     v: 30+
-  - k: Operational Workstreams
+  - k: Crew
     v: 20+
-  - k: Artist Groups
-    v: 1–25 Performers
-  - k: Role
-    v: Assistant Production Manager
-  - k: Organization
-    v: NCPA
+  - k: Audience
+    v: 1200+
 
-# 2–3 short paragraphs — kept brief on purpose, so this fits one viewport
-# alongside the poster.
+# Project Context, as three short blueprint sections rather than free
+# paragraphs — kept brief on purpose (~80-100 words total), so this fits
+# one viewport alongside the poster.
 context:
-  - >-
-    Vasant is NCPA's Gujarati theatre festival — four days of programming
-    across four venues, with a full lineup of productions, readings and
-    events running in parallel. As Assistant Production Manager, I owned
-    day-to-day operations across the run: vendor coordination, crew
-    scheduling, and keeping every show on its mark from load-in to curtain.
-  - >-
-    The scope sat across artist hospitality, front-of-house logistics,
-    technical crew coordination and on-ground budget tracking — closer to
-    running several small festivals inside one than a single production.
-    Vendors, volunteers and visiting companies all needed one operational
-    point of contact across the festival, and that was the role.
+  - label: What It Is
+    body: >-
+      Vasant is NCPA's Gujarati theatre festival — four days of programming
+      across four venues, with productions, readings and events running in
+      parallel. I owned day-to-day operations across the run.
+  - label: Scale
+    body: >-
+      Four venues, 7+ productions and 1200+ audience members across the
+      run, coordinated with a crew of 20+ and 30+ volunteer assignments.
+  - label: Operational Complexity
+    body: >-
+      The scope spanned artist hospitality, front-of-house logistics,
+      technical crew coordination and on-ground budget tracking — closer
+      to running several small festivals than one, with vendors,
+      volunteers and companies all needing a single point of contact.
 
 # Optional — delete this block, or leave `src` pointing at a file that
 # doesn't exist yet, and the page shows a "poster pending" placeholder
@@ -51,6 +55,21 @@ context:
 poster:
   src: img/vasant-schedule-poster.jpg
   alt: Vasant Gujarati Theatre Festival — full festival schedule poster
+
+# The title-block panel beneath the poster — a curated, poster-specific
+# set of figures (deliberately allowed to overlap the Executive Dashboard
+# above; a real engineering title block repeats key figures).
+posterInfo:
+  - k: Festival Duration
+    v: 4 Days
+  - k: Venues
+    v: "4"
+  - k: Productions
+    v: 7+
+  - k: Concurrent Workstreams
+    v: 20+
+  - k: Audience
+    v: 1200+
 
 # The Ownership Matrix cards, and the labels on the hub-and-spoke diagram
 # beside them (in the same order they're drawn, clockwise from the top).
