@@ -88,68 +88,75 @@ risks:
   - item: Interdependent Teams
     note: Production, artists, venue operations, vendors and front-of-house had to remain synchronised.
 
-# The Execution Strategy modules — how each area actually ran, not what it
-# was responsible for. Each module's supporting artifact is built in code
-# (see src/pages/ExecutionStrategy.tsx); this is the prose half.
+# The Execution Strategy bands — read as one continuous operations
+# playbook, not five separate write-ups. Each band's supporting artifact is
+# built in code (see src/pages/ExecutionStrategy.tsx); this is the prose
+# half. `keyDecision` is the one-line orange-accented callout inside each
+# band — kept short on purpose, distinct from the fuller Situation →
+# Decision → Outcome cards in `decisions` below.
 execution:
   - module: Production Planning
     objective: >-
-      Every festival day ran across multiple venues with back-to-back calls,
-      so the plan had to sequence load-in, tech and performance windows
-      without collision. The schedule was built backward from fixed curtain
-      times and held as the single source of truth for every department.
+      Four venues running in parallel needed one schedule, not four — built
+      backward from fixed curtain times.
     checklist:
-      - Built a master run-of-show mapping every venue, call time and changeover window across all four days
-      - Locked load-in and tech slots first, then fit rehearsals and briefings around fixed show times
-      - Circulated one shared schedule to all departments, updated in real time as calls shifted
-      - Flagged conflicts — double-booked crew, tight changeovers — during planning, not on the day
+      - Built a master run-of-show across all four venues and four days
+      - Locked load-in and tech slots first, fit rehearsals around fixed show times
+      - Circulated one shared schedule, updated in real time as calls shifted
+    keyDecision: >-
+      One shared run-of-show instead of four separate venue schedules — a
+      slip at one venue had a buffer to absorb into instead of cascading
+      into the next call.
 
   - module: Technical Operations
     objective: >-
-      Each venue arrived with a different rig, so technical requirements had
-      to be confirmed and adapted show by show rather than assumed constant.
-      The goal was a consistent audience experience despite that
-      variability.
+      Each venue arrived with a different rig, so technical plans were
+      confirmed and adapted show by show, not assumed constant.
     checklist:
-      - Ran a pre-show technical walkthrough at each venue ahead of its first performance
-      - Maintained venue-specific cue sheets rather than one generic technical plan
-      - Kept a single point of contact between visiting technical crews and the house team
-      - Built buffer time into every changeover for equipment checks before doors
+      - Ran a pre-show technical walkthrough at each venue
+      - Maintained venue-specific cue sheets rather than one generic plan
+      - Kept a single point of contact between visiting crews and the house team
+    keyDecision: >-
+      A pre-show walkthrough and a venue-specific cue sheet at every venue
+      kept the audience-facing standard consistent despite four different
+      rigs.
 
-  - module: Volunteer Operations
+  - module: Volunteer Management
     objective: >-
-      30+ volunteer assignments had to cover four venues across four days
-      with people of varying experience, so deployment needed structure
-      rather than ad hoc assignment. Every volunteer needed a clear role and
-      a clear person to ask.
+      30+ volunteers covering four venues across four days needed fixed
+      zones, not floating coverage.
     checklist:
       - Assigned volunteers to fixed zones and shifts rather than floating coverage
-      - Ran a role-specific briefing before each shift, not one festival-wide briefing
-      - Set one escalation contact per shift so issues didn't wait for a festival-wide fix
-      - Tracked shift coverage against a live allocation sheet, adjusted as gaps appeared
+      - Ran a role-specific briefing before every shift
+      - Set one escalation contact per shift
+    keyDecision: >-
+      One named escalation contact per shift meant issues were resolved at
+      the shift level, not routed back to a single point.
 
   - module: Artist Coordination & Hospitality
     objective: >-
       Company sizes ranged from a single performer to twenty-five, so
-      hospitality couldn't follow one fixed template. Each visiting artist
-      or company needed their specific needs confirmed before they arrived,
-      not discovered on the day.
+      hospitality was sized to each company, not templated.
     checklist:
       - Confirmed hospitality requirements with each company ahead of their show date
-      - Sized green room, catering and transport arrangements to each company individually
-      - Assigned one hospitality point of contact per company for the length of their stay
-      - Held a standing checklist scaled up or down by group size rather than rebuilt each time
+      - Sized green room, catering and transport arrangements individually
+      - Assigned one hospitality point of contact per company
+    keyDecision: >-
+      A hospitality checklist that scaled to company size, confirmed ahead
+      of the show date — nothing scrambled together on the day regardless
+      of group size.
 
   - module: Audience Experience
     objective: >-
-      House readiness shaped the first impression of every performance, so
-      front-of-house had to be consistent regardless of venue or day. The
-      goal was a predictable audience journey from arrival to their seat.
+      House readiness had to be consistent at every venue, every day,
+      regardless of who was performing.
     checklist:
-      - Ran a standardised front-of-house checklist before every curtain, at every venue
-      - Briefed house staff on venue-specific entry, seating and interval flow ahead of each show
-      - Coordinated ticketing and house opening times against the master schedule
-      - Checked signage and wayfinding at each venue rather than assuming carryover from the last
+      - Ran a standardised front-of-house checklist before every curtain
+      - Briefed house staff on venue-specific entry, seating and interval flow
+      - Checked signage and wayfinding at each venue individually
+    keyDecision: >-
+      One standardised front-of-house checklist run at every venue kept the
+      audience's first impression consistent regardless of venue or day.
 
 # The Operational Decisions cards — Situation → Decision → Outcome. Each
 # one's supporting visual is built in code (see

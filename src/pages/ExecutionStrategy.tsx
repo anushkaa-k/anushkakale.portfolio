@@ -1,221 +1,227 @@
-import { Fragment, useEffect, useState, type ReactElement } from 'react'
+import type { ReactElement } from 'react'
 
 import type { CaseStudy } from '../content'
-import { Reveal } from '../components/Sheet'
+import { useReveal } from '../hooks/useReveal'
 import { LanternRun, Note, Truss } from '../lib/draft'
 
-/* Five modules, each a 60/40 row: the operational objective and a "how it
-   was executed" checklist on the left, a supporting artifact on the right.
-   The artifacts are hand-built rather than photographed — a run-of-show
-   grid, a rider, an allocation sheet, a hospitality timeline, a journey
-   diagram — because the real documents aren't digitised for the site, and
-   a built diagram that's honest about being schematic beats a stand-in
-   photo that isn't actually the artifact it claims to be.
+/* Five bands, read top to bottom as one continuous operations playbook
+   rather than five disconnected write-ups: a thin spine runs down the
+   left edge on desktop, threading every band's number marker into one
+   line. Text and diagram alternate sides band to band (odd bands mirror
+   via `lg:flex-row-reverse`) so the row reads as rhythm, not repetition.
 
-   Each row's line-draw and fade-up both come from one <Reveal>: the
-   drawn divider above the row and the row's own content share the same
-   `.reveal[data-in="true"]` trigger, so nothing needs its own scroll
-   listener — see the `draw-in-line` rule in index.css, the same mechanism
-   Banner.tsx's sheet dividers use. */
+   One shared `useReveal()` on the outer wrapper drives all five bands'
+   entrance, staggered per band via inline transition-delay — the same
+   pattern OperationsMap.tsx uses next door, so the two sheets read as one
+   family rather than two different animation systems.
 
-function ModuleDivider({ index, title }: { index: number; title: string }): ReactElement {
+   The whole sheet targets one desktop viewport (`lg:h-dvh`, `lg:`-only
+   for the same reason as the rest of this case study: five bands of
+   text-plus-diagram have no graceful way to compress into a phone
+   screen, so mobile flows in ordinary document order instead). Five
+   bands of prose, checklist and a hand-drawn artifact each is dense
+   enough that a very short window may still need its internal
+   `overflow-y-auto` safety net — the same trade-off the opening sheet in
+   CaseStudy.tsx makes — but nothing here is designed to need it at a
+   normal desktop height. */
+
+/* ---- five miniature blueprint artifacts -------------------------------- */
+
+/* All five share one wide, short viewBox — roughly the aspect ratio a
+   half-width band actually renders at — so a node timeline has enough
+   run between stops for a two-word label without colliding into its
+   neighbour, and the artifact stays shallow rather than growing tall
+   inside a wide column. */
+
+const PLAN_STEPS = ['Load-In', 'Tech', 'Rehearsal', 'Doors', 'Curtain']
+
+function ProductionPlanningArtifact(): ReactElement {
+  const y = 50
+  const x0 = 40
+  const step = 98
+  const nodes = PLAN_STEPS.map((label, i) => ({ label, x: x0 + i * step }))
+  const last = nodes[nodes.length - 1]!
+
   return (
-    <>
-      <svg viewBox="0 0 1000 4" preserveAspectRatio="none" className="h-1 w-full" aria-hidden="true">
-        <line x1={0} y1={2} x2={1000} y2={2} className="l-thin draw-in-line" />
-      </svg>
-      <div className="mt-3 mb-6 flex items-baseline gap-3">
-        <span aria-hidden="true" className="size-2 shrink-0 rotate-45 border border-ink-45" />
-        <span className="label text-ink-45">Module {String(index + 1).padStart(2, '0')}</span>
-        <h3 className="font-display text-[1.05rem] font-bold">{title}</h3>
-      </div>
-    </>
-  )
-}
-
-function ArtifactCard({ title, onOpen, children }: { title: string; onOpen: () => void; children: ReactElement }): ReactElement {
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      aria-label={`Open the ${title} artifact`}
-      className="group relative block h-full w-full cursor-pointer border border-ink-25 bg-paper-warm p-3 pt-4 text-left shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_30px_-14px_var(--ink-45),0_0_20px_-8px_var(--accent-orange)]"
+    <svg
+      viewBox="0 0 480 84"
+      className="h-auto w-full"
+      role="img"
+      aria-label="Diagram: the production schedule planned backward from a fixed curtain time"
     >
-      <span
-        aria-hidden="true"
-        className="absolute top-1.5 left-1/2 z-10 size-2.5 -translate-x-1/2 rounded-full border border-ink-45 bg-paper shadow-[0_1px_2px_var(--ink-25)]"
-      />
-      {children}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center gap-1.5 bg-gradient-to-t from-ink/90 to-transparent py-2.5 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100"
-      >
-        <span className="label text-paper">Click to Enlarge</span>
-      </span>
-    </button>
+      <Note x={x0} y={14} anchor="start" size={8.5} tone="dim">
+        PLANNED BACKWARD FROM CURTAIN
+      </Note>
+      <line x1={x0 - 2} y1={23} x2={last.x} y2={23} className="l-hair" />
+      <polygon points={`${x0 - 2},23 ${x0 + 5},19 ${x0 + 5},27`} className="fill-ink" />
+      <line x1={x0} y1={y} x2={last.x} y2={y} className="l-thin" />
+      {nodes.map((n, i) => {
+        const isLast = i === nodes.length - 1
+        return (
+          <g key={n.label}>
+            {isLast ? (
+              <rect x={n.x - 4.5} y={y - 4.5} width={9} height={9} className="l-bold fill-paper" />
+            ) : (
+              <circle cx={n.x} cy={y} r={3.2} className="l-med fill-paper" />
+            )}
+            <Note x={n.x} y={y + 19} size={9}>
+              {n.label}
+            </Note>
+          </g>
+        )
+      })}
+    </svg>
   )
 }
 
-/* ---- the five artifacts ---------------------------------------------- */
+const CUES = ['SQ1', 'SQ2', 'SQ3', 'SQ4']
 
-const VENUES = ['Venue A', 'Venue B', 'Venue C', 'Venue D']
-const DAYS = ['Day 1', 'Day 2', 'Day 3', 'Day 4']
-const ACTIVE_DAYS: Record<number, number[]> = { 0: [0, 1], 1: [1, 2], 2: [0, 3], 3: [2, 3] }
+function TechnicalOperationsArtifact(): ReactElement {
+  const x = 18
+  const y = 16
+  const length = 444
+  const depth = 13
+  const cy = 68
+  const cx0 = 66
+  const cstep = 116
 
-function ProductionScheduleArtifact(): ReactElement {
   return (
-    <div className="border border-ink-25">
-      <div className="label border-b border-ink-25 bg-paper px-2 py-1.5 text-ink-45">Run of Show — Not to Scale</div>
-      <div className="grid grid-cols-[4.5rem_repeat(4,1fr)] text-center">
-        <div className="border-r border-b border-ink-25 bg-paper" />
-        {DAYS.map((day) => (
-          <div key={day} className="label border-r border-b border-ink-25 bg-paper py-1.5 text-ink-45 last:border-r-0">
-            {day}
-          </div>
-        ))}
-        {VENUES.map((venue, vi) => (
-          <Fragment key={venue}>
-            <div className="label border-r border-b border-ink-25 bg-paper px-2 py-2.5 text-left text-ink-45 last:border-b-0">
-              {venue}
-            </div>
-            {DAYS.map((_, di) => (
-              <div
-                key={di}
-                className={`border-r border-b border-ink-25 py-2.5 last:border-r-0 ${
-                  ACTIVE_DAYS[vi].includes(di)
-                    ? 'bg-[repeating-linear-gradient(45deg,transparent_0_5px,var(--ink-12)_5px_6px)]'
-                    : ''
-                }`}
-              />
-            ))}
-          </Fragment>
-        ))}
-      </div>
-    </div>
+    <svg
+      viewBox="0 0 480 84"
+      className="h-auto w-full"
+      role="img"
+      aria-label="Diagram: the lighting rig above the stage and the cue sequence run during the show"
+    >
+      <Truss x={x} y={y} length={length} depth={depth} bays={9} />
+      <LanternRun x={x} y={y + depth} length={length} count={5} types={['profile', 'fresnel', 'par']} scale={0.6} />
+      {CUES.map((c, i) => {
+        const cx = cx0 + i * cstep
+        return (
+          <g key={c}>
+            {i > 0 && <line x1={cx - cstep + 10} y1={cy} x2={cx - 10} y2={cy} className="l-hair" />}
+            <rect x={cx - 10} y={cy - 7} width={20} height={14} className="l-thin fill-paper" />
+            <Note x={cx} y={cy + 3} size={8.5}>
+              {c}
+            </Note>
+          </g>
+        )
+      })}
+    </svg>
   )
 }
 
-function TechnicalRiderArtifact(): ReactElement {
-  const x = 30
-  const y = 34
-  const length = 340
-  const depth = 20
-  return (
-    <div>
-      <svg
-        viewBox="0 0 400 110"
-        className="h-auto w-full"
-        role="img"
-        aria-label="Technical rider: a lighting position spanning the venue"
-      >
-        <Truss x={x} y={y} length={length} depth={depth} bays={8} />
-        <LanternRun x={x} y={y + depth} length={length} count={5} types={['profile', 'fresnel', 'par']} scale={0.85} />
-        <Note x={x + length} y={y - 10} anchor="end" size={10} tone="dim">
-          LX 1
-        </Note>
-      </svg>
-      <div className="border-t border-dashed border-ink-25 px-1 pt-3 pb-1">
-        <span className="label text-ink-45">Equipment</span>
-        <p className="mt-1 font-mono text-[0.72rem] leading-relaxed text-ink-70">
-          4× Profile · 3× Fresnel · 4× PAR · FOH Mix Position · DMX Distro
-        </p>
-      </div>
-    </div>
-  )
-}
-
-const VOLUNTEER_ROWS = [
-  { zone: 'Front of House', shift: 'Morning', count: 6 },
-  { zone: 'Backstage', shift: 'Evening', count: 8 },
-  { zone: 'Box Office', shift: 'All Day', count: 4 },
-  { zone: 'Artist Liaison', shift: 'Evening', count: 5 },
-  { zone: 'Technical Support', shift: 'All Day', count: 7 },
+const VENUES4 = ['Venue A', 'Venue B', 'Venue C', 'Venue D']
+const SHIFTS = ['AM', 'PM', 'Eve']
+const DEPLOYMENT = [
+  [2, 3, 4],
+  [3, 0, 5],
+  [0, 4, 3],
+  [2, 2, 0],
 ]
 
-function VolunteerAllocationArtifact(): ReactElement {
-  const total = VOLUNTEER_ROWS.reduce((sum, row) => sum + row.count, 0)
+function VolunteerManagementArtifact(): ReactElement {
+  const cellW = 92
+  const cellH = 17
+  const x0 = 112
+  const y0 = 14
+
   return (
-    <div className="border border-ink-25">
-      <div className="label flex items-center gap-2 border-b border-ink-25 bg-paper px-2 py-1.5 text-ink-45">
-        Volunteer Allocation
-        <span className="ml-auto text-ink-25">{total} Total</span>
-      </div>
-      <table className="w-full border-collapse text-left">
-        <thead>
-          <tr className="label text-ink-45">
-            <th className="border-b border-ink-25 px-2 py-1.5 font-medium">Zone</th>
-            <th className="border-b border-ink-25 px-2 py-1.5 font-medium">Shift</th>
-            <th className="border-b border-ink-25 px-2 py-1.5 text-right font-medium">Count</th>
-          </tr>
-        </thead>
-        <tbody>
-          {VOLUNTEER_ROWS.map((row) => (
-            <tr key={row.zone} className="border-b border-dashed border-ink-25 last:border-b-0">
-              <td className="px-2 py-2 text-[0.78rem] text-ink-70">{row.zone}</td>
-              <td className="px-2 py-2 text-[0.78rem] text-ink-70">{row.shift}</td>
-              <td className="px-2 py-2 text-right font-display text-[0.85rem] font-bold">{row.count}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <svg
+      viewBox="0 0 480 84"
+      className="h-auto w-full"
+      role="img"
+      aria-label="Diagram: volunteer deployment matrix across four venues and three shifts"
+    >
+      {SHIFTS.map((s, ci) => (
+        <Note key={s} x={x0 + ci * cellW + (cellW - 6) / 2} y={y0 - 3} size={8.5} tone="dim">
+          {s}
+        </Note>
+      ))}
+      {VENUES4.map((v, ri) => (
+        <g key={v}>
+          <Note x={x0 - 10} y={y0 + ri * cellH + 13} anchor="end" size={8.5}>
+            {v}
+          </Note>
+          {SHIFTS.map((_, ci) => {
+            const cx = x0 + ci * cellW
+            const cy = y0 + ri * cellH
+            const n = DEPLOYMENT[ri]![ci]!
+            return (
+              <g key={ci}>
+                <rect x={cx} y={cy} width={cellW - 6} height={cellH - 3} className="l-hair fill-paper" />
+                {n > 0 && (
+                  <Note x={cx + (cellW - 6) / 2} y={cy + (cellH - 3) / 2 + 3} size={8.8}>
+                    {String(n)}
+                  </Note>
+                )}
+              </g>
+            )
+          })}
+        </g>
+      ))}
+    </svg>
   )
 }
 
 const HOSPITALITY_STOPS = [
-  { label: 'Green Room Ready', time: 'T-90 min' },
-  { label: 'Artist Arrival', time: 'T-75 min' },
-  { label: 'Sound Check', time: 'T-45 min' },
-  { label: 'Meal Service', time: 'T-30 min' },
-  { label: 'Places Call', time: 'T-5 min' },
-  { label: 'Curtain', time: 'T-0' },
+  { label: 'Arrival', time: 'T-75' },
+  { label: 'Green Room', time: 'T-60' },
+  { label: 'Sound Check', time: 'T-45' },
+  { label: 'Meal', time: 'T-30' },
+  { label: 'Places', time: 'T-5' },
 ]
 
-function HospitalityScheduleArtifact(): ReactElement {
-  return (
-    <div className="border border-ink-25 bg-paper p-4">
-      <span className="label text-ink-45">Hospitality Timeline</span>
-      <ol className="mt-3 border-l-2 border-ink-25 pl-4">
-        {HOSPITALITY_STOPS.map((stop) => (
-          <li key={stop.label} className="relative pb-3.5 last:pb-0">
-            <span aria-hidden="true" className="absolute top-1 -left-[1.19rem] size-2 rotate-45 border border-ink bg-paper" />
-            <span className="block font-display text-[0.82rem] leading-tight font-bold">{stop.label}</span>
-            <span className="label text-ink-45">{stop.time}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  )
-}
-
-const JOURNEY_STEPS = ['Arrival', 'Ticketing', 'Seating', 'Performance', 'Interval', 'Exit']
-
-function AudienceJourneyArtifact(): ReactElement {
-  const y = 55
-  const step = 110
-  const nodes = JOURNEY_STEPS.map((label, i) => ({ label, x: 45 + i * step }))
+function HospitalityArtifact(): ReactElement {
+  const y = 48
+  const x0 = 30
+  const step = 104
+  const nodes = HOSPITALITY_STOPS.map((s, i) => ({ ...s, x: x0 + i * step }))
+  const last = nodes[nodes.length - 1]!
 
   return (
     <svg
-      viewBox="0 0 640 130"
+      viewBox="0 0 480 84"
       className="h-auto w-full"
       role="img"
-      aria-label="Diagram: the audience journey from arrival through to exit"
+      aria-label="Diagram: the artist call-time sequence counting down to places"
     >
-      {nodes.slice(0, -1).map((n, i) => (
-        <line
-          key={`link-${n.label}`}
-          x1={n.x}
-          y1={y}
-          x2={nodes[i + 1].x}
-          y2={y}
-          className="l-thin draw-in-line"
-        />
-      ))}
+      <line x1={x0} y1={y} x2={last.x} y2={y} className="l-thin" />
       {nodes.map((n) => (
         <g key={n.label}>
-          <circle cx={n.x} cy={y} r={5} className="l-med fill-paper" />
-          <Note x={n.x} y={y + 22} size={10.5}>
+          <circle cx={n.x} cy={y} r={3.2} className="l-med fill-paper" />
+          <Note x={n.x} y={y - 12} size={8} tone="dim">
+            {n.time}
+          </Note>
+          <Note x={n.x} y={y + 18} size={9}>
+            {n.label}
+          </Note>
+        </g>
+      ))}
+    </svg>
+  )
+}
+
+const JOURNEY_STEPS = ['Arrival', 'Entry Check', 'Seating', 'Show', 'Exit']
+
+function AudienceExperienceArtifact(): ReactElement {
+  const y = 46
+  const x0 = 30
+  const step = 104
+  const nodes = JOURNEY_STEPS.map((label, i) => ({ label, x: x0 + i * step }))
+  const last = nodes[nodes.length - 1]!
+
+  return (
+    <svg
+      viewBox="0 0 480 78"
+      className="h-auto w-full"
+      role="img"
+      aria-label="Diagram: the audience journey from arrival through to exit, with a checkpoint at each stage"
+    >
+      <line x1={x0} y1={y} x2={last.x} y2={y} className="l-thin" />
+      {nodes.map((n) => (
+        <g key={n.label}>
+          <line x1={n.x} y1={y - 6} x2={n.x} y2={y + 6} className="l-med" />
+          <Note x={n.x} y={y + 20} size={9}>
             {n.label}
           </Note>
         </g>
@@ -225,104 +231,110 @@ function AudienceJourneyArtifact(): ReactElement {
 }
 
 const ARTIFACTS: (() => ReactElement)[] = [
-  ProductionScheduleArtifact,
-  TechnicalRiderArtifact,
-  VolunteerAllocationArtifact,
-  HospitalityScheduleArtifact,
-  AudienceJourneyArtifact,
+  ProductionPlanningArtifact,
+  TechnicalOperationsArtifact,
+  VolunteerManagementArtifact,
+  HospitalityArtifact,
+  AudienceExperienceArtifact,
 ]
 
 const ARTIFACT_TITLES = [
-  'Run of Show',
-  'Technical Rider',
-  'Volunteer Allocation Sheet',
-  'Hospitality Timeline',
-  'Audience Journey Diagram',
+  'Reverse-Planned Timeline',
+  'Cue Flow & Rig',
+  'Deployment Matrix',
+  'Call-Time Sequence',
+  'Visitor Journey',
 ]
 
-export function ExecutionStrategy({ execution }: { execution: CaseStudy['execution'] }): ReactElement {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+/* ---- one band ----------------------------------------------------------- */
 
-  useEffect(() => {
-    if (openIndex === null) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpenIndex(null)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [openIndex])
+function Band({
+  index,
+  mod,
+  shown,
+}: {
+  index: number
+  mod: CaseStudy['execution'][number]
+  shown: boolean
+}): ReactElement {
+  const Artifact = ARTIFACTS[index]!
+  const reversed = index % 2 === 1
 
   return (
-    <section className="mt-14">
-      <div className="mb-6 flex items-baseline gap-3 border-b-2 border-ink pb-3">
-        <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink" />
-        <h2 className="font-display text-[clamp(1.15rem,2.2vw,1.4rem)] font-bold">Execution Strategy</h2>
-        <span className="label ml-auto text-ink-45">Operations Playbook</span>
-      </div>
-
-      {execution.map((mod, i) => {
-        const Artifact = ARTIFACTS[i]
-        if (!Artifact) return null
-
-        return (
-          <Reveal key={mod.module} className="mb-14 last:mb-0">
-            <ModuleDivider index={i} title={mod.module} />
-
-            <div className="grid gap-x-10 gap-y-6 lg:grid-cols-[3fr_2fr]">
-              <div>
-                <span className="label mb-2 block text-ink-45">Operational Objective</span>
-                <p className="mb-4 text-[0.92rem] leading-snug text-ink-70">{mod.objective}</p>
-
-                <span className="label mb-2 block text-ink-45">How It Was Executed</span>
-                <ul>
-                  {mod.checklist.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5 py-1">
-                      <span aria-hidden="true" className="mt-1 size-2.5 shrink-0 border border-ink-25" />
-                      <span className="text-[0.85rem] leading-snug text-ink-70">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <ArtifactCard title={ARTIFACT_TITLES[i]} onOpen={() => setOpenIndex(i)}>
-                <Artifact />
-              </ArtifactCard>
-            </div>
-          </Reveal>
-        )
-      })}
-
-      {openIndex !== null && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${ARTIFACT_TITLES[openIndex]}, enlarged`}
-          onClick={() => setOpenIndex(null)}
-          className="fixed inset-0 z-100 flex items-center justify-center bg-ink/90 p-[6vh_6vw] backdrop-blur-sm"
-        >
-          <figure
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[88vh] w-full max-w-[min(90vw,38rem)] overflow-y-auto border-4 border-paper bg-paper p-4 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]"
-          >
-            <div className="mb-3 flex items-center justify-between gap-4">
-              <span className="label text-ink-70">{ARTIFACT_TITLES[openIndex]}</span>
-              <button
-                type="button"
-                onClick={() => setOpenIndex(null)}
-                className="shrink-0 cursor-pointer border border-ink-25 px-2.5 py-1 text-ink-70 transition-colors hover:border-redline hover:text-ink"
-              >
-                Close ✕
-              </button>
-            </div>
-            <div className="mx-auto max-w-[30rem]">
-              {(() => {
-                const Artifact = ARTIFACTS[openIndex]
-                return <Artifact />
-              })()}
-            </div>
-          </figure>
+    <div
+      className="relative"
+      style={{
+        opacity: shown ? 1 : 0,
+        transform: shown ? 'translateY(0)' : 'translateY(14px)',
+        transition: 'opacity 0.55s ease, transform 0.55s ease',
+        transitionDelay: shown ? `${index * 130}ms` : '0ms',
+      }}
+    >
+      <span
+        aria-hidden="true"
+        className="absolute top-1 left-0 z-10 hidden size-2.5 -translate-x-1/2 rotate-45 border border-ink bg-paper lg:block"
+      />
+      <div
+        className={`flex flex-col gap-3 pl-0 lg:flex-row lg:items-center lg:gap-8 lg:pl-7 ${
+          reversed ? 'lg:flex-row-reverse' : ''
+        }`}
+      >
+        <div className="lg:w-1/2">
+          <div className="mb-0.5 flex items-baseline gap-2">
+            <span className="label text-ink-45">Stage {String(index + 1).padStart(2, '0')}</span>
+            <h3 className="font-display text-[0.86rem] font-bold">{mod.module}</h3>
+          </div>
+          <p className="mb-1 text-[0.72rem] leading-tight text-ink-70">{mod.objective}</p>
+          <ul className="mb-1">
+            {mod.checklist.map((item) => (
+              <li key={item} className="flex items-start gap-1.5 py-px">
+                <span aria-hidden="true" className="mt-1 size-1.5 shrink-0 border border-ink-25" />
+                <span className="text-[0.68rem] leading-tight text-ink-70">{item}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="border-l-2 border-accent-orange pl-2.5">
+            <span className="label text-accent-orange">Key Decision</span>
+            <p className="mt-0.5 text-[0.68rem] leading-tight font-medium text-ink">{mod.keyDecision}</p>
+          </div>
         </div>
-      )}
-    </section>
+
+        <div className="group border border-ink-25 bg-paper-warm p-2 transition-[border-color,box-shadow] duration-300 lg:w-1/2 hover:border-accent-orange hover:shadow-[0_0_16px_-8px_var(--accent-orange)]">
+          <span className="label mb-1 block text-ink-45 transition-colors duration-300 group-hover:text-accent-orange">
+            {ARTIFACT_TITLES[index]}
+          </span>
+          <Artifact />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ---- assembled sheet ------------------------------------------------------ */
+
+export function ExecutionStrategy({ execution }: { execution: CaseStudy['execution'] }): ReactElement {
+  const { ref, shown } = useReveal<HTMLDivElement>()
+  if (execution.length === 0) return <></>
+
+  return (
+    <div ref={ref} className="flex flex-col bg-paper text-ink lg:h-dvh lg:min-h-[40rem]">
+      <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(1.25rem,3.5vh,2.25rem)]">
+        <div className="mb-3 flex shrink-0 items-baseline gap-3 border-b-2 border-ink pb-2">
+          <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink" />
+          <h2 className="font-display text-[clamp(1.05rem,1.9vw,1.3rem)] font-bold">Execution Strategy</h2>
+          <span className="label ml-auto text-ink-45">Operations Playbook</span>
+        </div>
+
+        <div className="relative flex min-h-0 flex-1 flex-col gap-2.5">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1 bottom-1 left-0 hidden w-px bg-ink-25 lg:block"
+          />
+          {execution.map((mod, i) => (
+            <Band key={mod.module} index={i} mod={mod} shown={shown} />
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
