@@ -31,8 +31,12 @@ function SubsectionHeading({ children, tag }: { children: string; tag: string })
 
 const HUB = { x: 50, y: 50 }
 const HUB_R = 11
-const MODULE_R = 31
-/* Clockwise from the top, matching the order modules are drawn in. */
+/* Clockwise from the top, matching the order modules are drawn in. The top
+   and bottom spokes (Production Planning, Artist & Hospitality) run a
+   shorter radius than the diagonal/side ones — a full-length vertical
+   spoke pushes its box past the top/bottom edge of the panel and forces
+   the sheet to scroll, where the side spokes have headroom to spare. */
+const MODULE_RADII = [24, 31, 31, 24, 31, 31]
 const MODULE_ANGLES = [-90, -30, 30, 90, 150, 210]
 type Anchor = 'top' | 'right' | 'bottom' | 'left'
 const MODULE_ANCHORS: Anchor[] = ['top', 'right', 'right', 'bottom', 'left', 'left']
@@ -70,7 +74,8 @@ function OwnershipMap({ ownership, shown }: { ownership: CaseStudy['ownership'];
 
   const points = ownership.map((_, i) => {
     const rad = (MODULE_ANGLES[i] * Math.PI) / 180
-    return { x: HUB.x + MODULE_R * Math.cos(rad), y: HUB.y + MODULE_R * Math.sin(rad) }
+    const r = MODULE_RADII[i]!
+    return { x: HUB.x + r * Math.cos(rad), y: HUB.y + r * Math.sin(rad) }
   })
 
   return (
@@ -307,7 +312,7 @@ export function OperationsMap({
 
   return (
     <div ref={ref} className="flex flex-col bg-paper text-ink lg:h-dvh lg:min-h-[34rem]">
-      <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(2.5rem,6vh,4rem)]">
+      <div className="gutter flex min-h-0 flex-1 flex-col overflow-hidden py-[clamp(2.5rem,6vh,4rem)]">
         <div className="relative grid min-h-0 flex-1 gap-x-10 gap-y-10 lg:grid-cols-2">
           <div
             aria-hidden="true"
