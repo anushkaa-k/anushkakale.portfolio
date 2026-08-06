@@ -115,7 +115,8 @@ export const experienceSchema = z.object({
     z.object({
       period: z.string(),
       title: z.string(),
-      org: z.string(),
+      /** Optional — omit to leave the org line off a step's card. */
+      org: z.string().optional(),
       notes: z.array(z.string()).default([]),
     }),
   ),

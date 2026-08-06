@@ -275,13 +275,15 @@ export function Experience({ meta }: { meta: SectionMeta }): ReactElement {
                 >
                   {role.title}
                 </h3>
-                <p
-                  className={`mb-3 text-[0.85rem] font-semibold transition-colors duration-300 ${
-                    active ? 'text-accent-orange' : 'text-ink-70'
-                  }`}
-                >
-                  {role.org}
-                </p>
+                {role.org && (
+                  <p
+                    className={`mb-3 text-[0.85rem] font-semibold transition-colors duration-300 ${
+                      active ? 'text-accent-orange' : 'text-ink-70'
+                    }`}
+                  >
+                    {role.org}
+                  </p>
+                )}
                 <ul>
                   {role.notes.map((note) => (
                     <li
