@@ -1,4 +1,4 @@
-import { Fragment, type ReactElement } from 'react'
+import { Fragment, useEffect, type ReactElement } from 'react'
 
 import { sections, site, type SectionId, type SectionMeta } from './content'
 import { Hero } from './components/Hero'
@@ -38,6 +38,18 @@ const QUOTE_AFTER: SectionId = 'testimonials'
 
 export default function App(): ReactElement {
   const { mode, toggle } = useLights()
+
+  /* This is a client-rendered app, so a URL that already carries a hash on
+     load — arriving from the "Back to Projects" link on a case study page,
+     say — has the browser attempt its native jump-to-anchor before React
+     has rendered the target section, and it never retries once the section
+     exists. Once mounted, every section is already in the DOM (nothing
+     below the fold is lazy-mounted), so this just finishes what the
+     browser couldn't. */
+  useEffect(() => {
+    if (!window.location.hash) return
+    document.getElementById(window.location.hash.slice(1))?.scrollIntoView()
+  }, [])
 
   return (
     <>
