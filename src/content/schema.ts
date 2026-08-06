@@ -285,7 +285,8 @@ export const caseStudySchema = z.object({
   snapshot: z
     .object({
       fields: z.array(pair),
-      closing: z.string(),
+      /** Optional closing line under the fields — omit to skip that box. */
+      closing: z.string().optional(),
     })
     .optional(),
 })
