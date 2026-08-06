@@ -110,25 +110,53 @@ journey:
     phase: Recognition
 
 # The "From Script to Stage" pillars — the operational framework behind
-# the production. Each one's supporting artifact (budget worksheet,
-# workflow diagram, stage layout, production calendar) is built in code
-# (see src/pages/FromScriptToStage.tsx); this is the prose half.
+# the production. Each one's supporting artifact (budget board,
+# workflow diagram, stage layout, production workflow map) is built in
+# code (see src/pages/FromScriptToStage.tsx); this is the prose half.
 pillars:
   - title: Budgeting
     body: >-
-      Alive's budget was built department by department — set,
-      projection, costumes, transport, hospitality — before a single
-      rupee was committed. I gathered vendor quotations, compared
-      options against the creative brief, and built each line item into
-      a working worksheet rather than a single lump-sum figure. Every
-      quotation went through approval before procurement began, and I
-      tracked expenses against the worksheet through the run rather than
-      reconciling at the end. Contingency was held back deliberately,
-      not folded into other lines, so a late change in one department
-      didn't force a fight for budget elsewhere. The real work was
-      balancing creative ambition — a projection-heavy production is not
-      cheap to build — against a fixed ceiling, without either side
-      losing.
+      Alive's budget was built department by department, set design,
+      projection, lighting, costumes, transport, hospitality, artist
+      requirements, and technical equipment before a single rupee was
+      committed. Instead of working with a broad estimate, I created
+      detailed line-item budgets that reflected the actual production
+      requirements. This helped convert creative intent into measurable
+      financial planning from the very beginning.
+
+
+      I sourced and compared multiple vendor quotations for each
+      department, evaluating them not only on cost but also on quality,
+      reliability, and their ability to deliver within the production
+      timeline. Every quotation was reviewed against the creative brief
+      and approved before procurement, ensuring financial decisions
+      supported both the artistic vision and operational needs. In
+      several cases, this meant negotiating scope adjustments rather
+      than just price reductions to maintain quality within budget.
+
+
+      Throughout pre-production and execution, I maintained a live
+      budgeting worksheet that tracked committed costs, actual
+      expenditure, and remaining balances in real time. This allowed the
+      team to identify potential overruns early, make informed
+      trade-offs, and avoid end-of-project financial surprises. It also
+      became a shared reference point across departments, improving
+      transparency and decision-making speed.
+
+
+      Contingency funds were intentionally kept separate rather than
+      absorbed into departmental allocations. This created flexibility
+      to accommodate last-minute creative changes or operational
+      challenges without disrupting other areas of the production. This
+      buffer proved especially useful during on-ground adjustments where
+      technical requirements evolved after rehearsals.
+
+
+      The biggest challenge wasn't simply staying under budget, it was
+      balancing the creative ambition of a projection-heavy theatrical
+      production with a fixed financial ceiling, ensuring that every
+      spending decision delivered the highest possible impact on stage
+      without compromising the overall vision.
 
   - title: Cross-city Coordination (Mumbai ↔ Pune)
     body: >-
@@ -166,17 +194,33 @@ pillars:
 
   - title: Rehearsal & Production Planning
     body: >-
-      Rehearsals ran against a schedule built backward from opening
-      night — venue bookings, department coordination, and technical
-      rehearsals all sequenced so each one had what it needed from the
-      one before it. I ran daily production checklists through the
-      rehearsal period so nothing depended on memory: readiness for
-      lighting, projection, set and costume was tracked call by call,
-      not assumed. Technical rehearsals and dress rehearsals were
-      scheduled with enough separation to actually act on what tech
-      turned up, rather than running them back to back and hoping. By
-      opening night, readiness wasn't a single go/no-go decision — it
-      was the sum of every checklist cleared in the weeks before.
+      Rehearsals were planned by working backward from opening night,
+      creating a structured timeline that aligned venue availability,
+      cast schedules, technical requirements, and department
+      deliverables. Rather than treating rehearsals as isolated
+      sessions, each phase was designed to build on the previous one,
+      ensuring every team had the information and resources needed
+      before moving forward.
+
+
+      I developed detailed rehearsal schedules and daily production
+      checklists that tracked the readiness of every department, from
+      set installation and projection cues to lighting, costumes, props,
+      and backstage operations. This reduced reliance on memory or
+      verbal follow-ups, allowing progress to be monitored systematically
+      throughout the rehearsal period. The checklists also made it easier
+      to identify dependencies early, preventing small delays from
+      cascading into larger production issues.
+
+
+      Technical rehearsals, cue-to-cue runs, and dress rehearsals were
+      intentionally spaced to provide adequate time for revisions and
+      troubleshooting. This iterative approach significantly reduced
+      opening-night risks and improved coordination across creative and
+      technical teams. By opening night, readiness wasn't determined by
+      a single final rehearsal, it was the outcome of weeks of
+      structured planning, consistent tracking, and every checklist
+      successfully cleared along the way.
 
 # The Operations Takeaways cards — the closing section. Reflection on
 # how the production was run, not a restatement of the metrics or

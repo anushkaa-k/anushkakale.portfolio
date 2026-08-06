@@ -1,17 +1,17 @@
-import { Fragment, useEffect, useState, type ReactElement } from 'react'
+import { useEffect, useState, type ReactElement } from 'react'
 
 import type { CaseStudy } from '../content'
 import { Reveal } from '../components/Sheet'
 
 /* Four pillars. Budgeting (01) and Rehearsal & Production Planning (04)
    are each a full-width row split roughly 45/55 with a hand-built
-   operational artifact — a worksheet, a calendar — deliberately built to
-   look like documents a production manager would actually produce
-   rather than decorative charts, following the same "artifacts over
-   graphics" principle Execution Strategy uses on the Vasant case study.
-   Cross-city Coordination (02) and Technical Production (03) carry no
-   artifact: they sit side by side as a plain two-column text board (see
-   EngineeringBoard below) instead.
+   operational artifact — a budget board, a workflow map — deliberately
+   built to look like documents a production manager would actually
+   produce rather than decorative charts, following the same "artifacts
+   over graphics" principle Execution Strategy uses on the Vasant case
+   study. Cross-city Coordination (02) and Technical Production (03)
+   carry no artifact: they sit side by side as a plain two-column text
+   board (see EngineeringBoard below) instead.
 
    The drawn divider above each row/board reuses the existing
    `.draw-in-line` CSS utility (tied to the ancestor <Reveal>'s data-in
@@ -78,119 +78,427 @@ function ArtifactCard({
   )
 }
 
-/* ---- 01. Budget Worksheet ---------------------------------------------- */
+/* ---- shared geometry helpers --------------------------------------------
 
-const BUDGET_LINES = [
-  { item: 'Set', weight: 88, status: 'Approved', note: 'Quoted across three vendors before award.' },
-  { item: 'Projection', weight: 96, status: 'Approved', note: 'Largest line item — hardware plus operator fee.' },
-  { item: 'Costumes', weight: 42, status: 'Approved', note: 'In-house build, materials sourced separately.' },
-  { item: 'Transport', weight: 55, status: 'Approved', note: 'Mumbai–Pune set and equipment moves.' },
-  { item: 'Hospitality', weight: 28, status: 'Approved', note: 'Scaled to company size per show date.' },
-  { item: 'Contingency', weight: 38, status: 'Reserved', note: 'Held back, not drawn against another line.' },
-]
+   Both artifacts below draw their connecting lines and arrowheads inside
+   a single `viewBox="0 0 100 100" preserveAspectRatio="none"` SVG, the
+   same plain-fraction convention the Production Lifecycle map on this
+   case study's opening sheet uses — so a line, and the arrowhead drawn
+   on it, stretch together as one unit regardless of the card's actual
+   pixel aspect ratio, rather than the arrowhead's rotation reading wrong
+   once the SVG stretches non-uniformly. */
 
-function BudgetWorksheetArtifact(): ReactElement {
-  return (
-    <div className="border border-ink-25 bg-paper">
-      <div className="label flex items-center gap-2 border-b border-ink-25 bg-paper-warm px-3 py-2 text-ink-45">
-        Budget Worksheet — Department Allocation
-        <span className="ml-auto text-ink-25">Rev. 3</span>
-      </div>
-      <table className="w-full border-collapse text-left">
-        <thead>
-          <tr className="label text-ink-45">
-            <th className="border-b border-ink-25 px-3 py-1.5 font-medium">Line Item</th>
-            <th className="border-b border-ink-25 px-3 py-1.5 font-medium">Cost Weight</th>
-            <th className="border-b border-ink-25 px-3 py-1.5 font-medium">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {BUDGET_LINES.map((row) => (
-            <tr key={row.item} className="group/row relative border-b border-dashed border-ink-25 last:border-b-0">
-              <td className="px-3 py-2 align-top font-display text-[0.78rem] font-bold">{row.item}</td>
-              <td className="px-3 py-2 align-top">
-                <div className="h-2 w-full border border-ink-25 bg-paper">
-                  <div className="h-full bg-ink/70" style={{ width: `${row.weight}%` }} />
-                </div>
-              </td>
-              <td className="relative px-3 py-2 align-top text-[0.7rem]">
-                <span className={row.status === 'Approved' ? 'text-accent-orange' : 'text-ink-45'}>
-                  ✓ {row.status}
-                </span>
-                {/* Approval annotation — a blueprint note revealed on hover
-                    rather than printed permanently on the sheet, so the
-                    worksheet itself stays a clean row of figures. */}
-                <div className="pointer-events-none absolute top-full right-0 z-20 mt-1 w-48 border border-ink-25 bg-paper p-2 text-left text-[0.66rem] leading-snug text-ink-70 opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-opacity duration-200 group-hover/row:opacity-100">
-                  <CornerBrackets />
-                  {row.note}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="border-t border-dashed border-ink-25 px-3 py-2 text-[0.66rem] text-ink-45">
-        Approved — Assistant Production Manager
-      </div>
-    </div>
-  )
+function trimLine(ax: number, ay: number, bx: number, by: number, startGap: number, endGap: number) {
+  const dx = bx - ax
+  const dy = by - ay
+  const len = Math.hypot(dx, dy) || 1
+  const ux = dx / len
+  const uy = dy / len
+  return { x1: ax + ux * startGap, y1: ay + uy * startGap, x2: bx - ux * endGap, y2: by - uy * endGap }
 }
 
-/* ---- 04. Production Calendar --------------------------------------------
+function arrowhead(ax: number, ay: number, bx: number, by: number, t: number, size: number): string {
+  const dx = bx - ax
+  const dy = by - ay
+  const len = Math.hypot(dx, dy) || 1
+  const ux = dx / len
+  const uy = dy / len
+  const px = -uy
+  const py = ux
+  const cx = ax + dx * t
+  const cy = ay + dy * t
+  const tipX = cx + ux * size
+  const tipY = cy + uy * size
+  const b1x = cx - ux * size * 0.6 + px * size * 0.55
+  const b1y = cy - uy * size * 0.6 + py * size * 0.55
+  const b2x = cx - ux * size * 0.6 - px * size * 0.55
+  const b2y = cy - uy * size * 0.6 - py * size * 0.55
+  return `${tipX},${tipY} ${b1x},${b1y} ${b2x},${b2y}`
+}
 
-   A real Gantt, not a day-grid like the run-of-show artifact on the
-   Vasant page: continuous bars with genuine overlap between phases
-   (technical runs starting before rehearsals finish), which is the
-   actual shape of a rehearsal schedule. */
+/* ---- 01. Budget Board -----------------------------------------------------
 
-const WEEKS = 8
-const CAL_ROWS = [
-  { phase: 'Planning', start: 0, span: 2 },
-  { phase: 'Rehearsals', start: 1, span: 5 },
-  { phase: 'Technical Runs', start: 5, span: 2 },
-  { phase: 'Dress Rehearsals', start: 6, span: 1 },
-  { phase: 'Premiere', start: 7, span: 1 },
+   Not a ledger — a conceptual allocation board, the shape a production
+   manager might actually pin up: one "Production Budget" hub branching
+   into every department, each branch carrying its own cost weight,
+   two vendor-quotation slips paperclipped to the departments that were
+   shopped hardest, one approval stamp standing in for the whole sign-off
+   pass, and Contingency drawn deliberately outside the network — it was
+   never allocated to a branch, so it doesn't hang off one. */
+
+type BudgetNode = { item: string; share: number; weight: number; note: string; quote?: boolean }
+
+const BUDGET_CENTER = { x: 20, y: 50 }
+
+const BUDGET_NODES: (BudgetNode & { x: number; y: number })[] = [
+  { item: 'Set', share: 19, weight: 79, x: 20, y: 10, note: 'Three vendor quotations compared before award.', quote: true },
+  { item: 'Projection', share: 24, weight: 100, x: 42, y: 21, note: 'Largest single line — hardware plus operator fee.', quote: true },
+  { item: 'Lighting', share: 13, weight: 54, x: 49, y: 33, note: 'Rig plotted alongside the projection plan.' },
+  { item: 'Costumes', share: 9, weight: 38, x: 52, y: 44, note: 'In-house build, materials sourced separately.' },
+  { item: 'Transport', share: 11, weight: 46, x: 52, y: 56, note: 'Mumbai ↔ Pune set and equipment moves.' },
+  { item: 'Hospitality', share: 6, weight: 25, x: 49, y: 67, note: 'Scaled to company size per show date.' },
+  { item: 'Technical', share: 10, weight: 42, x: 42, y: 79, note: 'Equipment hire and on-site operator fees.' },
+  { item: 'Cast & Crew', share: 8, weight: 33, x: 20, y: 90, note: 'Artist fees and crew allowances.' },
 ]
 
-function ProductionCalendarArtifact(): ReactElement {
+const QUOTE_SLIPS = [
+  { forItem: 'Set', x: 74, y: 3, label: 'Vendor Quote — Set' },
+  { forItem: 'Projection', x: 88, y: 20, label: 'Vendor Quote — Projection' },
+]
+
+function BudgetBoardArtifact(): ReactElement {
   return (
-    <div className="border border-ink-25">
-      <div className="label border-b border-ink-25 bg-paper px-2 py-1.5 text-ink-45">
-        Production Calendar — Not to Scale
+    <div className="relative h-[31rem] w-full border border-ink-25 bg-paper">
+      <div className="label absolute inset-x-0 top-0 z-20 flex items-center gap-2 border-b border-ink-25 bg-paper-warm px-3 py-2 whitespace-nowrap text-ink-45">
+        Budget Board
+        <span className="ml-auto text-ink-25">Archival Copy</span>
       </div>
-      <div className="grid grid-cols-[5.5rem_repeat(8,1fr)] text-center">
-        <div className="border-r border-b border-ink-25 bg-paper" />
-        {Array.from({ length: WEEKS }, (_, i) => (
-          <div key={i} className="label border-r border-b border-ink-25 bg-paper py-1 text-ink-45 last:border-r-0">
-            W{i + 1}
+
+      <div className="absolute inset-0">
+        <svg
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-full"
+          aria-hidden="true"
+        >
+          {BUDGET_NODES.map((n) => {
+            const l = trimLine(BUDGET_CENTER.x, BUDGET_CENTER.y, n.x, n.y, 13, 4)
+            return (
+              <g key={n.item}>
+                <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} className="l-hair" style={{ fill: 'none' }} />
+                <polygon
+                  points={arrowhead(BUDGET_CENTER.x, BUDGET_CENTER.y, n.x, n.y, 0.56, 2)}
+                  className="fill-ink"
+                  style={{ opacity: 0.5 }}
+                />
+              </g>
+            )
+          })}
+          {QUOTE_SLIPS.map((s) => {
+            const node = BUDGET_NODES.find((n) => n.item === s.forItem)
+            if (!node) return null
+            const l = trimLine(node.x, node.y, s.x, s.y, 3, 3)
+            return (
+              <line
+                key={s.label}
+                x1={l.x1}
+                y1={l.y1}
+                x2={l.x2}
+                y2={l.y2}
+                className="l-hair"
+                style={{ fill: 'none', strokeDasharray: '2 1.6' }}
+              />
+            )
+          })}
+          <circle
+            cx={BUDGET_CENTER.x}
+            cy={BUDGET_CENTER.y}
+            r={13}
+            className="l-med"
+            style={{ fill: 'var(--paper-warm)' }}
+          />
+        </svg>
+
+        {/* Central hub label — plain HTML over the SVG circle so the text
+            itself never stretches with the non-uniform SVG scaling. */}
+        <div
+          className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center text-center"
+          style={{ left: `${BUDGET_CENTER.x}%`, top: `${BUDGET_CENTER.y}%`, width: '5.5rem' }}
+        >
+          <span className="label text-[0.56rem] leading-tight text-ink-45">Production</span>
+          <span className="label text-[0.56rem] leading-tight text-ink-45">Budget</span>
+        </div>
+
+        {/* Department branches — hover highlights the node and reveals its
+            note, the same corner-bracket callout treatment used across
+            this case study's other diagrams. */}
+        {/* Tooltips open sideways rather than above/below: with eight
+            branches stacked closely down the card, a vertical callout
+            would just about always land on the next department's own
+            label — opening horizontally, into the mostly-empty right
+            (or left, for the two branches nearest the card's right
+            edge) side of the board, never competes with a neighbour's
+            vertical space. */}
+        {BUDGET_NODES.map((n) => {
+          const openLeft = n.x > 46
+          return (
+            <div
+              key={n.item}
+              className="group/dept absolute z-10 -translate-y-1/2"
+              style={{ left: `${n.x}%`, top: `${n.y}%` }}
+            >
+              <div className="flex items-center gap-1.5">
+                <span
+                  aria-hidden="true"
+                  className="size-1.5 shrink-0 rotate-45 border border-ink-45 bg-paper transition-colors duration-300 group-hover/dept:border-accent-orange group-hover/dept:bg-accent-orange"
+                />
+                <div className="min-w-0">
+                  <div className="flex items-baseline gap-1">
+                    <span className="label text-[0.58rem] whitespace-nowrap text-ink transition-colors duration-300 group-hover/dept:text-accent-orange">
+                      {n.item}
+                    </span>
+                    <span className="label text-[0.5rem] text-ink-25">{n.share}%</span>
+                  </div>
+                  <div className="mt-0.5 h-[3px] w-14 border border-ink-25 bg-paper">
+                    <div
+                      className="h-full bg-ink/60 transition-[width] duration-300 group-hover/dept:bg-accent-orange"
+                      style={{ width: `${n.weight}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                role="tooltip"
+                className={`pointer-events-none absolute top-1/2 z-30 w-36 -translate-y-1/2 border border-ink-25 bg-paper p-1.5 text-left text-[0.6rem] leading-snug text-ink-70 opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-200 ease-out group-hover/dept:opacity-100 ${
+                  openLeft
+                    ? 'right-full mr-2 -translate-x-1 group-hover/dept:translate-x-0'
+                    : 'left-full ml-2 translate-x-1 group-hover/dept:translate-x-0'
+                }`}
+              >
+                <CornerBrackets />
+                {n.note}
+              </div>
+            </div>
+          )
+        })}
+
+        {/* Vendor-quotation slips — small rotated chits paperclipped back
+            to the two departments actually shopped across vendors. */}
+        {QUOTE_SLIPS.map((s) => (
+          <div
+            key={s.label}
+            className="absolute z-10 w-[5.2rem] -translate-y-1/2 border border-ink-25 bg-paper px-1.5 py-1 text-center shadow-[0_3px_8px_-4px_var(--ink-45)] transition-transform duration-300 ease-out hover:-translate-y-[calc(50%+2px)]"
+            style={{ left: `${s.x}%`, top: `${s.y}%`, transform: `translateY(-50%) rotate(${s.forItem === 'Set' ? -5 : 4}deg)` }}
+          >
+            <span className="label block text-[0.46rem] leading-tight text-ink-45">{s.label}</span>
           </div>
         ))}
-        {CAL_ROWS.map((row) => (
-          <Fragment key={row.phase}>
-            <div className="label border-r border-b border-ink-25 bg-paper px-2 py-2 text-left text-ink-45 last:border-b-0">
-              {row.phase}
-            </div>
-            <div className="relative col-span-8 border-b border-ink-25 last:border-b-0" style={{ height: '2rem' }}>
-              <div
-                className="absolute inset-y-1.5 border border-ink bg-ink/75"
-                style={{ left: `${(row.start / WEEKS) * 100}%`, width: `${(row.span / WEEKS) * 100}%` }}
-              />
-            </div>
-          </Fragment>
-        ))}
+
+        {/* Approval stamp — one mark standing in for the whole quotation
+            sign-off pass, not one per department. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute flex flex-col items-center justify-center rounded-full border-2 border-double text-center opacity-60"
+          style={{
+            left: '70%',
+            top: '38%',
+            width: '4.4rem',
+            height: '4.4rem',
+            transform: 'translate(-50%, -50%) rotate(-14deg)',
+            borderColor: 'var(--redline)',
+            color: 'var(--redline)',
+          }}
+        >
+          <span className="label text-[0.46rem] leading-none">Approved</span>
+          <span className="label text-[0.36rem] leading-none">Pre-Procurement</span>
+        </div>
+
+        {/* Handwritten-style annotation, the kind of note a production
+            manager scribbles on their own copy. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute font-display text-[0.56rem] leading-tight text-ink-45 italic"
+          style={{ left: '68%', top: '60%', width: '7rem', transform: 'rotate(-3deg)' }}
+        >
+          quotes weighed on quality, not just price
+        </span>
+      </div>
+
+      {/* Contingency — outside the network on purpose; it was held back,
+          never allocated to a branch. */}
+      <div className="absolute right-2 bottom-2 z-20 w-[8rem] border border-dashed border-ink-25 bg-paper-warm/90 p-1.5 transition-colors duration-300 hover:border-ink-45">
+        <span className="label block text-[0.54rem] text-ink-45">Contingency</span>
+        <span className="label block text-[0.54rem] text-accent-orange">Reserved</span>
+        <span
+          className="mt-1 block font-display text-[0.52rem] leading-tight text-ink-45 italic"
+          style={{ transform: 'rotate(-2deg)' }}
+        >
+          held back on purpose
+        </span>
       </div>
     </div>
   )
 }
 
-const ARTIFACTS: Record<'budget' | 'calendar', () => ReactElement> = {
-  budget: BudgetWorksheetArtifact,
-  calendar: ProductionCalendarArtifact,
+/* ---- 04. Production Workflow ----------------------------------------------
+
+   Not a Gantt — a horizontal journey toward one destination, Opening
+   Night, the way a production bible would actually draw it: Lighting
+   Ready and Projection Ready run as parallel department tracks off
+   Department Coordination and converge back at Technical Rehearsal,
+   because that's the real dependency, not two more beats on a single
+   line. Each milestone is a small archival card; hovering it expands
+   into its checklist. */
+
+type WorkflowNode = {
+  key: string
+  label: string
+  x: number
+  y: number
+  side: 'above' | 'below'
+  checklist: string[]
+  note: string
+  destination?: boolean
 }
 
-const ARTIFACT_TITLES: Record<'budget' | 'calendar', string> = {
-  budget: 'Budget Worksheet',
-  calendar: 'Production Calendar',
+const WORKFLOW_NODES: WorkflowNode[] = [
+  { key: 'planning', label: 'Planning', x: 4, y: 50, side: 'below', note: 'Where every schedule starts.', checklist: ['Script locked', 'Creative brief circulated'] },
+  { key: 'venue', label: 'Venue Locked', x: 17.1, y: 50, side: 'above', note: 'Everything downstream counts back from this date.', checklist: ['Dates confirmed', 'Load-in slot reserved'] },
+  { key: 'blocking', label: 'Blocking', x: 30.3, y: 50, side: 'below', note: 'Movement fixed before tech adds complexity.', checklist: ['Blocking notes finalised', 'Set installed'] },
+  { key: 'dept', label: 'Dept. Coordination', x: 43.4, y: 50, side: 'above', note: 'The point every department has to agree.', checklist: ['Lighting & projection synced', 'Costumes fitted'] },
+  { key: 'lighting', label: 'Lighting Ready', x: 50, y: 14, side: 'above', note: 'Focus complete ahead of tech.', checklist: ['Rig focused', 'Cues plotted'] },
+  { key: 'projection', label: 'Projection Ready', x: 50, y: 86, side: 'below', note: 'Tested against every seat in the house.', checklist: ['Mapping tested', 'Sightlines checked'] },
+  { key: 'tech', label: 'Tech Rehearsal', x: 56.6, y: 50, side: 'below', note: 'Lighting and projection run together for the first time.', checklist: ['Cue sheet approved', 'Sound checked'] },
+  { key: 'cue', label: 'Cue-to-Cue', x: 69.7, y: 50, side: 'above', note: 'A precision pass before performers run it live.', checklist: ['Every cue called', 'Timing adjusted'] },
+  { key: 'dress', label: 'Dress Rehearsal', x: 82.9, y: 50, side: 'below', note: 'The last rehearsal that counts as one.', checklist: ['Costumes ready', 'Full run without stops'] },
+  { key: 'opening', label: 'Opening Night', x: 96, y: 50, side: 'above', note: 'Every checklist behind it, cleared.', checklist: ['Front of house briefed', 'Go / no-go cleared'], destination: true },
+]
+
+const WORKFLOW_NODE_BY_KEY = new Map(WORKFLOW_NODES.map((n) => [n.key, n]))
+
+const WORKFLOW_SEGMENTS: [string, string][] = [
+  ['planning', 'venue'],
+  ['venue', 'blocking'],
+  ['blocking', 'dept'],
+  ['dept', 'lighting'],
+  ['lighting', 'tech'],
+  ['dept', 'projection'],
+  ['projection', 'tech'],
+  ['tech', 'cue'],
+  ['cue', 'dress'],
+  ['dress', 'opening'],
+]
+
+const WORKFLOW_CALLOUTS = [
+  { text: '✓ Set Installed', x: 11, y: 18 },
+  { text: '✓ Lighting Focus Complete', x: 40, y: 18 },
+  { text: '✓ Projection Mapping Tested', x: 50, y: 94 },
+  { text: '✓ Cue Sheet Approved', x: 68, y: 18 },
+  { text: '✓ Costumes Ready', x: 90, y: 18 },
+]
+
+function WorkflowMilestone({ n }: { n: WorkflowNode }): ReactElement {
+  const edge = n.x < 12 ? 'left-0 translate-x-0' : n.x > 88 ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2'
+
+  return (
+    <div
+      className="group/wf absolute z-10 -translate-x-1/2 -translate-y-1/2"
+      style={{ left: `${n.x}%`, top: `${n.y}%` }}
+    >
+      {n.destination ? (
+        <span
+          aria-hidden="true"
+          className="relative flex size-3 items-center justify-center rounded-full border-2 bg-paper"
+          style={{ borderColor: 'var(--accent-orange)', boxShadow: '0 0 0 3px var(--paper)' }}
+        >
+          <span className="size-1 rounded-full bg-accent-orange" />
+        </span>
+      ) : (
+        <span
+          aria-hidden="true"
+          className="block size-2 rotate-45 border border-ink bg-paper transition-colors duration-300 group-hover/wf:border-accent-orange group-hover/wf:bg-accent-orange"
+        />
+      )}
+
+      <span
+        className={`label pointer-events-none absolute text-[0.54rem] whitespace-nowrap transition-colors duration-300 group-hover/wf:text-accent-orange ${edge} ${
+          n.destination ? 'text-accent-orange' : 'text-ink-45'
+        } ${n.side === 'above' ? 'bottom-full mb-1.5' : 'top-full mt-1.5'}`}
+      >
+        {n.label}
+      </span>
+
+      <div
+        role="tooltip"
+        className={`pointer-events-none absolute z-30 w-40 border border-ink-25 bg-paper p-2 text-left opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-300 ease-out group-hover/wf:opacity-100 ${edge} ${
+          n.side === 'above'
+            ? 'bottom-full mb-6 translate-y-1 group-hover/wf:translate-y-0'
+            : 'top-full mt-6 -translate-y-1 group-hover/wf:translate-y-0'
+        }`}
+      >
+        <CornerBrackets />
+        <ul className="space-y-0.5">
+          {n.checklist.map((item) => (
+            <li key={item} className="flex items-baseline gap-1 text-[0.6rem] leading-snug text-ink-70">
+              <span className="text-accent-orange">✓</span>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-1.5 font-display text-[0.58rem] leading-snug text-ink-45 italic">{n.note}</p>
+      </div>
+    </div>
+  )
+}
+
+function ProductionWorkflowArtifact(): ReactElement {
+  return (
+    <div className="relative h-[26rem] w-full border border-ink-25 bg-paper">
+      <div className="label absolute inset-x-0 top-0 z-20 flex items-center gap-2 border-b border-ink-25 bg-paper-warm px-3 py-2 whitespace-nowrap text-ink-45">
+        Production Workflow
+        <span className="ml-auto text-ink-25">Production Bible</span>
+      </div>
+
+      {/* Ten labelled milestones don't compress gracefully into a phone's
+          width — rather than shrink the text past legibility, the diagram
+          keeps its full-size layout and scrolls horizontally below that
+          width, the same trade-off a real production bible's foldout
+          timeline makes. */}
+      <div className="absolute inset-x-0 top-8 bottom-0 overflow-x-auto overflow-y-hidden">
+        <div className="relative h-full w-full min-w-[42rem]">
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="absolute inset-0 h-full w-full"
+            aria-hidden="true"
+          >
+            {WORKFLOW_SEGMENTS.map(([fromKey, toKey]) => {
+              const a = WORKFLOW_NODE_BY_KEY.get(fromKey)
+              const b = WORKFLOW_NODE_BY_KEY.get(toKey)
+              if (!a || !b) return null
+              const l = trimLine(a.x, a.y, b.x, b.y, 3, 3)
+              return (
+                <g key={`${fromKey}-${toKey}`}>
+                  <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} className="l-thin" style={{ fill: 'none' }} />
+                  <polygon
+                    points={arrowhead(a.x, a.y, b.x, b.y, 0.85, 2.2)}
+                    className="fill-ink"
+                    style={{ opacity: 0.55 }}
+                  />
+                </g>
+              )
+            })}
+          </svg>
+
+          {WORKFLOW_CALLOUTS.map((c, i) => (
+            <span
+              key={c.text}
+              aria-hidden="true"
+              className="label pointer-events-none absolute z-0 border border-ink-25 bg-paper-warm/85 px-1.5 py-0.5 text-[0.48rem] leading-none whitespace-nowrap text-ink-45"
+              style={{ left: `${c.x}%`, top: `${c.y}%`, transform: `translate(-50%, -50%) rotate(${i % 2 === 0 ? -3 : 3}deg)` }}
+            >
+              {c.text}
+            </span>
+          ))}
+
+          {WORKFLOW_NODES.map((n) => (
+            <WorkflowMilestone key={n.key} n={n} />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const ARTIFACTS: Record<'budget' | 'workflow', () => ReactElement> = {
+  budget: BudgetBoardArtifact,
+  workflow: ProductionWorkflowArtifact,
+}
+
+const ARTIFACT_TITLES: Record<'budget' | 'workflow', string> = {
+  budget: 'Budget Board',
+  workflow: 'Production Workflow',
 }
 
 /* ---- Pillars 02 + 03: the engineering board ------------------------------
@@ -254,8 +562,26 @@ function EngineeringBoard({
   )
 }
 
+/* A pillar body can carry more than one paragraph (see Budgeting and
+   Rehearsal & Production Planning) — the YAML separates them with a
+   blank line, which a folded block scalar collapses to a single `\n`.
+   Everything else on this page is still one paragraph, so this just
+   renders as a single <p> for those, unchanged. */
+function PillarBody({ body }: { body: string }): ReactElement {
+  const paragraphs = body.split(/\n+/).filter(Boolean)
+  return (
+    <div className="space-y-3">
+      {paragraphs.map((para, i) => (
+        <p key={i} className="text-[0.9rem] leading-snug text-ink-70">
+          {para}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 export function FromScriptToStage({ pillars }: { pillars: CaseStudy['pillars'] }): ReactElement {
-  const [openKey, setOpenKey] = useState<'budget' | 'calendar' | null>(null)
+  const [openKey, setOpenKey] = useState<'budget' | 'workflow' | null>(null)
 
   useEffect(() => {
     if (openKey === null) return
@@ -288,8 +614,8 @@ export function FromScriptToStage({ pillars }: { pillars: CaseStudy['pillars'] }
 
         // Only pillars 01 (Budgeting) and 04 (Rehearsal & Production
         // Planning) still carry an artifact — index 0 → 'budget', the
-        // only other index reaching this branch (3) → 'calendar'.
-        const key = i === 0 ? 'budget' : 'calendar'
+        // only other index reaching this branch (3) → 'workflow'.
+        const key = i === 0 ? 'budget' : 'workflow'
         const Artifact = ARTIFACTS[key]
         const visualLeft = i % 2 === 1
 
@@ -299,7 +625,7 @@ export function FromScriptToStage({ pillars }: { pillars: CaseStudy['pillars'] }
 
             <div className="grid gap-x-10 gap-y-6 lg:grid-cols-[9fr_11fr]">
               <div className={visualLeft ? 'lg:order-2' : 'lg:order-1'}>
-                <p className="text-[0.9rem] leading-snug text-ink-70">{p.body}</p>
+                <PillarBody body={p.body} />
               </div>
 
               <ArtifactCard
