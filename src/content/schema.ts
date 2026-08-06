@@ -219,16 +219,20 @@ export const caseStudySchema = z.object({
       }),
     )
     .default([]),
-  /** The Execution Strategy modules. Each one's supporting artifact
-      (schedule grid, rider, allocation sheet, hospitality timeline,
-      journey diagram) is drawn in code, not stored here — this is the
-      prose half only. */
+  /** The Execution Strategy modules — read as five bands of one operations
+      playbook, not five separate write-ups. Each one's supporting artifact
+      (reverse-planned timeline, cue flow, deployment matrix, call-time
+      sequence, visitor journey) is drawn in code, not stored here — this
+      is the prose half only. `keyDecision` is the one-line orange-accented
+      callout inside each band, distinct from the fuller Situation →
+      Decision → Outcome cards in `decisions` below. */
   execution: z
     .array(
       z.object({
         module: z.string(),
         objective: z.string(),
         checklist: z.array(z.string()),
+        keyDecision: z.string(),
       }),
     )
     .default([]),
