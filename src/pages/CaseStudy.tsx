@@ -6,9 +6,8 @@ import { useReveal } from '../hooks/useReveal'
 import { asset } from '../lib/asset'
 import { CaseStudyHeader } from './CaseStudyHeader'
 import { ExecutionStrategy } from './ExecutionStrategy'
-import { OperationalComplexity } from './OperationalComplexity'
 import { OperationalDecisions } from './OperationalDecisions'
-import { OwnershipMatrix } from './OwnershipMatrix'
+import { OperationsMap } from './OperationsMap'
 
 /* Sheet one is the opening: header, Executive Dashboard, Project Context and
    the festival poster as a Project Board, sized to sit inside one desktop
@@ -227,9 +226,9 @@ export function CaseStudy({
         </div>
       </div>
 
+      <OperationsMap ownership={data.ownership} risks={data.risks} />
+
       <div className="gutter bg-paper pb-[clamp(3rem,6vw,5rem)] text-ink">
-        <OwnershipMatrix ownership={data.ownership} />
-        <OperationalComplexity risks={data.risks} />
         <ExecutionStrategy execution={data.execution} />
         <OperationalDecisions decisions={data.decisions} />
       </div>

@@ -198,24 +198,24 @@ export const caseStudySchema = z.object({
       alt: z.string(),
     })
     .optional(),
-  /** The Ownership Matrix cards — also drives the hub-and-spoke diagram
-      beside them, so the two never list different domains. */
+  /** The Scope of Ownership modules, drawn as a hub-and-spoke command map —
+      a short list of keywords each, not prose. */
   ownership: z
     .array(
       z.object({
         domain: z.string(),
-        summary: z.string(),
+        keywords: z.array(z.string()),
       }),
     )
     .default([]),
-  /** The Operations Risk Register rows — also drives the convergence
-      diagram's input labels. */
+  /** The Operational Complexity cards — a risk matrix, one short note per
+      card. Card numbering (C-01, C-02, ...) is derived from array order,
+      not stored here. */
   risks: z
     .array(
       z.object({
         item: z.string(),
-        impact: z.string(),
-        mitigation: z.string(),
+        note: z.string(),
       }),
     )
     .default([]),

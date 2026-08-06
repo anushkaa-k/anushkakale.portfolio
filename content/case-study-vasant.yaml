@@ -56,59 +56,37 @@ poster:
   src: img/vasant-schedule-poster.jpg
   alt: Vasant Gujarati Theatre Festival — full festival schedule poster
 
-# The Ownership Matrix cards, and the labels on the hub-and-spoke diagram
-# beside them (in the same order they're drawn, clockwise from the top).
+# The Scope of Ownership modules, drawn clockwise from the top of the
+# hub-and-spoke command map. Keywords, not sentences — 2-4 per module.
 ownership:
   - domain: Production Planning
-    summary: >-
-      Owned festival scheduling, run-of-show sequencing and pre-production
-      timelines across all four venues.
-  - domain: Technical Operations
-    summary: >-
-      Coordinated lighting, sound and stage crews, and resolved technical
-      variability show to show.
-  - domain: Venue Operations
-    summary: >-
-      Managed load-in, load-out and front-of-house readiness, and venue
-      handover across the run.
-  - domain: Volunteer Management
-    summary: >-
-      Recruited, briefed and deployed 30+ volunteer assignments across
-      venues and shifts.
-  - domain: Artist Hospitality
-    summary: >-
-      Primary point of contact for visiting artists and companies, from
-      green room to show-day needs.
+    keywords: [Scheduling, Run-of-show planning, Department coordination]
+  - domain: Budget & Procurement
+    keywords: [Budget tracking, Vendor quotations, Purchase orders, Reconciliation]
+  - domain: Vendor Management
+    keywords: [Fabricators, Rentals, Transport, Technical vendors]
+  - domain: Artist & Hospitality
+    keywords: [Travel, Accommodation, Backstage requirements, Green room coordination]
   - domain: Audience Experience
-    summary: >-
-      Owned house management and front-of-house presentation for every
-      performance.
-  - domain: Production Documentation
-    summary: >-
-      Maintained run sheets, contact lists and post-show reports across
-      the festival.
+    keywords: [Entry flow, Installations, Photo opportunities, Wayfinding]
+  - domain: Team Coordination
+    keywords: [Volunteers, Technicians, Venue staff, Cross-department communication]
 
-# The Operations Risk Register rows, and the input labels on the
-# convergence diagram beside it.
+# The Operational Complexity risk matrix cards. Numbered C-01, C-02... in
+# code, in this array order.
 risks:
-  - item: Multi-Venue Operations (4 Venues)
-    impact: Crew and resources split across sites running in parallel.
-    mitigation: Dedicated venue leads with a shared run-of-show and live status updates.
-  - item: Technical Variability
-    impact: Each venue's rig, acoustics and capabilities differ show to show.
-    mitigation: Pre-show technical walkthroughs and venue-specific cue sheets.
+  - item: Multiple Venues
+    note: Four venues operating simultaneously with different technical and audience requirements.
+  - item: Parallel Productions
+    note: Multiple rehearsals, performances and changeovers happening at the same time.
   - item: Fixed Show Timings
-    impact: Little to no slack between back-to-back performances.
-    mitigation: Buffered changeover windows and a strict call-time schedule.
-  - item: Volunteer Deployment (30+ Assignments)
-    impact: Large, rotating team with variable experience levels.
-    mitigation: Role-based briefings and a single point of escalation per shift.
-  - item: Artist Hospitality (1–25 Performers)
-    impact: Company sizes swing widely between productions.
-    mitigation: A scalable hospitality checklist sized to each company in advance.
-  - item: Audience Experience
-    impact: House readiness shapes the first impression of every show.
-    mitigation: A standardised front-of-house checklist run before every curtain.
+    note: Curtains could not be delayed regardless of upstream issues.
+  - item: Shared Resources
+    note: Equipment, crew and volunteers moved between productions throughout the day.
+  - item: Live Decision Making
+    note: Unexpected changes required quick operational decisions without disrupting performances.
+  - item: Interdependent Teams
+    note: Production, artists, venue operations, vendors and front-of-house had to remain synchronised.
 
 # The Execution Strategy modules — how each area actually ran, not what it
 # was responsible for. Each module's supporting artifact is built in code
