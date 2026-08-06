@@ -113,9 +113,9 @@ function ProjectContext({ context, shown }: { context: CaseStudy['context']; sho
 
 /* ---- Project Board -------------------------------------------------------
    The poster itself, drawn as the primary operational document rather than
-   a plain image: small blueprint annotations pinned around it (what the
-   document is actually used for) and a title-block strip of figures below
-   it — engineering-drawing conventions, not dashboard chrome. */
+   a plain image: small blueprint annotations pinned around it, naming what
+   the document is actually used for — an engineering-drawing convention,
+   not dashboard chrome. */
 
 const POSTER_ANNOTATIONS: { text: string; className: string }[] = [
   { text: 'Primary Operational Document', className: 'top-2 left-2' },
@@ -222,17 +222,6 @@ export function CaseStudy({
                   </div>
                 )}
               </div>
-
-              {data.posterInfo.length > 0 && (
-                <dl className="mt-3 grid shrink-0 grid-cols-3 border-t-2 border-ink bg-paper-warm sm:grid-cols-5">
-                  {data.posterInfo.map((info) => (
-                    <div key={info.k} className="border-r border-b border-ink-25 px-2.5 py-2 sm:border-b-0">
-                      <dt className="label text-[0.5rem] text-ink-45">{info.k}</dt>
-                      <dd className="mt-0.5 font-display text-[0.86rem] leading-none font-bold">{info.v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
             </div>
           </section>
         </div>

@@ -56,21 +56,6 @@ poster:
   src: img/vasant-schedule-poster.jpg
   alt: Vasant Gujarati Theatre Festival — full festival schedule poster
 
-# The title-block panel beneath the poster — a curated, poster-specific
-# set of figures (deliberately allowed to overlap the Executive Dashboard
-# above; a real engineering title block repeats key figures).
-posterInfo:
-  - k: Festival Duration
-    v: 4 Days
-  - k: Venues
-    v: "4"
-  - k: Productions
-    v: 7+
-  - k: Concurrent Workstreams
-    v: 20+
-  - k: Audience
-    v: 1200+
-
 # The Ownership Matrix cards, and the labels on the hub-and-spoke diagram
 # beside them (in the same order they're drawn, clockwise from the top).
 ownership:

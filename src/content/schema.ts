@@ -198,11 +198,6 @@ export const caseStudySchema = z.object({
       alt: z.string(),
     })
     .optional(),
-  /** The compact title-block panel beneath the Vasant poster — a curated,
-      poster-specific set of figures, independent of the Executive
-      Dashboard above (the two are allowed to overlap; a real engineering
-      title block repeats key figures rather than cross-referencing). */
-  posterInfo: z.array(pair).default([]),
   /** The Ownership Matrix cards — also drives the hub-and-spoke diagram
       beside them, so the two never list different domains. */
   ownership: z
