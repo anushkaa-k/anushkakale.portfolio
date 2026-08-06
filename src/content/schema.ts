@@ -268,6 +268,26 @@ export const caseStudySchema = z.object({
       }),
     )
     .default([]),
+  /** The Operations Takeaways cards (see Alive's closing section) — the
+      reflection, not a restatement of results. `icon` picks one of a
+      small fixed set of line icons drawn in code. */
+  takeaways: z
+    .array(
+      z.object({
+        heading: z.string(),
+        body: z.string(),
+        icon: z.enum(['workflow', 'checklist', 'budget', 'communication', 'planning']),
+      }),
+    )
+    .default([]),
+  /** The title-block-style Project Snapshot beside the takeaways —
+      optional, since only a case study with a closing section needs it. */
+  snapshot: z
+    .object({
+      fields: z.array(pair),
+      closing: z.string(),
+    })
+    .optional(),
 })
 
 /* ---- inferred types ------------------------------------------------------ */

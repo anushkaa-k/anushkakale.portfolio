@@ -174,3 +174,72 @@ pillars:
       turned up, rather than running them back to back and hoping. By
       opening night, readiness wasn't a single go/no-go decision — it
       was the sum of every checklist cleared in the weeks before.
+
+# The Operations Takeaways cards — the closing section. Reflection on
+# how the production was run, not a restatement of the metrics or
+# journey above. `icon` picks one of a small fixed set of line icons
+# drawn in code (see src/pages/OperationsTakeaways.tsx).
+takeaways:
+  - heading: Systems over firefighting
+    icon: communication
+    body: >-
+      Planning communication flows before rehearsals reduced last-minute
+      operational issues between Mumbai and Pune. A standing line
+      between both teams meant approvals and changes had an owner on
+      each end, rather than surfacing as a crisis on the day.
+
+  - heading: Visibility creates better decisions
+    icon: budget
+    body: >-
+      Maintaining live budget and schedule visibility allowed approvals,
+      vendor payments, and procurement to happen without delaying
+      rehearsals. Tracking expenses against a working worksheet through
+      the run, not reconciling at the end, kept decisions ahead of the
+      numbers rather than behind them.
+
+  - heading: Technical planning begins early
+    icon: workflow
+    body: >-
+      Projection-heavy productions require technical cues to be
+      integrated during rehearsals, not added after blocking is
+      complete. Treating projection with the same rigor as lighting and
+      sound from the start meant synchronisation was rehearsed until it
+      was routine, not discovered in tech.
+
+  - heading: Creative teams need operational stability
+    icon: checklist
+    body: >-
+      Reliable logistics, documentation, and scheduling allowed the
+      creative team to focus on directing and performance instead of
+      administration. A schedule built backward from opening night, with
+      daily checklists tracking readiness, meant nothing depended on
+      memory.
+
+  - heading: Production scales through process
+    icon: planning
+    body: >-
+      The same systems built for the festival premiere supported city
+      tours and future performances with minimal operational changes.
+      Because the structure carried the production rather than any one
+      person's memory, it travelled with it.
+
+# The Project Snapshot title block beside the takeaways.
+snapshot:
+  fields:
+    - k: Role
+      v: Assistant Production Manager
+    - k: Duration
+      v: 2025–26 Season
+    - k: Production Type
+      v: Touring Theatre, Projection-Led
+    - k: Cities
+      v: Mumbai · Pune + Tour Cities
+    - k: Cast & Crew
+      v: "18"
+    - k: Core Responsibilities
+      v: Budgeting · Cross-City Coordination · Technical Production · Rehearsal Planning
+    - k: Budget Ownership
+      v: Full department-wise ownership, tracked through the run
+  closing: >-
+    Good production management isn't noticed when everything goes
+    right — and that's exactly the point.
