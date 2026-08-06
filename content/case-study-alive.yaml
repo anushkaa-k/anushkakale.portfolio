@@ -5,11 +5,12 @@
 #  "View Case Study" button on this project's card in content/projects.yaml.
 #
 #  Alive is a narrative-style case study — a Project Overview paragraph
-#  with a photograph and a row of Blueprint Metric spec cards, plus a
-#  subway-style Production Lifecycle map, rather than the Executive
-#  Dashboard used on the Vasant case study. Its schema is the same shared
-#  caseStudySchema; it simply leaves the dashboard-only fields (context,
-#  ownership, risks, execution, decisions) unset.
+#  with a photograph, plus a subway-style Production Lifecycle map,
+#  rather than the Executive Dashboard used on the Vasant case study.
+#  Its schema is the same shared caseStudySchema; it simply leaves the
+#  dashboard-only fields (context, ownership, risks, execution,
+#  decisions) unset. `metrics` is also unused on this page (no Executive
+#  Dashboard here) but left populated in case a future section wants it.
 # =============================================================================
 
 title: Alive
@@ -17,11 +18,9 @@ role: Assistant Production Manager
 org: NCPA
 year: 2025–26
 
-# A single continuous paragraph — the story, not the scale. The scale
-# figures live in `metrics` below instead, as a row of spec cards, so the
-# paragraph isn't just restating every number. Kept tight on purpose: it
-# shares its 40% of the viewport with the metrics row and a photograph,
-# so there isn't room for a longer version alongside them.
+# A single continuous paragraph — the story, not the scale. Kept tight on
+# purpose: it shares its 40% of the viewport with a photograph, so there
+# isn't room for a longer version alongside it.
 overview: >-
   Alive began as the winning script in Darpan, NCPA's annual Marathi
   Scriptwriting Competition — an initiative created to discover, mentor,
@@ -37,10 +36,14 @@ overview: >-
   festival. A competition script, now a nationally recognised production.
 
 # The production photograph beside the overview paragraph. Reuses the
-# same `poster` field the Vasant page uses for its schedule poster.
+# same `poster` field the Vasant page uses for its schedule poster. `alt`
+# doubles as the hover caption shown over the photo.
+#
+# TODO: add public/img/alive-opening-night-pratibimb.jpg — the page shows
+# a "Photo Pending" placeholder until that file exists.
 poster:
-  src: img/alive-tech-run-pune.jpg
-  alt: Alive — tech run in Pune, the Darpan 2025 programme in hand
+  src: img/alive-opening-night-pratibimb.jpg
+  alt: Alive — Opening night at Pratibimb Marathi Theatre Festival
 
 # The Blueprint Metrics row beneath the overview — read as engineering
 # specifications (label + value), not a KPI dashboard.

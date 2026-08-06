@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactElement } from 'react'
+import { useState, type ReactElement } from 'react'
 
 import type { CaseStudy } from '../content'
 import { useLights } from '../hooks/useLights'
@@ -9,10 +9,10 @@ import { FromScriptToStage } from './FromScriptToStage'
 import { OperationsTakeaways } from './OperationsTakeaways'
 
 /* Alive is a narrative case study, not a dashboard one: the opening is a
-   Project Overview (40% of the viewport — a short narrative, a photograph,
-   and a row of Blueprint Metric spec cards) and a Production Lifecycle map
-   (60%), both inside the same h-dvh lock the Vasant page uses for its own
-   opening sheet — no scrolling needed to read either.
+   Project Overview (40% of the viewport — a short narrative alongside a
+   production photograph) and a Production Lifecycle map (60%), both
+   inside the same h-dvh lock the Vasant page uses for its own opening
+   sheet — no scrolling needed to read either.
 
    The two panes split with flex-grow ratios (2:3) rather than fixed
    percentages, so the 40/60 split holds regardless of how tall the header
@@ -33,18 +33,6 @@ function CornerBrackets(): ReactElement {
       <span aria-hidden="true" className={`${corner} bottom-0 left-0 border-b border-l`} />
       <span aria-hidden="true" className={`${corner} right-0 bottom-0 border-r border-b`} />
     </>
-  )
-}
-
-/* ---- Project Overview: Blueprint Metrics ------------------------------- */
-
-function SpecCard({ k, v }: { k: string; v: string }): ReactElement {
-  return (
-    <div className="group relative border border-ink-25 bg-paper px-2 py-1 transition-[border-color,box-shadow] duration-300 hover:border-ink hover:shadow-[0_0_14px_-7px_var(--accent-orange)]">
-      <CornerBrackets />
-      <span className="label block truncate text-[0.56rem] text-ink-45">{k}</span>
-      <span className="mt-0.5 block truncate font-display text-[0.78rem] leading-tight font-bold">{v}</span>
-    </div>
   )
 }
 
@@ -259,7 +247,14 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
               }}
             >
               <StationNode highlight={!!s.highlight} />
-              <StationLabel s={s} side={i % 2 === 0 ? 'above' : 'below'} />
+              {/* Alternates above/below by index for rhythm, except a
+                  station sitting low on the diagram (y >= 70, currently
+                  only the Competition phase) is forced 'above' even on an
+                  odd index — 'below' there stacks the label/tooltip past
+                  the diagram's own bottom edge, into the h-dvh viewport's
+                  scrolled-off area, so hovering it did nothing visible
+                  without scrolling first. */}
+              <StationLabel s={s} side={i % 2 === 0 || points[i].y >= 70 ? 'above' : 'below'} />
             </div>
           ))}
         </div>
@@ -287,17 +282,7 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
 export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: string }): ReactElement {
   useLights()
   const [photoFailed, setPhotoFailed] = useState(false)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
   const photoOk = !!data.poster && !photoFailed
-
-  useEffect(() => {
-    if (!lightboxOpen) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setLightboxOpen(false)
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [lightboxOpen])
 
   return (
     <>
@@ -313,22 +298,14 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
               <div className="grid min-h-0 flex-1 gap-x-8 gap-y-4 lg:grid-cols-[3fr_2fr]">
                 <div className="flex min-h-0 flex-col overflow-y-auto">
                   <p className="max-w-[42rem] text-[0.82rem] leading-snug text-ink-70">{data.overview}</p>
-
-                  <div className="mt-2 grid grid-cols-2 gap-1 sm:grid-cols-4">
-                    {data.metrics.map((m) => (
-                      <SpecCard key={m.k} k={m.k} v={m.v} />
-                    ))}
-                  </div>
                 </div>
 
+                {/* Non-interactive — a caption fades up on hover, the same
+                    treatment the Gallery's contact-sheet cards use, but no
+                    click-to-enlarge: this photo doesn't need a lightbox. */}
                 <div className="relative hidden min-h-0 lg:block">
                   {photoOk ? (
-                    <button
-                      type="button"
-                      onClick={() => setLightboxOpen(true)}
-                      aria-label={`Open the ${data.title} production photograph`}
-                      className="group relative block h-full w-full cursor-pointer border border-ink-25 bg-paper-warm p-2 text-left shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_30px_-14px_var(--ink-45),0_0_20px_-8px_var(--accent-orange)]"
-                    >
+                    <figure className="group relative block h-full w-full overflow-hidden border border-ink-25 bg-paper-warm p-2 shadow-[0_8px_18px_-10px_var(--ink-45)]">
                       <span
                         aria-hidden="true"
                         className="absolute top-2 left-1/2 z-10 size-2.5 -translate-x-1/2 rounded-full border border-ink-45 bg-paper shadow-[0_1px_2px_var(--ink-25)]"
@@ -337,15 +314,15 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
                         src={asset(data.poster!.src)}
                         alt={data.poster!.alt}
                         onError={() => setPhotoFailed(true)}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover transition-[filter] duration-300 group-hover:brightness-[1.04]"
                       />
-                      <span
+                      <figcaption
                         aria-hidden="true"
-                        className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center gap-1.5 bg-gradient-to-t from-ink/90 to-transparent py-3 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100"
+                        className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center bg-gradient-to-t from-ink/90 to-transparent px-3 py-3 text-center opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100"
                       >
-                        <span className="label text-paper">Click to Enlarge</span>
-                      </span>
-                    </button>
+                        <span className="label text-paper">{data.poster!.alt}</span>
+                      </figcaption>
+                    </figure>
                   ) : (
                     <div className="flex h-full w-full flex-col items-center justify-center gap-1.5 border border-dashed border-ink-25 bg-paper-warm text-center">
                       <span className="label text-ink-25">Photo Pending</span>
@@ -364,37 +341,6 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
         <FromScriptToStage pillars={data.pillars} />
         <OperationsTakeaways data={data} />
       </div>
-
-      {lightboxOpen && photoOk && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={data.poster!.alt}
-          onClick={() => setLightboxOpen(false)}
-          className="fixed inset-0 z-100 flex items-center justify-center bg-ink/90 p-[6vh_6vw] backdrop-blur-sm"
-        >
-          <figure
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[88vh] max-w-[min(90vw,36rem)] border-4 border-paper bg-paper p-2 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.6)]"
-          >
-            <img
-              src={asset(data.poster!.src)}
-              alt={data.poster!.alt}
-              className="max-h-[80vh] w-full object-contain"
-            />
-            <figcaption className="label mt-2 flex items-center justify-between gap-4 px-1 py-1 text-ink-70">
-              <span className="truncate">{data.poster!.alt}</span>
-              <button
-                type="button"
-                onClick={() => setLightboxOpen(false)}
-                className="shrink-0 cursor-pointer border border-ink-25 px-2.5 py-1 text-ink-70 transition-colors hover:border-redline hover:text-ink"
-              >
-                Close ✕
-              </button>
-            </figcaption>
-          </figure>
-        </div>
-      )}
     </>
   )
 }
