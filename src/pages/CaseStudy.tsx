@@ -228,9 +228,8 @@ export function CaseStudy({
 
       <OperationsMap ownership={data.ownership} risks={data.risks} />
 
-      <ExecutionStrategy execution={data.execution} />
-
       <div className="gutter bg-paper pb-[clamp(3rem,6vw,5rem)] text-ink">
+        <ExecutionStrategy execution={data.execution} />
         <OperationalDecisions decisions={data.decisions} />
       </div>
 

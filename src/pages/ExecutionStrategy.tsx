@@ -1,37 +1,27 @@
 import { useEffect, useState, type ReactElement } from 'react'
 
 import type { CaseStudy } from '../content'
-import { useReveal } from '../hooks/useReveal'
+import { Reveal } from '../components/Sheet'
 import { asset } from '../lib/asset'
 
-/* Five bands, read top to bottom as one continuous operations playbook
-   rather than five disconnected write-ups: a thin spine runs down the
-   left edge on desktop, threading every band's number marker into one
-   line.
+/* Five stages, each its own bordered card rather than a continuous
+   thread — the brief here is "read as an independent module," the
+   opposite of the connecting spine this section used to have. Ordinary
+   document flow, not a viewport-locked sheet: every card is left to
+   grow to whatever height its content needs, so nothing is clipped or
+   scrolled inside a container.
 
-   Only two bands carry a visual — the real Tech & Stage and Games &
-   Activities charts from the production spreadsheet, dropped in as
-   photographs of the actual documents rather than a drawn stand-in —
-   so those two keep the alternating text/visual split (odd bands mirror
-   via `lg:flex-row-reverse`, matching the original five-band rhythm:
-   Technical Operations is band two, Audience Experience is band five,
-   so they land on opposite sides exactly as they did when every band
-   had a diagram). The other three bands have no artifact to pair
-   against, so they run full width instead of half, rather than leaving
-   an empty column.
+   Stage 3 (Volunteer Management) and Stage 4 (Artist Coordination &
+   Hospitality) share one row — the two stages with no supporting
+   photograph, so pairing them is what keeps every row feeling
+   deliberate rather than one card looking oddly bare next to a full
+   width one. The other three stages, including the two with a real
+   production-sheet photograph inside them, each get a full-width row.
 
-   One shared `useReveal()` on the outer wrapper drives all five bands'
-   entrance, staggered per band via inline transition-delay — the same
-   pattern OperationsMap.tsx uses next door, so the two sheets read as
-   one family rather than two different animation systems.
-
-   The whole sheet targets one desktop viewport (`lg:h-dvh`, `lg:`-only
-   for the same reason as the rest of this case study: mobile flows in
-   ordinary document order instead). With only two photographs instead
-   of five hand-drawn diagrams, five bands comfortably fit one normal
-   desktop screen — the `overflow-y-auto` on the scroll container is
-   kept purely as the same short-window safety net every other sheet in
-   this case study uses, not because this one is expected to need it. */
+   Each `Reveal` fades its own row up independently as it scrolls into
+   view — this section runs long enough now that a card near the bottom
+   shouldn't wait on one shared reveal timed for the top of the
+   section. */
 
 interface Visual {
   src: string
@@ -55,95 +45,62 @@ const VISUALS: (Visual | null)[] = [
   },
 ]
 
-/* ---- one band ----------------------------------------------------------- */
+/* ---- one stage, always a single bordered card ---------------------------- */
 
-function BandBody({ index, mod }: { index: number; mod: CaseStudy['execution'][number] }): ReactElement {
-  return (
-    <>
-      <div className="mb-0.5 flex items-baseline gap-2">
-        <span className="label text-ink-45">Stage {String(index + 1).padStart(2, '0')}</span>
-        <h3 className="font-display text-[0.86rem] font-bold">{mod.module}</h3>
-      </div>
-      <p className="mb-1 text-[0.72rem] leading-tight text-ink-70">{mod.objective}</p>
-      <ul className="mb-1">
-        {mod.checklist.map((item) => (
-          <li key={item} className="flex items-start gap-1.5 py-px">
-            <span aria-hidden="true" className="mt-1 size-1.5 shrink-0 border border-ink-25" />
-            <span className="text-[0.68rem] leading-tight text-ink-70">{item}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="border-l-2 border-accent-orange pl-2.5">
-        <span className="label text-accent-orange">Key Decision</span>
-        <p className="mt-0.5 text-[0.68rem] leading-tight font-medium text-ink">{mod.keyDecision}</p>
-      </div>
-    </>
-  )
-}
-
-function Band({
+function StageCard({
   index,
   mod,
-  shown,
   onOpenImage,
 }: {
   index: number
   mod: CaseStudy['execution'][number]
-  shown: boolean
   onOpenImage: (v: Visual) => void
 }): ReactElement {
   const visual = VISUALS[index] ?? null
-  const reversed = index % 2 === 1
 
   return (
-    <div
-      className="relative"
-      style={{
-        opacity: shown ? 1 : 0,
-        transform: shown ? 'translateY(0)' : 'translateY(14px)',
-        transition: 'opacity 0.55s ease, transform 0.55s ease',
-        transitionDelay: shown ? `${index * 130}ms` : '0ms',
-      }}
-    >
-      <span
-        aria-hidden="true"
-        className="absolute top-1 left-0 z-10 hidden size-2.5 -translate-x-1/2 rotate-45 border border-ink bg-paper lg:block"
-      />
+    <div className="flex h-full flex-col border border-ink-25 bg-paper p-5 sm:p-6">
+      <div className="mb-3 flex items-baseline gap-2">
+        <span className="label text-ink-45">Stage {String(index + 1).padStart(2, '0')}</span>
+        <h3 className="font-display text-[1rem] font-bold">{mod.module}</h3>
+      </div>
 
-      {visual ? (
-        <div
-          className={`flex flex-col gap-3 pl-0 lg:flex-row lg:items-center lg:gap-8 lg:pl-7 ${
-            reversed ? 'lg:flex-row-reverse' : ''
-          }`}
+      <p className="mb-3 text-[0.85rem] leading-snug text-ink-70">{mod.objective}</p>
+
+      <ul className="mb-3">
+        {mod.checklist.map((item) => (
+          <li key={item} className="flex items-start gap-2 py-1">
+            <span aria-hidden="true" className="mt-1.5 size-1.5 shrink-0 border border-ink-25" />
+            <span className="text-[0.8rem] leading-snug text-ink-70">{item}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="border-l-2 border-accent-orange pl-3">
+        <span className="label text-accent-orange">Key Decision</span>
+        <p className="mt-1 text-[0.8rem] leading-snug font-medium text-ink">{mod.keyDecision}</p>
+      </div>
+
+      {visual && (
+        <button
+          type="button"
+          onClick={() => onOpenImage(visual)}
+          aria-label={`Open the ${visual.title} artifact`}
+          className="group relative mt-4 block cursor-pointer overflow-hidden border-t border-dashed border-ink-25 pt-4 text-left"
         >
-          <div className="lg:w-1/2">
-            <BandBody index={index} mod={mod} />
-          </div>
-
-          <button
-            type="button"
-            onClick={() => onOpenImage(visual)}
-            aria-label={`Open the ${visual.title} artifact`}
-            className="group relative block cursor-pointer overflow-hidden border border-ink-25 bg-paper-warm p-1.5 text-left transition-[border-color,box-shadow] duration-300 lg:w-1/2 hover:border-accent-orange hover:shadow-[0_0_16px_-8px_var(--accent-orange)]"
-          >
-            <span className="label mb-1 block text-ink-45 transition-colors duration-300 group-hover:text-accent-orange">
-              {visual.title}
+          <span className="label mb-2 block text-ink-45 transition-colors duration-300 group-hover:text-accent-orange">
+            {visual.title}
+          </span>
+          <span className="relative block h-44 overflow-hidden border border-ink-25 bg-paper-warm transition-[border-color,box-shadow] duration-300 group-hover:border-accent-orange group-hover:shadow-[0_0_16px_-8px_var(--accent-orange)] sm:h-52">
+            <img src={asset(visual.src)} alt={visual.alt} className="h-full w-full object-contain" />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center gap-1.5 bg-gradient-to-t from-ink/90 to-transparent py-2 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100"
+            >
+              <span className="label text-paper">Click to Enlarge</span>
             </span>
-            <span className="relative block h-32 overflow-hidden border border-ink-25 bg-paper sm:h-36">
-              <img src={asset(visual.src)} alt={visual.alt} className="h-full w-full object-contain" />
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center gap-1.5 bg-gradient-to-t from-ink/90 to-transparent py-2 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100"
-              >
-                <span className="label text-paper">Click to Enlarge</span>
-              </span>
-            </span>
-          </button>
-        </div>
-      ) : (
-        <div className="pl-0 lg:pl-7">
-          <BandBody index={index} mod={mod} />
-        </div>
+          </span>
+        </button>
       )}
     </div>
   )
@@ -152,7 +109,6 @@ function Band({
 /* ---- assembled sheet ------------------------------------------------------ */
 
 export function ExecutionStrategy({ execution }: { execution: CaseStudy['execution'] }): ReactElement {
-  const { ref, shown } = useReveal<HTMLDivElement>()
   const [lightbox, setLightbox] = useState<Visual | null>(null)
 
   useEffect(() => {
@@ -165,25 +121,43 @@ export function ExecutionStrategy({ execution }: { execution: CaseStudy['executi
   }, [lightbox])
 
   if (execution.length === 0) return <></>
+  const [s1, s2, s3, s4, s5] = execution
 
   return (
-    <div ref={ref} className="flex flex-col bg-paper text-ink lg:h-dvh lg:min-h-[36rem]">
-      <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(1rem,3vh,1.75rem)]">
-        <div className="mb-2.5 flex shrink-0 items-baseline gap-3 border-b-2 border-ink pb-2">
-          <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink" />
-          <h2 className="font-display text-[clamp(1.05rem,1.9vw,1.3rem)] font-bold">Execution Strategy</h2>
-          <span className="label ml-auto text-ink-45">Operations Playbook</span>
-        </div>
+    <section className="mt-14">
+      <div className="mb-6 flex items-baseline gap-3 border-b-2 border-ink pb-3">
+        <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink" />
+        <h2 className="font-display text-[clamp(1.15rem,2.2vw,1.4rem)] font-bold">Execution Strategy</h2>
+        <span className="label ml-auto text-ink-45">Operations Playbook</span>
+      </div>
 
-        <div className="relative flex min-h-0 flex-1 flex-col gap-2">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1 bottom-1 left-0 hidden w-px bg-ink-25 lg:block"
-          />
-          {execution.map((mod, i) => (
-            <Band key={mod.module} index={i} mod={mod} shown={shown} onOpenImage={setLightbox} />
-          ))}
-        </div>
+      <div className="flex flex-col gap-8">
+        {s1 && (
+          <Reveal>
+            <StageCard index={0} mod={s1} onOpenImage={setLightbox} />
+          </Reveal>
+        )}
+
+        {s2 && (
+          <Reveal>
+            <StageCard index={1} mod={s2} onOpenImage={setLightbox} />
+          </Reveal>
+        )}
+
+        {s3 && s4 && (
+          <Reveal>
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              <StageCard index={2} mod={s3} onOpenImage={setLightbox} />
+              <StageCard index={3} mod={s4} onOpenImage={setLightbox} />
+            </div>
+          </Reveal>
+        )}
+
+        {s5 && (
+          <Reveal>
+            <StageCard index={4} mod={s5} onOpenImage={setLightbox} />
+          </Reveal>
+        )}
       </div>
 
       {lightbox && (
@@ -212,6 +186,6 @@ export function ExecutionStrategy({ execution }: { execution: CaseStudy['executi
           </figure>
         </div>
       )}
-    </div>
+    </section>
   )
 }
