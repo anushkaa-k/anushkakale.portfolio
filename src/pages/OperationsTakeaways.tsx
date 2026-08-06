@@ -110,12 +110,14 @@ function ProjectSnapshot({ snapshot }: { snapshot: NonNullable<CaseStudy['snapsh
           </div>
         ))}
       </dl>
-      <div className="relative border-t-2 border-ink bg-paper-warm px-3.5 py-3.5">
-        <span aria-hidden="true" className="absolute top-2 left-3.5 font-display text-[1.4rem] leading-none text-ink-25">
-          &ldquo;
-        </span>
-        <p className="pl-3 text-[0.78rem] leading-snug font-medium text-ink italic">{snapshot.closing}</p>
-      </div>
+      {snapshot.closing && (
+        <div className="relative border-t-2 border-ink bg-paper-warm px-3.5 py-3.5">
+          <span aria-hidden="true" className="absolute top-2 left-3.5 font-display text-[1.4rem] leading-none text-ink-25">
+            &ldquo;
+          </span>
+          <p className="pl-3 text-[0.78rem] leading-snug font-medium text-ink italic">{snapshot.closing}</p>
+        </div>
+      )}
     </div>
   )
 }

@@ -30,12 +30,14 @@ function CornerBrackets(): ReactElement {
   )
 }
 
-function PillarDivider({ index, title }: { index: number; title: string }): ReactElement {
+function PillarDivider({ index, title, showLine = true }: { index: number; title: string; showLine?: boolean }): ReactElement {
   return (
     <>
-      <svg viewBox="0 0 1000 4" preserveAspectRatio="none" className="h-1 w-full" aria-hidden="true">
-        <line x1={0} y1={2} x2={1000} y2={2} className="l-thin draw-in-line" />
-      </svg>
+      {showLine && (
+        <svg viewBox="0 0 1000 4" preserveAspectRatio="none" className="h-1 w-full" aria-hidden="true">
+          <line x1={0} y1={2} x2={1000} y2={2} className="l-thin draw-in-line" />
+        </svg>
+      )}
       <div className="mt-3 mb-6 flex items-baseline gap-3">
         <span aria-hidden="true" className="size-2 shrink-0 rotate-45 border border-ink-45" />
         <span className="label text-ink-45">Pillar {String(index + 1).padStart(2, '0')}</span>
@@ -165,7 +167,14 @@ function BudgetBoardArtifact(): ReactElement {
             const l = trimLine(BUDGET_CENTER.x, BUDGET_CENTER.y, n.x, n.y, 13, 4)
             return (
               <g key={n.item}>
-                <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} className="l-hair" style={{ fill: 'none' }} />
+                <line
+                  x1={l.x1}
+                  y1={l.y1}
+                  x2={l.x2}
+                  y2={l.y2}
+                  className="l-hair"
+                  style={{ fill: 'none', strokeWidth: 0.7 }}
+                />
                 <polygon
                   points={arrowhead(BUDGET_CENTER.x, BUDGET_CENTER.y, n.x, n.y, 0.56, 2)}
                   className="fill-ink"
@@ -174,10 +183,13 @@ function BudgetBoardArtifact(): ReactElement {
               </g>
             )
           })}
+          {/* Quote-slip connectors start well clear of the department's own
+              label (a large start gap, not the usual small trim) so the
+              dashed line never travels underneath that text. */}
           {QUOTE_SLIPS.map((s) => {
             const node = BUDGET_NODES.find((n) => n.item === s.forItem)
             if (!node) return null
-            const l = trimLine(node.x, node.y, s.x, s.y, 3, 3)
+            const l = trimLine(node.x, node.y, s.x, s.y, 17, 3)
             return (
               <line
                 key={s.label}
@@ -186,7 +198,7 @@ function BudgetBoardArtifact(): ReactElement {
                 x2={l.x2}
                 y2={l.y2}
                 className="l-hair"
-                style={{ fill: 'none', strokeDasharray: '2 1.6' }}
+                style={{ fill: 'none', strokeWidth: 0.6, strokeDasharray: '2 1.6' }}
               />
             )
           })}
@@ -195,7 +207,7 @@ function BudgetBoardArtifact(): ReactElement {
             cy={BUDGET_CENTER.y}
             r={13}
             className="l-med"
-            style={{ fill: 'var(--paper-warm)' }}
+            style={{ fill: 'var(--paper-warm)', strokeWidth: 1.3 }}
           />
         </svg>
 
@@ -227,7 +239,7 @@ function BudgetBoardArtifact(): ReactElement {
               className="group/dept absolute z-10 -translate-y-1/2"
               style={{ left: `${n.x}%`, top: `${n.y}%` }}
             >
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 bg-paper py-0.5 pr-1.5">
                 <span
                   aria-hidden="true"
                   className="size-1.5 shrink-0 rotate-45 border border-ink-45 bg-paper transition-colors duration-300 group-hover/dept:border-accent-orange group-hover/dept:bg-accent-orange"
@@ -371,11 +383,11 @@ const WORKFLOW_SEGMENTS: [string, string][] = [
 ]
 
 const WORKFLOW_CALLOUTS = [
-  { text: '✓ Set Installed', x: 11, y: 18 },
-  { text: '✓ Lighting Focus Complete', x: 40, y: 18 },
-  { text: '✓ Projection Mapping Tested', x: 50, y: 94 },
-  { text: '✓ Cue Sheet Approved', x: 68, y: 18 },
-  { text: '✓ Costumes Ready', x: 90, y: 18 },
+  { text: '✓ Set Installed', x: 10, y: 18 },
+  { text: '✓ Lighting Focus Complete', x: 37, y: 18 },
+  { text: '✓ Projection Mapping Tested', x: 78, y: 97 },
+  { text: '✓ Cue Sheet Approved', x: 63, y: 18 },
+  { text: '✓ Costumes Ready', x: 88, y: 18 },
 ]
 
 function WorkflowMilestone({ n }: { n: WorkflowNode }): ReactElement {
@@ -402,7 +414,7 @@ function WorkflowMilestone({ n }: { n: WorkflowNode }): ReactElement {
       )}
 
       <span
-        className={`label pointer-events-none absolute text-[0.54rem] whitespace-nowrap transition-colors duration-300 group-hover/wf:text-accent-orange ${edge} ${
+        className={`label pointer-events-none absolute bg-paper px-1 py-0.5 text-[0.54rem] whitespace-nowrap transition-colors duration-300 group-hover/wf:text-accent-orange ${edge} ${
           n.destination ? 'text-accent-orange' : 'text-ink-45'
         } ${n.side === 'above' ? 'bottom-full mb-1.5' : 'top-full mt-1.5'}`}
       >
@@ -434,58 +446,51 @@ function WorkflowMilestone({ n }: { n: WorkflowNode }): ReactElement {
 
 function ProductionWorkflowArtifact(): ReactElement {
   return (
-    <div className="relative h-[26rem] w-full border border-ink-25 bg-paper">
+    <div className="relative h-[20rem] w-full border border-ink-25 bg-paper">
       <div className="label absolute inset-x-0 top-0 z-20 flex items-center gap-2 border-b border-ink-25 bg-paper-warm px-3 py-2 whitespace-nowrap text-ink-45">
         Production Workflow
         <span className="ml-auto text-ink-25">Production Bible</span>
       </div>
 
-      {/* Ten labelled milestones don't compress gracefully into a phone's
-          width — rather than shrink the text past legibility, the diagram
-          keeps its full-size layout and scrolls horizontally below that
-          width, the same trade-off a real production bible's foldout
-          timeline makes. */}
-      <div className="absolute inset-x-0 top-8 bottom-0 overflow-x-auto overflow-y-hidden">
-        <div className="relative h-full w-full min-w-[42rem]">
-          <svg
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            className="absolute inset-0 h-full w-full"
+      <div className="absolute inset-x-0 top-8 bottom-0">
+        <svg
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-full"
+          aria-hidden="true"
+        >
+          {WORKFLOW_SEGMENTS.map(([fromKey, toKey]) => {
+            const a = WORKFLOW_NODE_BY_KEY.get(fromKey)
+            const b = WORKFLOW_NODE_BY_KEY.get(toKey)
+            if (!a || !b) return null
+            const l = trimLine(a.x, a.y, b.x, b.y, 3, 3)
+            return (
+              <g key={`${fromKey}-${toKey}`}>
+                <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} className="l-thin" style={{ fill: 'none', strokeWidth: 0.8 }} />
+                <polygon
+                  points={arrowhead(a.x, a.y, b.x, b.y, 0.85, 2.2)}
+                  className="fill-ink"
+                  style={{ opacity: 0.55 }}
+                />
+              </g>
+            )
+          })}
+        </svg>
+
+        {WORKFLOW_CALLOUTS.map((c, i) => (
+          <span
+            key={c.text}
             aria-hidden="true"
+            className="label pointer-events-none absolute z-0 border border-ink-25 bg-paper-warm px-1 py-0.5 text-[0.42rem] leading-none whitespace-nowrap text-ink-45"
+            style={{ left: `${c.x}%`, top: `${c.y}%`, transform: `translate(-50%, -50%) rotate(${i % 2 === 0 ? -3 : 3}deg)` }}
           >
-            {WORKFLOW_SEGMENTS.map(([fromKey, toKey]) => {
-              const a = WORKFLOW_NODE_BY_KEY.get(fromKey)
-              const b = WORKFLOW_NODE_BY_KEY.get(toKey)
-              if (!a || !b) return null
-              const l = trimLine(a.x, a.y, b.x, b.y, 3, 3)
-              return (
-                <g key={`${fromKey}-${toKey}`}>
-                  <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} className="l-thin" style={{ fill: 'none' }} />
-                  <polygon
-                    points={arrowhead(a.x, a.y, b.x, b.y, 0.85, 2.2)}
-                    className="fill-ink"
-                    style={{ opacity: 0.55 }}
-                  />
-                </g>
-              )
-            })}
-          </svg>
+            {c.text}
+          </span>
+        ))}
 
-          {WORKFLOW_CALLOUTS.map((c, i) => (
-            <span
-              key={c.text}
-              aria-hidden="true"
-              className="label pointer-events-none absolute z-0 border border-ink-25 bg-paper-warm/85 px-1.5 py-0.5 text-[0.48rem] leading-none whitespace-nowrap text-ink-45"
-              style={{ left: `${c.x}%`, top: `${c.y}%`, transform: `translate(-50%, -50%) rotate(${i % 2 === 0 ? -3 : 3}deg)` }}
-            >
-              {c.text}
-            </span>
-          ))}
-
-          {WORKFLOW_NODES.map((n) => (
-            <WorkflowMilestone key={n.key} n={n} />
-          ))}
-        </div>
+        {WORKFLOW_NODES.map((n) => (
+          <WorkflowMilestone key={n.key} n={n} />
+        ))}
       </div>
     </div>
   )
@@ -599,10 +604,6 @@ export function FromScriptToStage({ pillars }: { pillars: CaseStudy['pillars'] }
         <h2 className="font-display text-[clamp(1.15rem,2.2vw,1.4rem)] font-bold">From Script to Stage</h2>
         <span className="label ml-auto text-ink-45">Production Dossier</span>
       </div>
-      <p className="label mb-6 text-ink-45">
-        The operational framework behind building a touring theatre production.
-      </p>
-
       {pillars.map((p, i) => {
         // Pillars 02 and 03 (Cross-city Coordination, Technical Production)
         // render together as the engineering board below, once, keyed off
@@ -621,7 +622,7 @@ export function FromScriptToStage({ pillars }: { pillars: CaseStudy['pillars'] }
 
         return (
           <Reveal key={p.title} className="mb-14 last:mb-0">
-            <PillarDivider index={i} title={p.title} />
+            <PillarDivider index={i} title={p.title} showLine={i !== 0} />
 
             <div className="grid gap-x-10 gap-y-6 lg:grid-cols-[9fr_11fr]">
               <div className={visualLeft ? 'lg:order-2' : 'lg:order-1'}>
