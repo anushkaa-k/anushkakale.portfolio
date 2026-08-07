@@ -72,7 +72,7 @@ ownership:
   - domain: Team Coordination
     keywords: [Volunteers, Technicians, Venue staff, Cross-department communication]
 
-# The Operational Complexity risk matrix cards. Numbered C-01, C-02... in
+# The Project Complexity risk matrix cards. Numbered C-01, C-02... in
 # code, in this array order.
 risks:
   - item: Multiple Venues
