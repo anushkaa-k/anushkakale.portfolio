@@ -76,13 +76,13 @@ ownership:
 # code, in this array order.
 risks:
   - item: Multiple Venues
-    metric: 4 venues operating simultaneously
+    metric: 5 venues operating simultaneously
     note: >-
       Each venue had unique backstage layouts, technical setups, crew
       requirements and audience capacities, requiring separate operational
       planning despite running under one festival.
   - item: Parallel Productions
-    metric: 20+ performances across 4 days
+    metric: 8+ performances across 4 days
     note: >-
       Rehearsals, load-ins, changeovers and live performances frequently
       overlapped, meaning several production workflows were active at the
@@ -106,7 +106,7 @@ risks:
       issues required rapid decisions while keeping performances and
       audience experience uninterrupted.
   - item: Interdependent Teams
-    metric: 30+ volunteers and multiple stakeholders
+    metric: 8+ volunteers and 9+ stakeholders
     note: >-
       Production teams, artists, venue management, technicians, vendors and
       front-of-house all depended on timely information and coordinated
@@ -121,14 +121,14 @@ risks:
 execution:
   - module: Production Planning
     objective: >-
-      Four venues running in parallel needed one schedule, not four — built
+      Five venues running in parallel needed one schedule, not five — built
       backward from fixed curtain times.
     checklist:
-      - Built a master run-of-show across all four venues and four days
+      - Built a master run-of-show across all five venues and four days
       - Locked load-in and tech slots first, fit rehearsals around fixed show times
       - Circulated one shared schedule, updated in real time as calls shifted
     keyDecision: >-
-      One shared run-of-show instead of four separate venue schedules — a
+      One shared run-of-show instead of five separate venue schedules, a
       slip at one venue had a buffer to absorb into instead of cascading
       into the next call.
 
@@ -147,7 +147,7 @@ execution:
 
   - module: Volunteer Management
     objective: >-
-      30+ volunteers covering four venues across four days needed fixed
+      8+ volunteers covering four venues across four days needed fixed
       zones, not floating coverage.
     checklist:
       - Assigned volunteers to fixed zones and shifts rather than floating coverage
@@ -167,7 +167,7 @@ execution:
       - Assigned one hospitality point of contact per company
     keyDecision: >-
       A hospitality checklist that scaled to company size, confirmed ahead
-      of the show date — nothing scrambled together on the day regardless
+      of the show date, nothing scrambled together on the day regardless
       of group size.
 
   - module: Audience Experience
@@ -191,9 +191,9 @@ execution:
 # is 2–3 short, measurable bullets, not a paragraph.
 decisions:
   - title: Multi-Venue Scheduling
-    metric: 4 Venues · 4 Days
+    metric: 5 Venues · 4 Days
     challenge: >-
-      Four venues, four fixed curtain times, almost no slack to absorb
+      Five venues, four fixed curtain times, almost no slack to absorb
       a slip at any one of them.
     decision: >-
       Built one shared run-of-show instead of four separate venue
@@ -205,9 +205,9 @@ decisions:
       - One shared schedule, not four, as the single source of truth
 
   - title: Volunteer Deployment
-    metric: 30+ Volunteers
+    metric: 8+ Volunteers
     challenge: >-
-      30+ volunteers across four venues and four days — too many shifts
+      8+ volunteers across four venues and four days, too many shifts
       for one supervisor to watch.
     decision: >-
       Assigned volunteers to fixed zones and shifts, with one named
@@ -220,7 +220,7 @@ decisions:
   - title: Technical Coordination
     metric: 100+ Technical Cues
     challenge: >-
-      Four venues, four different rigs — no single technical plan
+      Four venues, four different rigs, no single technical plan
       could be assumed to carry over.
     decision: >-
       Ran a pre-show walkthrough at every venue and kept a
