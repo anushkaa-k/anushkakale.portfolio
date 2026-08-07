@@ -4,8 +4,8 @@ import type { Mode } from '../hooks/useLights'
 
 /* The chrome every case study page shares verbatim, split in two:
 
-   CaseStudyNav is the sticky top bar (back link, House Lights toggle,
-   section nav) — rendered as a plain sibling before the page's own
+   CaseStudyNav is the sticky top bar (back link, section nav, House
+   Lights toggle rightmost) — rendered as a plain sibling before the page's own
    viewport-locked opening sheet, exactly where Masthead sits on the main
    page, so `sticky top-0` pins it across the whole page's scroll rather
    than being scoped to just the opening sheet's own overflow container
@@ -42,21 +42,6 @@ export function CaseStudyNav({
         <span aria-hidden="true">←</span> Back to Projects
       </a>
 
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-pressed={mode === 'blueprint'}
-        className="inline-flex shrink-0 cursor-pointer items-center gap-2.5 border border-ink-25 px-2.5 py-1.5 text-ink-70 transition-colors hover:border-ink-45 hover:text-ink"
-      >
-        <span
-          aria-hidden="true"
-          className={`size-2.5 rounded-full border border-current ${
-            mode === 'blueprint' ? 'bg-transparent' : 'bg-redline shadow-[0_0_0_3px_rgb(164_64_42/0.22)]'
-          }`}
-        />
-        <span className="label">{mode === 'blueprint' ? 'House Lights' : 'Lights Out'}</span>
-      </button>
-
       <nav aria-label="Sections on this page" className="ml-auto">
         <ul className="flex flex-wrap gap-x-5 gap-y-2">
           {sections.map((s) => (
@@ -71,6 +56,21 @@ export function CaseStudyNav({
           ))}
         </ul>
       </nav>
+
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-pressed={mode === 'blueprint'}
+        className="inline-flex shrink-0 cursor-pointer items-center gap-2.5 border border-ink-25 px-2.5 py-1.5 text-ink-70 transition-colors hover:border-ink-45 hover:text-ink"
+      >
+        <span
+          aria-hidden="true"
+          className={`size-2.5 rounded-full border border-current ${
+            mode === 'blueprint' ? 'bg-transparent' : 'bg-redline shadow-[0_0_0_3px_rgb(164_64_42/0.22)]'
+          }`}
+        />
+        <span className="label">{mode === 'blueprint' ? 'House Lights' : 'Lights Out'}</span>
+      </button>
     </header>
   )
 }
