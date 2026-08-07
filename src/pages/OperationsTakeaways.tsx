@@ -134,7 +134,7 @@ export function OperationsTakeaways({ data }: { data: CaseStudy }): ReactElement
       </div>
 
       <div className="grid grid-cols-1 gap-x-10 gap-y-8 lg:grid-cols-[65fr_35fr]">
-        <div className="border border-ink-25">
+        <div className="border border-ink-25 bg-paper">
           {data.takeaways.map((t, i) => (
             <TakeawayCard key={t.heading} index={i} t={t} />
           ))}
