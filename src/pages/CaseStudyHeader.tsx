@@ -29,7 +29,7 @@ export function CaseStudyHeader({
 }): ReactElement {
   return (
     <header className="shrink-0">
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-ink-25 bg-paper pb-3">
         <a
           href={backHref}
           className="label inline-flex items-center gap-1.5 text-ink-45 no-underline transition-colors hover:text-ink"
