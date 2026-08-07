@@ -3,7 +3,7 @@ import { useState, type ReactElement } from 'react'
 import type { CaseStudy } from '../content'
 import { useReveal } from '../hooks/useReveal'
 
-/* Scope of Ownership and Operational Complexity used to be two separate,
+/* Scope of Ownership and Project Complexity used to be two separate,
    scroll-triggered sections, each pairing a diagram with a list. They're
    now one sheet: a hub-and-spoke "command map" of what she owned on the
    left, a risk matrix of why that ownership was operationally hard on the
@@ -207,7 +207,7 @@ function OwnershipMap({ ownership, shown }: { ownership: CaseStudy['ownership'];
   )
 }
 
-/* ---- Operational Complexity: risk matrix cards --------------------------- */
+/* ---- Project Complexity: risk matrix cards -------------------------------- */
 
 function RiskIcon({ index }: { index: number }): ReactElement {
   const stroke = 'l-thin'
@@ -291,6 +291,7 @@ function ComplexityGrid({ risks, shown }: { risks: CaseStudy['risks']; shown: bo
             </span>
           </div>
           <h3 className="mt-1.5 font-display text-[0.86rem] leading-tight font-bold">{risk.item}</h3>
+          <p className="mt-1 text-[0.72rem] leading-snug font-semibold text-accent-orange">{risk.metric}</p>
           <p className="mt-1 text-[0.72rem] leading-snug text-ink-70">{risk.note}</p>
         </div>
       ))}
@@ -327,7 +328,7 @@ export function OperationsMap({
           </div>
 
           <div className="flex min-h-0 flex-col">
-            <SubsectionHeading tag={`${risks.length} Factors`}>Operational Complexity</SubsectionHeading>
+            <SubsectionHeading tag={`${risks.length} Factors`}>Project Complexity</SubsectionHeading>
             <ComplexityGrid risks={risks} shown={shown} />
           </div>
         </div>

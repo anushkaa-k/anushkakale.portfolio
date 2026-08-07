@@ -210,13 +210,15 @@ export const caseStudySchema = z.object({
       }),
     )
     .default([]),
-  /** The Operational Complexity cards — a risk matrix, one short note per
-      card. Card numbering (C-01, C-02, ...) is derived from array order,
-      not stored here. */
+  /** The Project Complexity cards — a risk matrix, one card per constraint.
+      Card numbering (C-01, C-02, ...) is derived from array order, not
+      stored here. `metric` is the short stat/callout line under the
+      title; `note` is the fuller sentence beneath it. */
   risks: z
     .array(
       z.object({
         item: z.string(),
+        metric: z.string(),
         note: z.string(),
       }),
     )
