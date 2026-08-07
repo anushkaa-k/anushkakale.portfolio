@@ -8,6 +8,16 @@ import { CaseStudyHeader } from './CaseStudyHeader'
 import { FromScriptToStage } from './FromScriptToStage'
 import { OperationsTakeaways } from './OperationsTakeaways'
 
+/* This page's own sections, in document order — fed to CaseStudyHeader's
+   nav so it can jump around this page specifically, distinct from the
+   main site's section list. */
+const ALIVE_SECTIONS = [
+  { id: 'project-overview', label: 'Project Overview' },
+  { id: 'production-lifecycle', label: 'Production Lifecycle' },
+  { id: 'from-script-to-stage', label: 'From Script to Stage' },
+  { id: 'operations-takeaways', label: 'Operations Takeaways' },
+]
+
 /* Alive is a narrative case study, not a dashboard one: the opening is a
    Project Overview (40% of the viewport — a short narrative alongside a
    production photograph) and a Production Lifecycle map (60%), both
@@ -160,7 +170,7 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
       : null
 
   return (
-    <section className="flex min-h-0 flex-col" style={{ flex: '3 1 0%' }}>
+    <section id="production-lifecycle" className="flex min-h-0 flex-col" style={{ flex: '3 1 0%' }}>
       <h2 className="label mb-2 shrink-0 text-ink-45">Production Lifecycle</h2>
 
       <div
@@ -288,12 +298,19 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
     <>
       <div className="flex h-dvh min-h-[36rem] flex-col text-ink">
         <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
-          <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} backHref={backHref} />
+          <CaseStudyHeader
+            title={data.title}
+            role={data.role}
+            org={data.org}
+            year={data.year}
+            backHref={backHref}
+            sections={ALIVE_SECTIONS}
+          />
 
           <hr className="my-[clamp(0.75rem,2.5vh,1.25rem)] shrink-0 border-t-2 border-ink" />
 
           <div className="flex min-h-0 flex-1 flex-col gap-[clamp(1rem,3vh,2rem)]">
-            <section className="flex min-h-0 flex-col" style={{ flex: '2 1 0%' }}>
+            <section id="project-overview" className="flex min-h-0 flex-col" style={{ flex: '2 1 0%' }}>
               <h2 className="label mb-2 shrink-0 text-ink-45">Project Overview</h2>
               <div className="grid min-h-0 flex-1 gap-x-8 gap-y-4 lg:grid-cols-[3fr_2fr]">
                 <div className="flex min-h-0 flex-col overflow-y-auto">

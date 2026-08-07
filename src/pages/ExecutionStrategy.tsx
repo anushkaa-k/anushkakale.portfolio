@@ -159,7 +159,7 @@ export function ExecutionStrategy({ execution }: { execution: CaseStudy['executi
   const [s1, s2, s3, s4, s5] = execution
 
   return (
-    <section className="mt-14">
+    <section id="execution-strategy" className="mt-14">
       <div className="mb-6 flex items-baseline gap-3 border-b-2 border-ink pb-3">
         <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink" />
         <h2 className="font-display text-[clamp(1.15rem,2.2vw,1.4rem)] font-bold">Execution Strategy</h2>
