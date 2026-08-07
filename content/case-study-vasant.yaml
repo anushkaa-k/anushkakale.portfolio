@@ -76,17 +76,41 @@ ownership:
 # code, in this array order.
 risks:
   - item: Multiple Venues
-    note: Four venues operating simultaneously with different technical and audience requirements.
+    metric: 4 venues operating simultaneously
+    note: >-
+      Each venue had unique backstage layouts, technical setups, crew
+      requirements and audience capacities, requiring separate operational
+      planning despite running under one festival.
   - item: Parallel Productions
-    note: Multiple rehearsals, performances and changeovers happening at the same time.
+    metric: 20+ performances across 4 days
+    note: >-
+      Rehearsals, load-ins, changeovers and live performances frequently
+      overlapped, meaning several production workflows were active at the
+      same time.
   - item: Fixed Show Timings
-    note: Curtains could not be delayed regardless of upstream issues.
+    metric: Zero flexibility on curtain time
+    note: >-
+      Every production worked backwards from fixed performance slots.
+      Delays in technical setup or rehearsals could not push audience-facing
+      schedules.
   - item: Shared Resources
-    note: Equipment, crew and volunteers moved between productions throughout the day.
+    metric: One resource, multiple dependencies
+    note: >-
+      Lighting equipment, sound systems, venue staff, volunteers and
+      technical crews were shared across productions, creating constant
+      scheduling dependencies.
   - item: Live Decision Making
-    note: Unexpected changes required quick operational decisions without disrupting performances.
+    metric: Continuous operational changes
+    note: >-
+      Artist requests, venue constraints, schedule shifts and technical
+      issues required rapid decisions while keeping performances and
+      audience experience uninterrupted.
   - item: Interdependent Teams
-    note: Production, artists, venue operations, vendors and front-of-house had to remain synchronised.
+    metric: 30+ volunteers and multiple stakeholders
+    note: >-
+      Production teams, artists, venue management, technicians, vendors and
+      front-of-house all depended on timely information and coordinated
+      execution.
 
 # The Execution Strategy bands — read as one continuous operations
 # playbook, not five separate write-ups. Each band's supporting artifact is
