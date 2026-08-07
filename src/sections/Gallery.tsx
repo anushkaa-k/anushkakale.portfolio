@@ -48,11 +48,14 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
   const [atEnd, setAtEnd] = useState(false)
   const stripRef = useRef<HTMLDivElement>(null)
 
-  const shown: Frame[] = gallery.items
-    .filter((photo) => !failed.has(photo.src))
-    .map((photo, i) => ({ ...photo, frame: i + 1 }))
+  const shown: Photo[] = gallery.items.filter((photo) => !failed.has(photo.src))
 
-  const ordered: Frame[] = GROUP_ORDER.flatMap((group) => shown.filter((p) => p.project === group))
+  /* Frame numbers follow the strip's own left-to-right display order
+     (grouped by GROUP_ORDER), not the underlying yaml order — so the
+     numbers read sequentially, 1 through N, as you actually scroll. */
+  const ordered: Frame[] = GROUP_ORDER.flatMap((group) => shown.filter((p) => p.project === group)).map(
+    (photo, i) => ({ ...photo, frame: i + 1 }),
+  )
 
   useEffect(() => {
     if (openIndex === null) return

@@ -13,9 +13,6 @@ import { OperationsMap } from './OperationsMap'
    nav so it can jump around this page specifically, distinct from the
    main site's section list. */
 const VASANT_SECTIONS = [
-  { id: 'executive-dashboard', label: 'Executive Dashboard' },
-  { id: 'project-context', label: 'Project Context' },
-  { id: 'project-board', label: 'Project Board' },
   { id: 'scope-of-ownership', label: 'Scope of Ownership' },
   { id: 'project-complexity', label: 'Project Complexity' },
   { id: 'execution-strategy', label: 'Execution Strategy' },
