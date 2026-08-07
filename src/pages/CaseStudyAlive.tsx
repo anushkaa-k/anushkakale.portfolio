@@ -154,6 +154,7 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
 
+  
   const d = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ')
 
   const tail = (() => {
