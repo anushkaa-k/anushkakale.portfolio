@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactElement } from 'react'
 
 import type { CaseStudy } from '../content'
 import { Reveal } from '../components/Sheet'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 
 /* Four pillars. Budgeting (01) and Rehearsal & Production Planning (04)
    are each a full-width row split roughly 45/55 with a hand-built
@@ -148,12 +149,25 @@ const QUOTE_SLIPS = [
   { forItem: 'Projection', x: 88, y: 20, label: 'Vendor Quote — Projection' },
 ]
 
+/* Below `md` (768px) the board's own column shrinks well past the width
+   the desktop layout was designed for, and a handful of its children —
+   the vendor-quote chits, the department tooltips — carry a fixed pixel
+   width anchored by a percentage `left`, a combination that only stays
+   inside the box at desktop column widths. Percentage-based `right`
+   clamps (the trick used elsewhere, e.g. Contingency) can't fix the
+   quote slips without also nudging their position at ordinary desktop
+   widths, since the tightest of them already leaves less margin than
+   its own box width there — so this needs a real mobile/desktop branch
+   rather than a CSS-only formula, keeping the desktop path untouched. */
 function BudgetBoardArtifact(): ReactElement {
+  const isMobile = useMediaQuery('(max-width: 767px)')
+  const quoteSlipX = (s: (typeof QUOTE_SLIPS)[number]) => (isMobile ? 56 : s.x)
+
   return (
     <div className="relative h-[31rem] w-full border border-ink-25 bg-paper">
       <div className="label absolute inset-x-0 top-0 z-20 flex items-center gap-2 border-b border-ink-25 bg-paper-warm px-3 py-2 whitespace-nowrap text-ink-45">
         Budget Board
-        <span className="ml-auto text-ink-25">Archival Copy</span>
+        <span className="ml-auto hidden text-ink-25 sm:inline">Archival Copy</span>
       </div>
 
       <div className="absolute inset-0">
@@ -189,7 +203,7 @@ function BudgetBoardArtifact(): ReactElement {
           {QUOTE_SLIPS.map((s) => {
             const node = BUDGET_NODES.find((n) => n.item === s.forItem)
             if (!node) return null
-            const l = trimLine(node.x, node.y, s.x, s.y, 17, 3)
+            const l = trimLine(node.x, node.y, quoteSlipX(s), s.y, 17, 3)
             return (
               <line
                 key={s.label}
@@ -260,17 +274,23 @@ function BudgetBoardArtifact(): ReactElement {
                 </div>
               </div>
 
-              <div
-                role="tooltip"
-                className={`pointer-events-none absolute top-1/2 z-30 w-36 -translate-y-1/2 border border-ink-25 bg-paper p-1.5 text-left text-[0.6rem] leading-snug text-ink-70 opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-200 ease-out group-hover/dept:opacity-100 ${
-                  openLeft
-                    ? 'right-full mr-2 -translate-x-1 group-hover/dept:translate-x-0'
-                    : 'left-full ml-2 translate-x-1 group-hover/dept:translate-x-0'
-                }`}
-              >
-                <CornerBrackets />
-                {n.note}
-              </div>
+              {/* Hover-only and unreachable on touch devices anyway, so
+                  below `md` it's skipped outright rather than left to
+                  occupy — invisibly — layout space its fixed width can't
+                  fit inside a narrow column. */}
+              {!isMobile && (
+                <div
+                  role="tooltip"
+                  className={`pointer-events-none absolute top-1/2 z-30 w-36 -translate-y-1/2 border border-ink-25 bg-paper p-1.5 text-left text-[0.6rem] leading-snug text-ink-70 opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-200 ease-out group-hover/dept:opacity-100 ${
+                    openLeft
+                      ? 'right-full mr-2 -translate-x-1 group-hover/dept:translate-x-0'
+                      : 'left-full ml-2 translate-x-1 group-hover/dept:translate-x-0'
+                  }`}
+                >
+                  <CornerBrackets />
+                  {n.note}
+                </div>
+              )}
             </div>
           )
         })}
@@ -281,7 +301,11 @@ function BudgetBoardArtifact(): ReactElement {
           <div
             key={s.label}
             className="absolute z-10 w-[5.2rem] -translate-y-1/2 border border-ink-25 bg-paper px-1.5 py-1 text-center shadow-[0_3px_8px_-4px_var(--ink-45)] transition-transform duration-300 ease-out hover:-translate-y-[calc(50%+2px)]"
-            style={{ left: `${s.x}%`, top: `${s.y}%`, transform: `translateY(-50%) rotate(${s.forItem === 'Set' ? -5 : 4}deg)` }}
+            style={{
+              left: `${quoteSlipX(s)}%`,
+              top: `${s.y}%`,
+              transform: `translateY(-50%) rotate(${s.forItem === 'Set' ? -5 : 4}deg)`,
+            }}
           >
             <span className="label block text-[0.46rem] leading-tight text-ink-45">{s.label}</span>
           </div>
@@ -311,7 +335,12 @@ function BudgetBoardArtifact(): ReactElement {
         <span
           aria-hidden="true"
           className="pointer-events-none absolute font-display text-[0.56rem] leading-tight text-ink-45 italic"
-          style={{ left: '68%', top: '60%', width: '7rem', transform: 'rotate(-3deg)' }}
+          style={{
+            left: isMobile ? '54%' : '68%',
+            top: '60%',
+            width: isMobile ? '6rem' : '7rem',
+            transform: 'rotate(-3deg)',
+          }}
         >
           quotes weighed on quality, not just price
         </span>
@@ -390,7 +419,7 @@ const WORKFLOW_CALLOUTS = [
   { text: '✓ Costumes Ready', x: 88, y: 18 },
 ]
 
-function WorkflowMilestone({ n }: { n: WorkflowNode }): ReactElement {
+function WorkflowMilestone({ n, isMobile }: { n: WorkflowNode; isMobile: boolean }): ReactElement {
   const edge = n.x < 12 ? 'left-0 translate-x-0' : n.x > 88 ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2'
 
   return (
@@ -421,35 +450,45 @@ function WorkflowMilestone({ n }: { n: WorkflowNode }): ReactElement {
         {n.label}
       </span>
 
-      <div
-        role="tooltip"
-        className={`pointer-events-none absolute z-30 w-40 border border-ink-25 bg-paper p-2 text-left opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-300 ease-out group-hover/wf:opacity-100 ${edge} ${
-          n.side === 'above'
-            ? 'bottom-full mb-6 translate-y-1 group-hover/wf:translate-y-0'
-            : 'top-full mt-6 -translate-y-1 group-hover/wf:translate-y-0'
-        }`}
-      >
-        <CornerBrackets />
-        <ul className="space-y-0.5">
-          {n.checklist.map((item) => (
-            <li key={item} className="flex items-baseline gap-1 text-[0.6rem] leading-snug text-ink-70">
-              <span className="text-accent-orange">✓</span>
-              {item}
-            </li>
-          ))}
-        </ul>
-        <p className="mt-1.5 font-display text-[0.58rem] leading-snug text-ink-45 italic">{n.note}</p>
-      </div>
+      {/* Hover-only and unreachable on touch devices anyway; below `md`
+          it's skipped outright rather than left to occupy — invisibly —
+          layout space its fixed width can't fit inside a narrow card
+          (the edge-aware anchor above only accounts for the anchor
+          point, not this box's own width against a phone-narrow
+          container). */}
+      {!isMobile && (
+        <div
+          role="tooltip"
+          className={`pointer-events-none absolute z-30 w-40 border border-ink-25 bg-paper p-2 text-left opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-300 ease-out group-hover/wf:opacity-100 ${edge} ${
+            n.side === 'above'
+              ? 'bottom-full mb-6 translate-y-1 group-hover/wf:translate-y-0'
+              : 'top-full mt-6 -translate-y-1 group-hover/wf:translate-y-0'
+          }`}
+        >
+          <CornerBrackets />
+          <ul className="space-y-0.5">
+            {n.checklist.map((item) => (
+              <li key={item} className="flex items-baseline gap-1 text-[0.6rem] leading-snug text-ink-70">
+                <span className="text-accent-orange">✓</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-1.5 font-display text-[0.58rem] leading-snug text-ink-45 italic">{n.note}</p>
+        </div>
+      )}
     </div>
   )
 }
 
 function ProductionWorkflowArtifact(): ReactElement {
+  const isMobile = useMediaQuery('(max-width: 767px)')
+
   return (
     <div className="relative h-[20rem] w-full border border-ink-25 bg-paper">
       <div className="label absolute inset-x-0 top-0 z-20 flex items-center gap-2 border-b border-ink-25 bg-paper-warm px-3 py-2 whitespace-nowrap text-ink-45">
         Production Workflow
-        <span className="ml-auto text-ink-25">Production Bible</span>
+        <span className="ml-auto hidden text-ink-25 sm:inline">Production Bible</span>
       </div>
 
       <div className="absolute inset-x-0 top-8 bottom-0">
@@ -489,7 +528,7 @@ function ProductionWorkflowArtifact(): ReactElement {
         ))}
 
         {WORKFLOW_NODES.map((n) => (
-          <WorkflowMilestone key={n.key} n={n} />
+          <WorkflowMilestone key={n.key} n={n} isMobile={isMobile} />
         ))}
       </div>
     </div>
