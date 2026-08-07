@@ -17,7 +17,7 @@ import { asset, isExternal } from '../lib/asset'
 export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
   return (
     <Sheet meta={meta}>
-      <Reveal className="grid gap-px border border-ink-45 bg-ink-25 [grid-template-columns:repeat(auto-fit,minmax(19rem,1fr))]">
+      <Reveal className="grid grid-cols-4 gap-px border border-ink-45 bg-ink-25">
         {projects.items.map((project, i) => {
           const featured = i < 2
 
