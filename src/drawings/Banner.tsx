@@ -109,6 +109,57 @@ function GroundPlan(): ReactElement {
 
 /* ---------- centre top: truss elevation ------------------------------------ */
 
+/* The lights hanging over the name: one soft blurred glow per fixture,
+   painted behind the fixture's own linework (LanternRun stays static
+   line art; these circles are the only thing that actually animates).
+   Position math mirrors LanternRun's own spacing exactly, so a glow
+   always sits right at its fixture's lens rather than needing the
+   lantern positions maintained in two places.
+
+   Each fixture is two stacked circles: `.hero-light-base` powers on
+   once (staggered per fixture) then holds an almost-imperceptible
+   shimmer forever; `.hero-light-boost` is a second, independent layer
+   that only answers to `#top:hover`, so the hover brighten never fights
+   the shimmer for the same animated value. */
+function LanternGlow({
+  x,
+  y,
+  length,
+  count,
+  scale = 1,
+}: {
+  x: number
+  y: number
+  length: number
+  count: number
+  scale?: number
+}): ReactElement {
+  const step = length / (count + 1)
+  const lensY = y + 17 * scale
+  const r = 20 * scale
+
+  return (
+    <>
+      {Array.from({ length: count }, (_, i) => {
+        const lx = x + (i + 1) * step
+        const onDelay = 0.9 + i * 0.12
+        return (
+          <Fragment key={i}>
+            <circle
+              cx={lx}
+              cy={lensY}
+              r={r}
+              className="hero-light-base"
+              style={{ animationDelay: `${onDelay}s, ${onDelay + 1.4}s` }}
+            />
+            <circle cx={lx} cy={lensY} r={r} className="hero-light-boost" />
+          </Fragment>
+        )
+      })}
+    </>
+  )
+}
+
 function TrussElevation(): ReactElement {
   const x = 654
   const y = 104
@@ -141,16 +192,15 @@ function TrussElevation(): ReactElement {
         style={{ '--scan-distance': `${length - scanWidth}px` } as CSSProperties}
       />
 
-      <g className="hero-lanterns">
-        <LanternRun
-          x={x}
-          y={y + depth}
-          length={length}
-          count={8}
-          types={['profile', 'fresnel', 'profile', 'par']}
-          scale={1.15}
-        />
-      </g>
+      <LanternGlow x={x} y={y + depth} length={length} count={8} scale={1.15} />
+      <LanternRun
+        x={x}
+        y={y + depth}
+        length={length}
+        count={8}
+        types={['profile', 'fresnel', 'profile', 'par']}
+        scale={1.15}
+      />
 
       {/* motor chains up to the grid */}
       {[0.14, 0.5, 0.86].map((f, i) => {

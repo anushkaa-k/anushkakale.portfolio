@@ -342,6 +342,58 @@ html[data-mode="blueprint"] {
     94%     { transform: translateX(var(--scan-distance, 0px)); opacity: 1; }
     100%    { transform: translateX(var(--scan-distance, 0px)); opacity: 0; }
   }
+
+  /* ---- hero: the rig over the name powering on ---------------------------
+     Two animations on one property, run in sequence by delay rather than
+     by chaining: `hero-light-on` (one-shot, per-fixture stagger) fades
+     each glow up to its resting brightness, then `hero-light-shimmer`
+     (infinite) takes over the instant the first ends — its 0%/100%
+     keyframe matches the resting value exactly, so there's no jump at
+     the handoff. Blurred fill in the site's own orange accent, standing
+     in for a warm practical glow without introducing a new colour. */
+  .hero-light-base {
+    fill: var(--accent-orange);
+    filter: blur(2.25px);
+    opacity: 0;
+    animation-name: hero-light-on, hero-light-shimmer;
+    animation-duration: 1.4s, 9s;
+    animation-timing-function: ease-out, ease-in-out;
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: forwards, none;
+  }
+  @keyframes hero-light-on {
+    from { opacity: 0; }
+    to   { opacity: 0.8; }
+  }
+  @keyframes hero-light-shimmer {
+    0%, 100% { opacity: 0.8; }
+    50%      { opacity: 0.78; }
+  }
+
+  /* A second, independent glow stacked on the same spot — kept off a
+     shared property with the shimmer above on purpose, so answering to
+     hover never has to interrupt or fight an already-running animation. */
+  .hero-light-boost {
+    fill: var(--accent-orange);
+    filter: blur(2.25px);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  #top:hover .hero-light-boost {
+    opacity: 0.12;
+  }
+
+  /* ---- hero: the ambient lift the lit rig casts over the name ----------- */
+  /* A soft radial wash, not a spotlight cone — it only ever brightens the
+     top edge of the heading block and fades out within a few rem, well
+     short of a hard edge. */
+  .hero-ambient-wash {
+    opacity: 0;
+    animation: hero-ambient-in 1.8s 2.6s ease-out forwards;
+  }
+  @keyframes hero-ambient-in {
+    to { opacity: 1; }
+  }
 }
 
 /* On a phone the sheet crops to its centre column (see Banner.tsx), so the
@@ -369,5 +421,13 @@ html[data-mode="blueprint"] {
   }
   .hero-truss-scan {
     opacity: 0;
+  }
+
+  /* Same reasoning: the power-on is one-shot and fine at 0.001s, but the
+     shimmer that follows it is an infinite loop — dropped here so the
+     lights settle at their resting brightness and stay there. The hover
+     boost is a plain transition, not a loop, so it's left alone. */
+  .hero-light-base {
+    animation: hero-light-on 0.001s forwards;
   }
 }
