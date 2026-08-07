@@ -24,7 +24,7 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
           return (
             <article
               key={project.title}
-              className={`group flex flex-col bg-paper p-6 transition-[background-color,box-shadow,transform] duration-300 ease-out hover:z-10 hover:-translate-y-0.5 hover:bg-paper-warm hover:shadow-[0_10px_24px_-12px_var(--ink-25),0_0_22px_-8px_var(--accent-orange)] ${
+              className={`group flex flex-col bg-paper p-[clamp(1rem,2vw,1.5rem)] transition-[background-color,box-shadow,transform] duration-300 ease-out hover:z-10 hover:-translate-y-0.5 hover:bg-paper-warm hover:shadow-[0_10px_24px_-12px_var(--ink-25),0_0_22px_-8px_var(--accent-orange)] ${
                 featured ? 'ring-1 ring-inset ring-ink/70 hover:ring-ink' : 'hover:ring-1 hover:ring-inset hover:ring-ink-25'
               }`}
             >
@@ -42,14 +42,14 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
               </div>
 
               <h3
-                className={`font-display text-2xl leading-tight ${featured ? 'font-extrabold' : 'font-semibold'}`}
+                className={`font-display text-[clamp(1.15rem,1.7vw,1.5rem)] leading-tight ${featured ? 'font-extrabold' : 'font-semibold'}`}
               >
                 {project.title}
               </h3>
               <p className="mt-1 text-[0.9rem] text-ink-70">{project.org}</p>
 
               {project.metrics.length > 0 && (
-                <dl className="my-6 grid gap-x-4 gap-y-3.5 border-t border-ink-12 pt-5 [grid-template-columns:repeat(auto-fit,minmax(5.5rem,1fr))]">
+                <dl className="my-6 grid grid-cols-2 gap-x-4 gap-y-3.5 border-t border-ink-12 pt-5">
                   {project.metrics.map((metric) => {
                     const long = metric.v.length > 14
                     return (
@@ -57,7 +57,9 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
                         <dt className="label text-[0.58rem] text-ink-45">{metric.k}</dt>
                         <dd
                           className={`mt-1 font-display font-bold ${
-                            long ? 'text-[1rem] leading-snug' : 'text-[1.3rem] leading-none'
+                            long
+                              ? 'text-[clamp(0.85rem,1.1vw,1rem)] leading-snug'
+                              : 'text-[clamp(1rem,1.5vw,1.3rem)] leading-none'
                           }`}
                         >
                           {metric.v}
