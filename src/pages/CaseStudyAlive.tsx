@@ -109,15 +109,15 @@ function StationNode({ highlight }: { highlight: boolean }): ReactElement {
   )
 }
 
-function StationLabel({ s, side }: { s: Station; side: 'above' | 'below' }): ReactElement {
+function StationLabel({ s, side, index }: { s: Station; side: 'above' | 'below'; index: number }): ReactElement {
   return (
     <div
-      className={`absolute left-1/2 -translate-x-1/2 ${side === 'above' ? 'bottom-full mb-2.5' : 'top-full mt-2.5'}`}
+      className={`absolute left-1/2 -translate-x-1/2 ${side === 'above' ? 'bottom-full mb-2.5' : 'top-full mt-2.5'
+        } ${index === 0 ? 'translate-x-[-35%]' : ''}`}
     >
       <span
-        className={`label block max-w-none text-center whitespace-nowrap lg:max-w-[4.75rem] lg:text-[0.58rem] lg:whitespace-normal ${
-          s.highlight ? 'font-bold text-accent-orange' : 'text-ink-70'
-        }`}
+        className={`label block max-w-none text-center whitespace-nowrap lg:max-w-[4.75rem] lg:text-[0.58rem] lg:whitespace-normal ${s.highlight ? 'font-bold text-accent-orange' : 'text-ink-70'
+          }`}
       >
         {s.label}
       </span>
@@ -128,11 +128,10 @@ function StationLabel({ s, side }: { s: Station; side: 'above' | 'below' }): Rea
           fades up on hover rather than snapping in. */}
       <div
         role="tooltip"
-        className={`pointer-events-none absolute left-1/2 z-30 w-44 -translate-x-1/2 border border-ink-25 bg-paper p-2.5 text-left opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-300 ease-out group-hover:opacity-100 ${
-          side === 'above'
+        className={`pointer-events-none absolute left-1/2 z-30 w-44 -translate-x-1/2 border border-ink-25 bg-paper p-2.5 text-left opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-300 ease-out group-hover:opacity-100 ${side === 'above'
             ? 'bottom-full mb-2 translate-y-1 group-hover:translate-y-0'
             : 'top-full mt-2 -translate-y-1 group-hover:translate-y-0'
-        }`}
+          }`}
       >
         <CornerBrackets />
         <span className="label block text-accent-orange">{s.label}</span>
@@ -173,15 +172,15 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
 
   return (
     <section
-  id="production-lifecycle"
-  className="flex min-h-0 flex-col lg:flex-[3_1_0%]"
->
+      id="production-lifecycle"
+      className="flex min-h-0 flex-col lg:flex-[3_1_0%]"
+    >
       <h2 className="label mb-2 shrink-0 text-ink-45">Production Lifecycle</h2>
 
       <div
-  ref={ref}
-  className="flex min-h-[18rem] flex-col overflow-x-auto overflow-y-visible no-scrollbar lg:min-h-0 lg:flex-1 lg:overflow-x-visible"
->
+        ref={ref}
+        className="flex min-h-[18rem] flex-col overflow-x-auto overflow-y-visible no-scrollbar lg:min-h-0 lg:flex-1 lg:overflow-x-visible"
+      >
         <div className="relative min-w-[1400px] flex-1 lg:min-w-0">
           {/* The viewBox is stretched non-uniformly (preserveAspectRatio="none"
               onto a container many times wider than it is tall), so every
@@ -270,15 +269,16 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
                   scrolled-off area, so hovering it did nothing visible
                   without scrolling first. */}
               <StationLabel
-  s={s}
-  side={
-    isMobile && i === 1
-      ? 'below'
-      : i % 2 === 0 || points[i].y >= 70
-        ? 'above'
-        : 'below'
-  }
-/>
+                s={s}
+                side={
+                  isMobile && i === 1
+                    ? 'below'
+                    : i % 2 === 0 || points[i].y >= 70
+                      ? 'above'
+                      : 'below'
+                }
+                index={i}
+              />
             </div>
           ))}
         </div>
@@ -320,9 +320,9 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
 
           <div className="flex min-h-0 flex-1 flex-col gap-[clamp(1rem,3vh,2rem)]">
             <section
-  id="project-overview"
-  className="flex min-h-0 flex-col lg:flex-[2_1_0%]"
->
+              id="project-overview"
+              className="flex min-h-0 flex-col lg:flex-[2_1_0%]"
+            >
               <h2 className="label mb-2 shrink-0 text-ink-45">Project Overview</h2>
               <div className="grid min-h-0 flex-1 gap-x-8 gap-y-4 lg:grid-cols-[3fr_2fr]">
                 <div className="flex min-h-0 flex-col">
