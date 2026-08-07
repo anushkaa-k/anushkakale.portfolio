@@ -301,6 +301,47 @@ html[data-mode="blueprint"] {
   .reveal[data-in="true"] svg .draw-in-line {
     stroke-dashoffset: 0;
   }
+
+  /* ---- hero: the sheet's datum spine draws itself in on load ------------ */
+  /* One-time, unlike `.draw-in-line` above — fires on load rather than on
+     scroll, and only on the hero's central datum line, not every stroke
+     on the sheet. `pathLength="1"` on the element (see Banner.tsx)
+     normalises the dash units to exactly 1, so this works regardless of
+     the line's real length. */
+  .hero-draw-in {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: hero-draw-in 1.6s 0.5s ease-out forwards;
+  }
+  @keyframes hero-draw-in {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* ---- hero: stage lights, an extremely soft breathing pulse ------------ */
+  .hero-lanterns {
+    animation: hero-light-pulse 5.5s ease-in-out infinite;
+    animation-delay: 1.6s;
+  }
+  @keyframes hero-light-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.93; }
+  }
+
+  /* ---- hero: a slow scanning highlight along the truss, every ~9s ------- */
+  /* Dormant for the first 80% of each cycle, so it reads as an occasional
+     pass rather than continuous motion. */
+  .hero-truss-scan {
+    transform: translateX(0);
+    opacity: 0;
+    animation: hero-truss-scan 9s ease-in-out infinite;
+    animation-delay: 2.4s;
+  }
+  @keyframes hero-truss-scan {
+    0%, 80% { transform: translateX(0); opacity: 0; }
+    84%     { opacity: 1; }
+    94%     { transform: translateX(var(--scan-distance, 0px)); opacity: 1; }
+    100%    { transform: translateX(var(--scan-distance, 0px)); opacity: 0; }
+  }
 }
 
 /* On a phone the sheet crops to its centre column (see Banner.tsx), so the
@@ -318,4 +359,15 @@ html[data-mode="blueprint"] {
     transition-duration: 0.001s !important;
   }
   .reveal { opacity: 1; transform: none; }
+
+  /* The line-draw above ends on a defined state, so the blanket
+     0.001s duration handles it. These two are infinite loops instead —
+     at a near-zero duration they'd flash rather than settle, so they're
+     switched off outright. */
+  .hero-lanterns, .hero-truss-scan {
+    animation: none !important;
+  }
+  .hero-truss-scan {
+    opacity: 0;
+  }
 }
