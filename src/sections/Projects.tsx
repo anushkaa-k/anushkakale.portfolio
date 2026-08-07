@@ -9,10 +9,10 @@ import { asset, isExternal } from '../lib/asset'
    dimensions, and a link out to the work.
 
    The first two plates are Featured Case Studies — a heavier inset frame,
-   a bolder title and a "View Case Study" CTA. The rest are Supporting
-   Productions: same plate, quieter treatment, a plain "Project Summary"
-   link. Tier comes from position, not extra content, so the row stays
-   exactly the height it was — nothing here adds a line to any card. */
+   a bolder title, a "View Case Study" CTA and an optional second outbound
+   CTA (e.g. Instagram). The rest are Supporting Productions: same plate,
+   quieter treatment, a single plain outbound link. Tier comes from
+   position, not extra content. */
 
 export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
   return (
@@ -70,18 +70,33 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
 
               {project.link &&
                 (featured ? (
-                  <a
-                    href={isExternal(project.link.href) ? project.link.href : asset(project.link.href)}
-                    {...(isExternal(project.link.href)
-                      ? { target: '_blank', rel: 'noopener noreferrer' }
-                      : {})}
-                    className="label mt-auto inline-flex w-fit items-center gap-2 self-start border-2 border-ink/70 px-4 py-2 font-semibold text-ink no-underline transition-colors hover:border-accent-orange hover:bg-accent-orange hover:text-paper"
-                  >
-                    View Case Study
-                    <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
-                      →
-                    </span>
-                  </a>
+                  <div className="mt-auto flex flex-wrap items-center gap-3">
+                    <a
+                      href={isExternal(project.link.href) ? project.link.href : asset(project.link.href)}
+                      {...(isExternal(project.link.href)
+                        ? { target: '_blank', rel: 'noopener noreferrer' }
+                        : {})}
+                      className="label inline-flex w-fit items-center gap-2 self-start border-2 border-ink/70 px-4 py-2 font-semibold text-ink no-underline transition-colors hover:border-accent-orange hover:bg-accent-orange hover:text-paper"
+                    >
+                      View Case Study
+                      <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </a>
+                    {project.instagram && (
+                      <a
+                        href={project.instagram.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="label ml-auto inline-flex w-fit items-center gap-2 self-start border border-ink-25 px-4 py-2 text-ink-70 no-underline transition-[color,border-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-ink-45 hover:text-ink hover:shadow-[0_14px_28px_-16px_var(--ink-45),0_0_20px_-8px_var(--accent-orange)]"
+                      >
+                        {project.instagram.label}
+                        <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+                          ↗
+                        </span>
+                      </a>
+                    )}
+                  </div>
                 ) : (
                   <a
                     href={project.link.href}
@@ -89,7 +104,7 @@ export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
                     rel="noopener noreferrer"
                     className="label mt-auto flex items-center gap-1.5 self-start border-b border-ink-25 pb-1 text-ink-45 no-underline transition-colors hover:border-ink-45 hover:text-ink-70"
                   >
-                    Project Summary
+                    {project.link.label}
                     <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
                       ↗
                     </span>

@@ -5,9 +5,9 @@
 #  block (from "- title:" down to its last line), paste it, and edit it.
 #
 #  Order matters: the first two cards show as Featured Case Studies (a
-#  bigger CTA, a heavier frame); everything after that shows as a Supporting
-#  Production (understated, a plain "Project Summary" link). Put the two
-#  you want leading the sheet first.
+#  bigger CTA, a heavier frame, plus an optional second "instagram" CTA);
+#  everything after that shows as a Supporting Production (understated,
+#  a plain outbound "link"). Put the two you want leading the sheet first.
 # =============================================================================
 
 items:
@@ -31,6 +31,10 @@ items:
     link:
       label: View Case Study
       href: case-study-vasant.html
+    # Optional second CTA. Delete both lines to hide it.
+    instagram:
+      label: View on Instagram
+      href: https://www.instagram.com/reel/DWA5j97jGRh/?utm_source=ig_web_button_share_sheet
 
   - title: Alive
     org: NCPA Production
@@ -42,9 +46,16 @@ items:
         v: 3+
       - k: Recognition
         v: Nominated, ZEE Natya Gaurav 2026
+      - k: Budget
+        v: 5L+
+      - k: Crew
+        v: 15+
     link:
       label: View Case Study
       href: case-study-alive.html
+    instagram:
+      label: View on Instagram
+      href: https://www.instagram.com/p/DUf3CSqjF17/?utm_source=ig_web_button_share_sheet
 
   - title: Pratibimb Marathi Theatre Festival
     org: NCPA
@@ -61,7 +72,7 @@ items:
       - k: Duration
         v: 4 days
     link:
-      label: Watch on Instagram
+      label: View on Instagram
       href: https://www.instagram.com/reel/DXgX8LHjOol/
 
   - title: Kalgitura
@@ -74,6 +85,10 @@ items:
         v: 5+
       - k: Recognition
         v: Winner, Best Play – ZEE Natya Gaurav 2024
+      - k: Budget
+        v: 5L+
+      - k: Crew
+        v: 20+
     link:
-      label: Watch on Instagram
+      label: View on Instagram
       href: https://www.instagram.com/reel/DOyfZ0UDD8E/
