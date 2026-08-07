@@ -153,6 +153,8 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
   const groups = phaseGroups(stations)
   const highlightIndex = stations.findIndex((s) => s.highlight)
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640
+
   const d = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ')
 
   const tail = (() => {
@@ -170,13 +172,16 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
       : null
 
   return (
-    <section id="production-lifecycle" className="flex min-h-0 flex-col" style={{ flex: '3 1 0%' }}>
+    <section
+  id="production-lifecycle"
+  className="flex min-h-0 flex-col lg:flex-[3_1_0%]"
+>
       <h2 className="label mb-2 shrink-0 text-ink-45">Production Lifecycle</h2>
 
       <div
-        ref={ref}
-        className="flex min-h-0 flex-1 flex-col overflow-x-auto overflow-y-visible no-scrollbar lg:overflow-x-visible"
-      >
+  ref={ref}
+  className="flex min-h-[18rem] flex-col overflow-x-auto overflow-y-visible no-scrollbar lg:min-h-0 lg:flex-1 lg:overflow-x-visible"
+>
         <div className="relative min-w-[1400px] flex-1 lg:min-w-0">
           {/* The viewBox is stretched non-uniformly (preserveAspectRatio="none"
               onto a container many times wider than it is tall), so every
@@ -264,7 +269,16 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
                   the diagram's own bottom edge, into the h-dvh viewport's
                   scrolled-off area, so hovering it did nothing visible
                   without scrolling first. */}
-              <StationLabel s={s} side={i % 2 === 0 || points[i].y >= 70 ? 'above' : 'below'} />
+              <StationLabel
+  s={s}
+  side={
+    isMobile && i === 1
+      ? 'below'
+      : i % 2 === 0 || points[i].y >= 70
+        ? 'above'
+        : 'below'
+  }
+/>
             </div>
           ))}
         </div>
@@ -298,14 +312,17 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
     <>
       <CaseStudyNav backHref={backHref} sections={ALIVE_SECTIONS} mode={mode} onToggle={toggle} />
 
-      <div className="flex h-dvh min-h-[36rem] flex-col text-ink">
+      <div className="flex min-h-[36rem] flex-col text-ink lg:h-dvh">
         <div className="gutter flex min-h-0 flex-1 flex-col py-[clamp(0.75rem,2.5vh,1.5rem)]">
           <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} />
 
           <hr className="my-[clamp(0.75rem,2.5vh,1.25rem)] shrink-0 border-t-2 border-ink" />
 
           <div className="flex min-h-0 flex-1 flex-col gap-[clamp(1rem,3vh,2rem)]">
-            <section id="project-overview" className="flex min-h-0 flex-col" style={{ flex: '2 1 0%' }}>
+            <section
+  id="project-overview"
+  className="flex min-h-0 flex-col lg:flex-[2_1_0%]"
+>
               <h2 className="label mb-2 shrink-0 text-ink-45">Project Overview</h2>
               <div className="grid min-h-0 flex-1 gap-x-8 gap-y-4 lg:grid-cols-[3fr_2fr]">
                 <div className="flex min-h-0 flex-col">
