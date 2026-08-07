@@ -20,25 +20,15 @@ const VASANT_SECTIONS = [
 ]
 
 /* Sheet one is the opening: header, Executive Dashboard, Project Context and
-   the festival poster as a Project Board, sized to sit inside one desktop
-   viewport with no scrolling. `lg:h-dvh` plus `min-h-0` down the flex chain
-   is what makes that hold: each block is `shrink-0` except the two-column
-   row at the bottom, which is the one `flex-1` that absorbs whatever height
-   is left over. A very short window still overflows into a scrollbar
-   rather than clipping content outright, but nothing here is designed to
-   need it. The viewport lock is desktop-only (`lg:`) on purpose — eight
-   dashboard tiles, three context sections and a full poster board have no
-   graceful way to compress into one screen at phone width, so mobile just
-   flows in ordinary, fully-scrollable document order instead.
+   the festival poster as a Project Board. Every block flows in ordinary
+   document height — nothing here is locked to the viewport, so the sheet
+   simply grows as tall as its content needs and the page scrolls normally
+   past it, the same as every sheet after it.
 
    The 40/60 column split reads as figures-then-evidence: the Executive
    Dashboard and Project Context on the left tell a recruiter the shape of
    the project in a glance, and the poster on the right is the primary
    document that actually proves it — a real artifact, not decoration.
-
-   Everything after that — Scope of Ownership, Operational Complexity — is
-   deliberately outside the h-dvh block, in ordinary document flow: those
-   are read by scrolling, the opening sheet is read at a glance.
 
    `useLights()` is called for its side effect only — the stored paper/
    blueprint choice from the main site still applies here, there just isn't
@@ -97,9 +87,9 @@ function ExecutiveDashboard({ metrics, shown }: { metrics: CaseStudy['metrics'];
 
 function ProjectContext({ context, shown }: { context: CaseStudy['context']; shown: boolean }): ReactElement {
   return (
-    <div id="project-context" className="flex min-h-0 flex-1 flex-col">
+    <div id="project-context" className="flex flex-col">
       <SubsectionHeading>Project Context</SubsectionHeading>
-      <div className="flex min-h-0 flex-1 flex-col justify-center gap-4 overflow-y-auto">
+      <div className="flex flex-col gap-4">
         {context.map((section, i) => (
           <div
             key={section.label}
@@ -159,15 +149,15 @@ export function CaseStudy({
     <>
       <CaseStudyNav backHref={backHref} sections={VASANT_SECTIONS} mode={mode} onToggle={toggle} />
 
-      <div ref={ref} className="flex flex-col text-ink lg:h-dvh lg:min-h-[38rem]">
-        <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
+      <div ref={ref} className="flex flex-col text-ink">
+        <div className="gutter flex flex-col py-[clamp(0.75rem,2.5vh,1.5rem)]">
           <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} />
 
           <hr className="my-[clamp(0.65rem,2.2vh,1.1rem)] shrink-0 border-t-2 border-ink" />
 
-          <section className="grid min-h-0 flex-1 gap-x-10 gap-y-5 lg:grid-cols-[2fr_3fr]">
+          <section className="grid gap-x-10 gap-y-8 lg:grid-cols-[2fr_3fr]">
             {/* LEFT — 40%: Executive Dashboard over Project Context */}
-            <div className="flex min-h-0 flex-col gap-[clamp(0.75rem,2vh,1.25rem)]">
+            <div className="flex flex-col gap-[clamp(0.75rem,2vh,1.25rem)]">
               <ExecutiveDashboard metrics={data.metrics} shown={shown} />
               <ProjectContext context={data.context} shown={shown} />
             </div>
@@ -175,7 +165,7 @@ export function CaseStudy({
             {/* RIGHT — 60%: the poster as a Project Board */}
             <div
               id="project-board"
-              className="flex min-h-0 flex-col"
+              className="flex flex-col"
               style={{
                 opacity: shown ? 1 : 0,
                 transform: shown ? 'translateY(0)' : 'translateY(10px)',
@@ -185,7 +175,7 @@ export function CaseStudy({
             >
               <SubsectionHeading>Project Board</SubsectionHeading>
 
-              <div className="relative min-h-0 flex-1">
+              <div className="relative aspect-[3/4]">
                 {posterOk ? (
                   <>
                     <button
