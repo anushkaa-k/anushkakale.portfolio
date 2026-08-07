@@ -3,15 +3,14 @@ import { useState, type ReactElement } from 'react'
 import type { CaseStudy } from '../content'
 import { useReveal } from '../hooks/useReveal'
 
-/* Scope of Ownership and Project Complexity used to be two separate,
-   scroll-triggered sections, each pairing a diagram with a list. They're
-   now one sheet: a hub-and-spoke "command map" of what she owned on the
-   left, a risk matrix of why that ownership was operationally hard on the
-   right, side by side in one desktop viewport — the same "read it in one
-   glance" discipline the opening sheet (see CaseStudy.tsx) uses, on a
-   `lg:` breakpoint for the same reason: six modules and six risk cards
-   have no graceful way to compress into a phone screen, so mobile falls
-   back to ordinary, fully-scrollable document order.
+/* Scope of Ownership and Project Complexity: a hub-and-spoke "command
+   map" of what she owned on the left, a risk matrix of why that
+   ownership was operationally hard on the right, side by side on a `lg:`
+   breakpoint — six modules and six risk cards have no graceful way to
+   compress into a phone screen, so mobile falls back to ordinary,
+   fully-scrollable document order. The sheet flows in ordinary document
+   height rather than being locked to the viewport, so it simply grows as
+   tall as it needs to and the page scrolls normally past it.
 
    One shared `useReveal()` on the outer wrapper drives both halves'
    entrance stagger together, so scrolling this sheet into view reads as
@@ -80,7 +79,7 @@ function OwnershipMap({ ownership, shown }: { ownership: CaseStudy['ownership'];
 
   return (
     <>
-    <div className="relative hidden min-h-[30rem] flex-1 lg:block">
+    <div className="relative hidden min-h-[30rem] lg:block">
       <svg
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
@@ -269,7 +268,7 @@ function RiskIcon({ index }: { index: number }): ReactElement {
 
 function ComplexityGrid({ risks, shown }: { risks: CaseStudy['risks']; shown: boolean }): ReactElement {
   return (
-    <div className="grid min-h-0 flex-1 grid-cols-1 gap-2.5 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
       {risks.map((risk, i) => (
         <div
           key={risk.item}
@@ -312,9 +311,9 @@ export function OperationsMap({
   if (ownership.length === 0 && risks.length === 0) return <></>
 
   return (
-    <div ref={ref} className="flex flex-col text-ink lg:h-dvh lg:min-h-[34rem]">
-      <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(2.5rem,6vh,4rem)]">
-        <div className="relative grid min-h-0 flex-1 gap-x-10 gap-y-10 lg:grid-cols-2">
+    <div ref={ref} className="flex flex-col text-ink">
+      <div className="gutter flex flex-col py-[clamp(2.5rem,6vh,4rem)]">
+        <div className="relative grid gap-x-10 gap-y-10 lg:grid-cols-2">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 lg:block"
@@ -322,12 +321,12 @@ export function OperationsMap({
             <div className="h-full border-l border-dashed border-ink-25" />
           </div>
 
-          <div id="scope-of-ownership" className="flex min-h-0 flex-col">
+          <div id="scope-of-ownership" className="flex flex-col">
             <SubsectionHeading tag="Command Map">Scope of Ownership</SubsectionHeading>
             <OwnershipMap ownership={ownership} shown={shown} />
           </div>
 
-          <div id="project-complexity" className="flex min-h-0 flex-col">
+          <div id="project-complexity" className="flex flex-col">
             <SubsectionHeading tag={`${risks.length} Factors`}>Project Complexity</SubsectionHeading>
             <ComplexityGrid risks={risks} shown={shown} />
           </div>
