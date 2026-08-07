@@ -15,7 +15,7 @@ metrics:
   - k: Festival Duration
     v: 4 Days
   - k: Venues
-    v: "4"
+    v: "5"
   - k: Productions
     v: 7+
   - k: Budget
@@ -35,17 +35,17 @@ metrics:
 context:
   - label: What It Is
     body: >-
-      Vasant is NCPA's Gujarati theatre festival — four days of programming
-      across four venues, with productions, readings and events running in
+      Vasant is NCPA's Gujarati Theatre Festival, four days of programming
+      across five venues, with productions, readings, workshops and events running in
       parallel. I owned day-to-day operations across the run.
   - label: Scale
     body: >-
-      Four venues, 7+ productions and 1200+ audience members across the
-      run, coordinated with a crew of 20+ and 30+ volunteer assignments.
+      Five venues, 7+ productions and 1200+ audience members across the
+      run, coordinated with a crew of 50+ and 5+ volunteer assignments.
   - label: Operational Complexity
     body: >-
       The scope spanned artist hospitality, front-of-house logistics,
-      technical crew coordination and on-ground budget tracking — closer
+      technical crew coordination and on-ground budget tracking, closer
       to running several small festivals than one, with vendors,
       volunteers and companies all needing a single point of contact.
 
