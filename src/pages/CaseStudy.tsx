@@ -4,7 +4,7 @@ import type { CaseStudy } from '../content'
 import { useLights } from '../hooks/useLights'
 import { useReveal } from '../hooks/useReveal'
 import { asset } from '../lib/asset'
-import { CaseStudyHeader } from './CaseStudyHeader'
+import { CaseStudyHeader, CaseStudyNav } from './CaseStudyHeader'
 import { ExecutionStrategy } from './ExecutionStrategy'
 import { OperationalDecisions } from './OperationalDecisions'
 import { OperationsMap } from './OperationsMap'
@@ -140,7 +140,7 @@ export function CaseStudy({
   data: CaseStudy
   backHref: string
 }): ReactElement {
-  useLights()
+  const { mode, toggle } = useLights()
   const { ref, shown } = useReveal<HTMLDivElement>()
   const [posterFailed, setPosterFailed] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -157,16 +157,11 @@ export function CaseStudy({
 
   return (
     <>
+      <CaseStudyNav backHref={backHref} sections={VASANT_SECTIONS} mode={mode} onToggle={toggle} />
+
       <div ref={ref} className="flex flex-col text-ink lg:h-dvh lg:min-h-[38rem]">
         <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
-          <CaseStudyHeader
-            title={data.title}
-            role={data.role}
-            org={data.org}
-            year={data.year}
-            backHref={backHref}
-            sections={VASANT_SECTIONS}
-          />
+          <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} />
 
           <hr className="my-[clamp(0.65rem,2.2vh,1.1rem)] shrink-0 border-t-2 border-ink" />
 
