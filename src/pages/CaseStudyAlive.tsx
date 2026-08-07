@@ -4,7 +4,7 @@ import type { CaseStudy } from '../content'
 import { useLights } from '../hooks/useLights'
 import { useReveal } from '../hooks/useReveal'
 import { asset } from '../lib/asset'
-import { CaseStudyHeader } from './CaseStudyHeader'
+import { CaseStudyHeader, CaseStudyNav } from './CaseStudyHeader'
 import { FromScriptToStage } from './FromScriptToStage'
 import { OperationsTakeaways } from './OperationsTakeaways'
 
@@ -290,22 +290,17 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
 }
 
 export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: string }): ReactElement {
-  useLights()
+  const { mode, toggle } = useLights()
   const [photoFailed, setPhotoFailed] = useState(false)
   const photoOk = !!data.poster && !photoFailed
 
   return (
     <>
+      <CaseStudyNav backHref={backHref} sections={ALIVE_SECTIONS} mode={mode} onToggle={toggle} />
+
       <div className="flex h-dvh min-h-[36rem] flex-col text-ink">
         <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
-          <CaseStudyHeader
-            title={data.title}
-            role={data.role}
-            org={data.org}
-            year={data.year}
-            backHref={backHref}
-            sections={ALIVE_SECTIONS}
-          />
+          <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} />
 
           <hr className="my-[clamp(0.75rem,2.5vh,1.25rem)] shrink-0 border-t-2 border-ink" />
 
