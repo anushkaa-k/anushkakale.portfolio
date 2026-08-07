@@ -165,7 +165,7 @@ export function CaseStudy({
             {/* RIGHT — 60%: the poster as a Project Board */}
             <div
               id="project-board"
-              className="flex flex-col"
+              className="flex min-w-0 flex-col"
               style={{
                 opacity: shown ? 1 : 0,
                 transform: shown ? 'translateY(0)' : 'translateY(10px)',
@@ -175,7 +175,13 @@ export function CaseStudy({
             >
               <SubsectionHeading>Project Board</SubsectionHeading>
 
-              <div className="relative aspect-[3/4]">
+              {/* On desktop the board is sized off the viewport height rather
+                  than the column width (51:68 is the same 3:4 ratio), so the
+                  whole opening sheet stays inside one screen instead of the
+                  poster running metres tall in a wide column. Below `lg` the
+                  column is full-width and the page stacks, so it keeps the
+                  plain width-driven aspect box. */}
+              <div className="relative aspect-[3/4] lg:mx-auto lg:aspect-auto lg:h-[68vh] lg:w-[51vh] lg:max-w-full">
                 {posterOk ? (
                   <>
                     <button
