@@ -14,7 +14,7 @@ const STAGGER = ['delay-0', 'delay-75', 'delay-150', 'delay-200', 'delay-300']
 export function About({ meta }: { meta: SectionMeta }): ReactElement {
   return (
     <Sheet meta={meta}>
-      <div className="grid gap-[clamp(2rem,5vw,4rem)] lg:grid-cols-[minmax(0,1.65fr)_minmax(15rem,0.85fr)]">
+      <div className="grid gap-[clamp(2rem,5vw,4rem)] md:grid-cols-[minmax(0,1.65fr)_minmax(15rem,0.85fr)]">
         <div>
           <Reveal className="max-w-[63ch]">
             <p className="font-display text-[clamp(1.3rem,2.4vw,1.8rem)] leading-tight">
@@ -85,7 +85,7 @@ export function About({ meta }: { meta: SectionMeta }): ReactElement {
             </aside>
           </Reveal>
 
-          <Reveal className="mt-6 hidden aspect-[3/4] md:block lg:aspect-auto lg:min-h-[9rem] lg:flex-1 [transition-delay:130ms]">
+          <Reveal className="mt-6 hidden aspect-[3/4] md:block md:aspect-auto md:min-h-[9rem] md:flex-1 [transition-delay:130ms]">
             <AboutDetail className="h-full w-full" />
           </Reveal>
         </div>
