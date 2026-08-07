@@ -9,6 +9,19 @@ import { ExecutionStrategy } from './ExecutionStrategy'
 import { OperationalDecisions } from './OperationalDecisions'
 import { OperationsMap } from './OperationsMap'
 
+/* This page's own sections, in document order — fed to CaseStudyHeader's
+   nav so it can jump around this page specifically, distinct from the
+   main site's section list. */
+const VASANT_SECTIONS = [
+  { id: 'executive-dashboard', label: 'Executive Dashboard' },
+  { id: 'project-context', label: 'Project Context' },
+  { id: 'project-board', label: 'Project Board' },
+  { id: 'scope-of-ownership', label: 'Scope of Ownership' },
+  { id: 'project-complexity', label: 'Project Complexity' },
+  { id: 'execution-strategy', label: 'Execution Strategy' },
+  { id: 'operational-decisions', label: 'Operational Decisions' },
+]
+
 /* Sheet one is the opening: header, Executive Dashboard, Project Context and
    the festival poster as a Project Board, sized to sit inside one desktop
    viewport with no scrolling. `lg:h-dvh` plus `min-h-0` down the flex chain
@@ -51,7 +64,7 @@ function SubsectionHeading({ children }: { children: string }): ReactElement {
 
 function ExecutiveDashboard({ metrics, shown }: { metrics: CaseStudy['metrics']; shown: boolean }): ReactElement {
   return (
-    <section className="shrink-0">
+    <section id="executive-dashboard" className="shrink-0">
       <SubsectionHeading>Executive Dashboard</SubsectionHeading>
       <dl className="grid grid-cols-2 gap-px border border-ink-25 bg-ink-25 sm:grid-cols-4">
         {metrics.map((metric, i) => (
@@ -87,7 +100,7 @@ function ExecutiveDashboard({ metrics, shown }: { metrics: CaseStudy['metrics'];
 
 function ProjectContext({ context, shown }: { context: CaseStudy['context']; shown: boolean }): ReactElement {
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div id="project-context" className="flex min-h-0 flex-1 flex-col">
       <SubsectionHeading>Project Context</SubsectionHeading>
       <div className="flex min-h-0 flex-1 flex-col justify-center gap-4 overflow-y-auto">
         {context.map((section, i) => (
@@ -149,7 +162,14 @@ export function CaseStudy({
     <>
       <div ref={ref} className="flex flex-col text-ink lg:h-dvh lg:min-h-[38rem]">
         <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
-          <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} backHref={backHref} />
+          <CaseStudyHeader
+            title={data.title}
+            role={data.role}
+            org={data.org}
+            year={data.year}
+            backHref={backHref}
+            sections={VASANT_SECTIONS}
+          />
 
           <hr className="my-[clamp(0.65rem,2.2vh,1.1rem)] shrink-0 border-t-2 border-ink" />
 
@@ -162,6 +182,7 @@ export function CaseStudy({
 
             {/* RIGHT — 60%: the poster as a Project Board */}
             <div
+              id="project-board"
               className="flex min-h-0 flex-col"
               style={{
                 opacity: shown ? 1 : 0,

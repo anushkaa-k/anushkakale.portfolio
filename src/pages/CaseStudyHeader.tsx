@@ -1,17 +1,16 @@
 import type { ReactElement } from 'react'
 
-import { sections } from '../content'
-
 /* The one piece of chrome every case study page shares verbatim: the back
-   link, a link back to the main page's sections, and the title block.
-   Each page builds its own body below this — the shared part is
-   deliberately just the header, not the whole page, since the two case
-   studies' opening layouts differ by design.
+   link, a nav to this page's own sections, and the title block. Each page
+   builds its own body below this — the shared part is deliberately just
+   the header, not the whole page, since the two case studies' opening
+   layouts differ by design.
 
-   The section nav mirrors the main page's Masthead nav (same labels, same
-   link styling) so it reads as the same navigation bar, just without the
-   scroll-spy active state — these pages have no `#about`/`#skills`/etc.
-   sections of their own to spy on, only the main page does. */
+   The section nav mirrors the main page's Masthead nav (same link
+   styling, same top-right placement), but points at this page's own
+   in-page anchors, passed in per page since Vasant and Alive have
+   different sections. There's no scroll-spy active state here — that's a
+   main-page-only affordance. */
 
 export function CaseStudyHeader({
   title,
@@ -19,12 +18,14 @@ export function CaseStudyHeader({
   org,
   year,
   backHref,
+  sections,
 }: {
   title: string
   role: string
   org: string
   year: string
   backHref: string
+  sections: { id: string; label: string }[]
 }): ReactElement {
   return (
     <header className="shrink-0">
@@ -36,12 +37,12 @@ export function CaseStudyHeader({
           <span aria-hidden="true">←</span> Back to Projects
         </a>
 
-        <nav aria-label="Sections">
+        <nav aria-label="Sections on this page">
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
             {sections.map((s) => (
               <li key={s.id}>
                 <a
-                  href={`${import.meta.env.BASE_URL}#${s.id}`}
+                  href={`#${s.id}`}
                   className="label border-b border-transparent pb-0.5 text-[0.68rem] text-ink-70 no-underline transition-colors hover:text-ink"
                 >
                   {s.label}

@@ -322,12 +322,12 @@ export function OperationsMap({
             <div className="h-full border-l border-dashed border-ink-25" />
           </div>
 
-          <div className="flex min-h-0 flex-col">
+          <div id="scope-of-ownership" className="flex min-h-0 flex-col">
             <SubsectionHeading tag="Command Map">Scope of Ownership</SubsectionHeading>
             <OwnershipMap ownership={ownership} shown={shown} />
           </div>
 
-          <div className="flex min-h-0 flex-col">
+          <div id="project-complexity" className="flex min-h-0 flex-col">
             <SubsectionHeading tag={`${risks.length} Factors`}>Project Complexity</SubsectionHeading>
             <ComplexityGrid risks={risks} shown={shown} />
           </div>

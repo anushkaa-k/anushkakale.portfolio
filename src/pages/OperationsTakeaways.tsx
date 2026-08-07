@@ -126,7 +126,7 @@ export function OperationsTakeaways({ data }: { data: CaseStudy }): ReactElement
   if (data.takeaways.length === 0) return <></>
 
   return (
-    <Reveal className="mt-14 lg:flex lg:min-h-screen lg:flex-col lg:justify-center">
+    <Reveal id="operations-takeaways" className="mt-14 lg:flex lg:min-h-screen lg:flex-col lg:justify-center">
       <div className="mb-6 flex items-baseline gap-3 border-b-2 border-ink pb-3">
         <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink" />
         <h2 className="font-display text-[clamp(1.15rem,2.2vw,1.4rem)] font-bold">Operations Takeaways</h2>

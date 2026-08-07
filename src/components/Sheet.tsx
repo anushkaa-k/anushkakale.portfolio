@@ -45,13 +45,15 @@ export function Sheet({
 export function Reveal({
   children,
   className = '',
+  id,
 }: {
   children: ReactNode
   className?: string
+  id?: string
 }): ReactElement {
   const { ref, shown } = useReveal<HTMLDivElement>()
   return (
-    <div ref={ref} data-in={shown} className={`reveal ${className}`}>
+    <div ref={ref} id={id} data-in={shown} className={`reveal ${className}`}>
       {children}
     </div>
   )
