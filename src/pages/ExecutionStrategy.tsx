@@ -11,13 +11,14 @@ import { asset } from '../lib/asset'
    grow to whatever height its content needs, so nothing is clipped or
    scrolled inside a container.
 
-   Three rows: Stage 1 paired with Stage 2 (its Tech & Stage chart
-   stays inside its own card, unchanged), Stage 3 paired with Stage 4
-   (neither carries a photograph), and Stage 5 paired with the Games &
-   Activities chart as its own standalone card rather than nested
-   inside Stage 5 — the one place a card's "text" and "artifact" are
-   deliberately split apart, so the chart reads as document evidence
-   sitting beside the stage rather than an attachment inside it.
+   Four rows: Stage 1 paired with Stage 2, the Tech & Stage chart on
+   its own row directly after — centered rather than stretched, since
+   nothing pairs beside it — then Stage 3 paired with Stage 4 (neither
+   carries a photograph), and Stage 5 paired with the Games &
+   Activities chart as its own standalone card. Both charts render as
+   a standalone ChartCard rather than nested inside a stage, so they
+   read as document evidence sitting beside — or under — the stage
+   rather than an attachment inside it.
 
    Every card — text-only or chart — shares the same hover lift and
    orange glow, so the whole rectangle answers to a hover, not just the
@@ -46,9 +47,9 @@ const GAMES_ACTIVITIES_CHART: Visual = {
   title: 'Games & Activities Chart',
 }
 
-/* Only Stage 2 keeps its chart nested inside the stage card — Stage 5's
-   chart is rendered separately as its own ChartCard. */
-const VISUALS: (Visual | null)[] = [null, TECH_STAGE_CHART, null, null, null]
+/* Neither chart is nested inside a stage card — both render as their
+   own standalone ChartCard. */
+const VISUALS: (Visual | null)[] = [null, null, null, null, null]
 
 const CARD_HOVER =
   'transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-accent-orange hover:shadow-[0_14px_28px_-16px_var(--ink-45),0_0_16px_-8px_var(--accent-orange)]'
@@ -174,6 +175,12 @@ export function ExecutionStrategy({ execution }: { execution: CaseStudy['executi
             </div>
           </Reveal>
         )}
+
+        <Reveal>
+          <div className="mx-auto w-full lg:max-w-[calc(50%-1rem)]">
+            <ChartCard visual={TECH_STAGE_CHART} onOpenImage={setLightbox} />
+          </div>
+        </Reveal>
 
         {s3 && s4 && (
           <Reveal>
