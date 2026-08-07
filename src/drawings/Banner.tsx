@@ -11,7 +11,7 @@
    whole sheet shrunk into noise.
    ========================================================================== */
 
-import { Fragment, type CSSProperties, type ReactElement } from 'react'
+import { Fragment, type ReactElement } from 'react'
 import {
   Bubble,
   CenterLine,
@@ -109,18 +109,21 @@ function GroundPlan(): ReactElement {
 
 /* ---------- centre top: truss elevation ------------------------------------ */
 
-/* The lights hanging over the name: one soft blurred glow per fixture,
-   painted behind the fixture's own linework (LanternRun stays static
-   line art; these circles are the only thing that actually animates).
-   Position math mirrors LanternRun's own spacing exactly, so a glow
-   always sits right at its fixture's lens rather than needing the
-   lantern positions maintained in two places.
+/* The lights hanging over the name — and only the fixtures: the truss
+   they hang from stays plain blueprint linework, nothing painted on or
+   near it. Position math mirrors LanternRun's own spacing exactly, so
+   a glow always sits right at its fixture's lens rather than needing
+   the lantern positions maintained in two places. The lens sits well
+   clear of the truss's own bottom edge (`clearance` below), so even
+   the blur never reaches back up into the beam.
 
-   Each fixture is two stacked circles: `.hero-light-base` powers on
-   once (staggered per fixture) then holds an almost-imperceptible
-   shimmer forever; `.hero-light-boost` is a second, independent layer
-   that only answers to `#top:hover`, so the hover brighten never fights
-   the shimmer for the same animated value. */
+   Each fixture is three pieces: a narrow, almost-invisible beam hinting
+   at a downward throw; `.hero-light-base`, which powers on once
+   (staggered per fixture, ramping gently through 5%–9%) then holds an
+   almost-imperceptible shimmer forever; and `.hero-light-boost`, a
+   second independent layer that only answers to `#top:hover` — kept
+   off the shimmer's own animated property on purpose, so the hover
+   brighten never has to interrupt or race a perpetual animation. */
 function LanternGlow({
   x,
   y,
@@ -135,8 +138,10 @@ function LanternGlow({
   scale?: number
 }): ReactElement {
   const step = length / (count + 1)
-  const lensY = y + 17 * scale
-  const r = 20 * scale
+  const clearance = 26 * scale
+  const lensY = y + clearance
+  const r = 9 * scale
+  const beamLength = 34 * scale
 
   return (
     <>
@@ -145,6 +150,14 @@ function LanternGlow({
         const onDelay = 0.9 + i * 0.12
         return (
           <Fragment key={i}>
+            <rect
+              x={lx - 1.5 * scale}
+              y={lensY}
+              width={3 * scale}
+              height={beamLength}
+              className="hero-light-beam"
+              style={{ animationDelay: `${onDelay}s` }}
+            />
             <circle
               cx={lx}
               cy={lensY}
@@ -165,33 +178,20 @@ function TrussElevation(): ReactElement {
   const y = 104
   const length = 700
   const depth = 54
-  const scanWidth = 150
 
   return (
     <g className="zone" style={{ animationDelay: '0.42s' }}>
+      {/* The truss itself is plain blueprint linework, full stop — nothing
+          is ever painted on or over it. Only the fixtures below it emit
+          light (see LanternGlow). */}
       <Truss x={x} y={y} length={length} depth={depth} bays={15} />
 
-      {/* a slow highlight scanning the truss's length every ~9s — dormant
-          the rest of the time, so it reads as an occasional check rather
-          than continuous motion */}
       <defs>
-        <linearGradient id="heroTrussScan" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="var(--accent-orange)" stopOpacity="0" />
-          <stop offset="50%" stopColor="var(--accent-orange)" stopOpacity="0.4" />
+        <linearGradient id="heroLightBeam" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--accent-orange)" stopOpacity="0.14" />
           <stop offset="100%" stopColor="var(--accent-orange)" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <rect
-        aria-hidden="true"
-        x={x}
-        y={y - 8}
-        width={scanWidth}
-        height={depth + 16}
-        fill="url(#heroTrussScan)"
-        className="hero-truss-scan"
-        style={{ '--scan-distance': `${length - scanWidth}px` } as CSSProperties}
-      />
-
       <LanternGlow x={x} y={y + depth} length={length} count={8} scale={1.15} />
       <LanternRun
         x={x}

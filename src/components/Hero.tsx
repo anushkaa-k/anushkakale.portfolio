@@ -19,11 +19,20 @@ import { asset, isExternal } from '../lib/asset'
    via `.lift` (staggered by `animationDelay` below) — that piece existed
    before this pass. What's new here is the drawing itself answering back:
    the sheet's datum line draws itself in (`.hero-draw-in`, in Banner.tsx),
-   the stage lights hold an extremely soft breathing pulse, the truss
-   takes a slow scanning pass every ~9s, the whole plate drifts a few
-   pixels with the cursor, and the stat figures count up rather than just
-   appearing. Every one of those is opt-out under `prefers-reduced-motion`
-   — see the media query at the bottom of index.css. */
+   the fixtures on the main truss power on individually and hold an
+   extremely soft breathing pulse (the truss they hang from stays plain
+   linework — nothing is ever painted on it), the whole plate drifts a
+   few pixels with the cursor, and the stat figures count up rather than
+   just appearing.
+
+   `.hero-lit-name` on the heading below is the one place the fixtures'
+   light actually lands: a gradient clipped to the glyphs themselves runs
+   from a warm highlight at the very top of each letter down to ordinary
+   ink within a quarter of the letter's height — reflected light grazing
+   raised lettering, not a glow behind or around it.
+
+   Every animated piece here is opt-out under `prefers-reduced-motion` —
+   see the media query at the bottom of index.css. */
 
 /** A `#section` anchor is used as-is; anything else is a /public path. */
 function ctaHref(href: string): string {
@@ -152,15 +161,6 @@ export function Hero(): ReactElement {
         />
 
         <div className="relative text-center">
-          <div
-            aria-hidden="true"
-            className="hero-ambient-wash pointer-events-none absolute top-0 left-1/2 h-24 w-[42rem] max-w-[85vw] -translate-x-1/2 md:h-28"
-            style={{
-              background:
-                'radial-gradient(ellipse 60% 100% at 50% 0%, color-mix(in srgb, var(--accent-orange) 24%, transparent) 0%, transparent 72%)',
-            }}
-          />
-
           <p className="lift label text-ink-70" style={{ animationDelay: '0.3s' }}>
             {site.meta.location}
           </p>
@@ -168,7 +168,7 @@ export function Hero(): ReactElement {
           <hr className="rule lift mt-5" style={{ animationDelay: '0.36s' }} />
 
           <h1
-            className="lift mt-3 font-display text-[clamp(2.6rem,7.2vw,4.9rem)] leading-[1.02] font-extrabold tracking-tight"
+            className="hero-lit-name lift mt-3 font-display text-[clamp(2.6rem,7.2vw,4.9rem)] leading-[1.02] font-extrabold tracking-tight"
             style={{ animationDelay: '0.45s' }}
           >
             {nameLines.map((line, i) => (
