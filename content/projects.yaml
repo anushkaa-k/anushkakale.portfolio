@@ -44,12 +44,12 @@ items:
         v: 5+
       - k: Cities
         v: 3+
-      - k: Recognition
-        v: Nominated, ZEE Natya Gaurav 2026
       - k: Budget
         v: 5L+
       - k: Crew
         v: 15+
+      - k: Recognition
+        v: Nominated, ZEE Natya Gaurav 2026
     link:
       label: View Case Study
       href: case-study-alive.html
@@ -83,12 +83,12 @@ items:
         v: 25+
       - k: Cities
         v: 5+
-      - k: Recognition
-        v: Winner, Best Play – ZEE Natya Gaurav 2024
       - k: Budget
         v: 5L+
       - k: Crew
         v: 20+
+      - k: Recognition
+        v: Winner, Best Play – ZEE Natya Gaurav 2024
     link:
       label: View on Instagram
       href: https://www.instagram.com/reel/DOyfZ0UDD8E/
