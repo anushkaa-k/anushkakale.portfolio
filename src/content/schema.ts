@@ -97,6 +97,8 @@ export const projectsSchema = z.object({
       year: z.string(),
       metrics: z.array(pair).default([]),
       link: link.optional(),
+      /** Optional second CTA, always an outbound link (e.g. Instagram). */
+      instagram: link.optional(),
     }),
   ),
 })
