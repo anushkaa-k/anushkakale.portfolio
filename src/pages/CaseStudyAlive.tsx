@@ -128,7 +128,7 @@ function StationLabel({ s, side, index }: { s: Station; side: 'above' | 'below';
           fades up on hover rather than snapping in. */}
       <div
         role="tooltip"
-        className={`pointer-events-none absolute left-1/2 z-30 w-44 -translate-x-1/2 border border-ink-25 bg-paper p-2.5 text-left opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-300 ease-out group-hover:opacity-100 ${side === 'above'
+        className={`pointer-events-none absolute left-1/2 z-30 w-44 -translate-x-1/2 border border-ink-25 bg-paper p-2.5 text-left opacity-0 shadow-[0_10px_22px_-10px_var(--ink-45)] transition-[opacity,transform] duration-300 ease-out group-hover:opacity-100 group-focus:opacity-100 ${side === 'above'
             ? 'bottom-full mb-2 translate-y-1 group-hover:translate-y-0'
             : 'top-full mt-2 -translate-y-1 group-hover:translate-y-0'
           }`}
@@ -250,6 +250,7 @@ function ProductionLifecycle({ stations }: { stations: CaseStudy['journey'] }): 
           {stations.map((s, i) => (
             <div
               key={s.label}
+              tabIndex={0}
               className="group absolute z-10"
               style={{
                 left: `${points[i].x}%`,
