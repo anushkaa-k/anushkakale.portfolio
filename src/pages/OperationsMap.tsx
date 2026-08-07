@@ -311,7 +311,7 @@ export function OperationsMap({
   if (ownership.length === 0 && risks.length === 0) return <></>
 
   return (
-    <div ref={ref} className="flex flex-col bg-paper text-ink lg:h-dvh lg:min-h-[34rem]">
+    <div ref={ref} className="flex flex-col text-ink lg:h-dvh lg:min-h-[34rem]">
       <div className="gutter flex min-h-0 flex-1 flex-col overflow-hidden py-[clamp(2.5rem,6vh,4rem)]">
         <div className="relative grid min-h-0 flex-1 gap-x-10 gap-y-10 lg:grid-cols-2">
           <div
