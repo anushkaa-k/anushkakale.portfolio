@@ -152,6 +152,15 @@ export function Hero(): ReactElement {
         />
 
         <div className="relative text-center">
+          <div
+            aria-hidden="true"
+            className="hero-ambient-wash pointer-events-none absolute top-0 left-1/2 h-24 w-[42rem] max-w-[85vw] -translate-x-1/2 md:h-28"
+            style={{
+              background:
+                'radial-gradient(ellipse 60% 100% at 50% 0%, color-mix(in srgb, var(--accent-orange) 24%, transparent) 0%, transparent 72%)',
+            }}
+          />
+
           <p className="lift label text-ink-70" style={{ animationDelay: '0.3s' }}>
             {site.meta.location}
           </p>
