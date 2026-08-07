@@ -286,7 +286,7 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
 
   return (
     <>
-      <div className="flex h-dvh min-h-[36rem] flex-col bg-paper text-ink">
+      <div className="flex h-dvh min-h-[36rem] flex-col text-ink">
         <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
           <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} backHref={backHref} />
 
@@ -337,7 +337,7 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
         </div>
       </div>
 
-      <div className="gutter bg-paper pb-[clamp(3rem,6vw,5rem)] text-ink">
+      <div className="gutter pb-[clamp(3rem,6vw,5rem)] text-ink">
         <FromScriptToStage pillars={data.pillars} />
         <OperationsTakeaways data={data} />
       </div>

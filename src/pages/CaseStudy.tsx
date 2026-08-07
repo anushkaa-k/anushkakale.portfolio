@@ -147,7 +147,7 @@ export function CaseStudy({
 
   return (
     <>
-      <div ref={ref} className="flex flex-col bg-paper text-ink lg:h-dvh lg:min-h-[38rem]">
+      <div ref={ref} className="flex flex-col text-ink lg:h-dvh lg:min-h-[38rem]">
         <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
           <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} backHref={backHref} />
 
@@ -228,7 +228,7 @@ export function CaseStudy({
 
       <OperationsMap ownership={data.ownership} risks={data.risks} />
 
-      <div className="gutter bg-paper pb-[clamp(3rem,6vw,5rem)] text-ink">
+      <div className="gutter pb-[clamp(3rem,6vw,5rem)] text-ink">
         <ExecutionStrategy execution={data.execution} />
         <OperationalDecisions decisions={data.decisions} />
       </div>
