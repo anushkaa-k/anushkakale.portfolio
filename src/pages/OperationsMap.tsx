@@ -19,7 +19,7 @@ import { useReveal } from '../hooks/useReveal'
 
 function SubsectionHeading({ children, tag }: { children: string; tag: string }): ReactElement {
   return (
-    <div className="mb-3 flex shrink-0 items-baseline gap-3 border-b-2 border-ink pb-2.5">
+    <div className="mb-3 flex flex-wrap shrink-0 items-baseline gap-x-3 gap-y-1 border-b-2 border-ink pb-2.5">
       <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink" />
       <h2 className="font-display text-[clamp(1.05rem,1.9vw,1.3rem)] font-bold">{children}</h2>
       <span className="label ml-auto text-ink-45">{tag}</span>
@@ -80,7 +80,7 @@ function OwnershipMap({ ownership, shown }: { ownership: CaseStudy['ownership'];
 
   return (
     <>
-    <div className="relative hidden min-h-0 flex-1 lg:block">
+    <div className="relative hidden min-h-[30rem] flex-1 lg:block">
       <svg
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
@@ -273,7 +273,7 @@ function ComplexityGrid({ risks, shown }: { risks: CaseStudy['risks']; shown: bo
       {risks.map((risk, i) => (
         <div
           key={risk.item}
-          className="group relative flex flex-col border border-ink-25 bg-paper p-3 transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_14px_28px_-16px_var(--ink-45),0_0_16px_-8px_var(--accent-orange)]"
+          className="group relative flex flex-col border border-ink-25 bg-paper p-[clamp(0.65rem,1.5vw,0.75rem)] transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_14px_28px_-16px_var(--ink-45),0_0_16px_-8px_var(--accent-orange)]"
           style={{
             opacity: shown ? 1 : 0,
             transform: shown ? 'translateY(0)' : 'translateY(10px)',
@@ -290,9 +290,9 @@ function ComplexityGrid({ risks, shown }: { risks: CaseStudy['risks']; shown: bo
               <RiskIcon index={i} />
             </span>
           </div>
-          <h3 className="mt-1.5 font-display text-[0.86rem] leading-tight font-bold">{risk.item}</h3>
-          <p className="mt-1 text-[0.72rem] leading-snug font-semibold text-accent-orange">{risk.metric}</p>
-          <p className="mt-1 text-[0.72rem] leading-snug text-ink-70">{risk.note}</p>
+          <h3 className="mt-1.5 font-display text-[clamp(0.78rem,1.2vw,0.86rem)] leading-tight font-bold">{risk.item}</h3>
+          <p className="mt-1 text-[clamp(0.66rem,1vw,0.72rem)] leading-snug font-semibold text-accent-orange">{risk.metric}</p>
+          <p className="mt-1 text-[clamp(0.66rem,1vw,0.72rem)] leading-snug text-ink-70">{risk.note}</p>
         </div>
       ))}
     </div>
@@ -313,7 +313,7 @@ export function OperationsMap({
 
   return (
     <div ref={ref} className="flex flex-col text-ink lg:h-dvh lg:min-h-[34rem]">
-      <div className="gutter flex min-h-0 flex-1 flex-col overflow-hidden py-[clamp(2.5rem,6vh,4rem)]">
+      <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(2.5rem,6vh,4rem)]">
         <div className="relative grid min-h-0 flex-1 gap-x-10 gap-y-10 lg:grid-cols-2">
           <div
             aria-hidden="true"
