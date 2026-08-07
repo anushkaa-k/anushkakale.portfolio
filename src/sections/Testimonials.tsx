@@ -68,7 +68,7 @@ export function Testimonials({ meta }: { meta: SectionMeta }): ReactElement {
                     className="relative overflow-hidden transition-[max-height] duration-500 ease-in-out"
                     style={{ maxHeight: isExpanded ? '40rem' : '5rem' }}
                   >
-                    <blockquote className="relative text-[0.97rem] leading-[1.7] text-ink">
+                    <blockquote className="relative pl-5 text-[0.97rem] leading-[1.7] text-ink">
                       &ldquo;{person.quote}&rdquo;
                     </blockquote>
                     {!isExpanded && (

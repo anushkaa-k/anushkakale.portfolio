@@ -16,66 +16,68 @@ export function Skills({ meta }: { meta: SectionMeta }): ReactElement {
     <Sheet meta={meta}>
       <Reveal>
         <div className="overflow-x-auto border border-ink-45">
-          {/* title bar */}
-          <div className="label flex items-center gap-3 border-b border-ink-45 bg-paper-warm px-3.5 py-2.5 text-ink-45">
-            <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink-45" />
-            skills.xlsx
-            <span className="ml-auto text-ink-25">Read-only</span>
-          </div>
-
-          {/* formula bar */}
-          <div className="label flex items-center gap-3 border-b border-dashed border-ink-25 px-3.5 py-2 text-ink-70">
-            <span className="border border-ink-25 px-2 py-0.5 text-[0.6rem] text-ink-45">B2</span>
-            <span className="text-ink-25">fx</span>
-            <span className="truncate text-[0.62rem]">
-              =SKILLSET({cols.map((g) => `"${g.name}"`).join(', ')})
-            </span>
-          </div>
-
-          <div
-            className="grid min-w-[42rem]"
-            style={{ gridTemplateColumns: `2.75rem repeat(${cols.length}, minmax(11rem, 1fr))` }}
-          >
-            {/* column-letter row */}
-            <div className="border-r border-b border-ink-25 bg-paper-warm" />
-            {cols.map((group, i) => (
-              <div
-                key={`col-${group.name}`}
-                className="label border-r border-b border-ink-25 bg-paper-warm px-3 py-2 text-center text-ink-45 last:border-r-0"
-              >
-                {String.fromCharCode(65 + i)}
-              </div>
-            ))}
-
-            {/* header row: row "1" holds the group names */}
-            <div className="label border-r border-b border-ink-25 bg-paper-warm px-2 py-2 text-center text-ink-45">
-              1
+          <div className="min-w-[47rem]">
+            {/* title bar */}
+            <div className="label flex items-center gap-3 border-b border-ink-45 bg-paper-warm px-3.5 py-2.5 text-ink-45">
+              <span aria-hidden="true" className="size-2.5 shrink-0 rotate-45 border border-ink-45" />
+              skills.xlsx
+              <span className="ml-auto text-ink-25">Read-only</span>
             </div>
-            {cols.map((group) => (
-              <div
-                key={`head-${group.name}`}
-                className="border-r border-b border-ink-25 bg-paper-warm px-3.5 py-3 text-center font-display text-[0.98rem] leading-tight font-bold last:border-r-0"
-              >
-                {group.name}
-              </div>
-            ))}
 
-            {/* one row per skill, cells left blank where a column runs out */}
-            {Array.from({ length: rows }, (_, r) => (
-              <Fragment key={`row-${r}`}>
-                <div className="label border-r border-b border-ink-25 bg-paper-warm px-2 py-2 text-center text-ink-45">
-                  {r + 2}
+            {/* formula bar */}
+            <div className="label flex items-center gap-3 border-b border-dashed border-ink-25 px-3.5 py-2 text-ink-70">
+              <span className="border border-ink-25 px-2 py-0.5 text-[0.6rem] text-ink-45">B2</span>
+              <span className="text-ink-25">fx</span>
+              <span className="truncate text-[0.62rem]">
+                =SKILLSET({cols.map((g) => `"${g.name}"`).join(', ')})
+              </span>
+            </div>
+
+            <div
+              className="grid"
+              style={{ gridTemplateColumns: `2.75rem repeat(${cols.length}, minmax(11rem, 1fr))` }}
+            >
+              {/* column-letter row */}
+              <div className="border-r border-b border-ink-25 bg-paper-warm" />
+              {cols.map((group, i) => (
+                <div
+                  key={`col-${group.name}`}
+                  className="label border-r border-b border-ink-25 bg-paper-warm px-3 py-2 text-center text-ink-45 last:border-r-0"
+                >
+                  {String.fromCharCode(65 + i)}
                 </div>
-                {cols.map((group) => (
-                  <div
-                    key={`${group.name}-${r}`}
-                    className="border-r border-b border-ink-25 bg-paper px-3.5 py-2.5 text-[0.86rem] text-ink-70 last:border-r-0"
-                  >
-                    {group.items[r] ?? ''}
+              ))}
+
+              {/* header row: row "1" holds the group names */}
+              <div className="label border-r border-b border-ink-25 bg-paper-warm px-2 py-2 text-center text-ink-45">
+                1
+              </div>
+              {cols.map((group) => (
+                <div
+                  key={`head-${group.name}`}
+                  className="border-r border-b border-ink-25 bg-paper-warm px-3.5 py-3 text-center font-display text-[0.98rem] leading-tight font-bold last:border-r-0"
+                >
+                  {group.name}
+                </div>
+              ))}
+
+              {/* one row per skill, cells left blank where a column runs out */}
+              {Array.from({ length: rows }, (_, r) => (
+                <Fragment key={`row-${r}`}>
+                  <div className="label border-r border-b border-ink-25 bg-paper-warm px-2 py-2 text-center text-ink-45">
+                    {r + 2}
                   </div>
-                ))}
-              </Fragment>
-            ))}
+                  {cols.map((group) => (
+                    <div
+                      key={`${group.name}-${r}`}
+                      className="border-r border-b border-ink-25 bg-paper px-3.5 py-2.5 text-[0.86rem] text-ink-70 last:border-r-0"
+                    >
+                      {group.items[r] ?? ''}
+                    </div>
+                  ))}
+                </Fragment>
+              ))}
+            </div>
           </div>
         </div>
       </Reveal>
