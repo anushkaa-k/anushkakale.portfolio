@@ -29,13 +29,13 @@ function SubsectionHeading({ children, tag }: { children: string; tag: string })
 /* ---- Scope of Ownership: hub-and-spoke command map ---------------------- */
 
 const HUB = { x: 50, y: 50 }
-const HUB_R = 11
+const HUB_R = 9
 /* Clockwise from the top, matching the order modules are drawn in. The top
    and bottom spokes (Production Planning, Artist & Hospitality) run a
    shorter radius than the diagonal/side ones — a full-length vertical
    spoke pushes its box past the top/bottom edge of the panel and forces
    the sheet to scroll, where the side spokes have headroom to spare. */
-const MODULE_RADII = [24, 31, 31, 24, 31, 31]
+const MODULE_RADII = [24, 28, 28, 24, 28, 28]
 const MODULE_ANGLES = [-90, -30, 30, 90, 150, 210]
 type Anchor = 'top' | 'right' | 'bottom' | 'left'
 const MODULE_ANCHORS: Anchor[] = ['top', 'right', 'right', 'bottom', 'left', 'left']
@@ -79,7 +79,7 @@ function OwnershipMap({ ownership, shown }: { ownership: CaseStudy['ownership'];
 
   return (
     <>
-    <div className="relative hidden min-h-[30rem] lg:block">
+    <div className="relative hidden min-h-[44rem] lg:block">
       <svg
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
@@ -145,7 +145,7 @@ function OwnershipMap({ ownership, shown }: { ownership: CaseStudy['ownership'];
         return (
           <div
             key={m.domain}
-            className={`group absolute z-10 flex w-36 flex-col ${ANCHOR_ITEMS[anchor]}`}
+            className={`group absolute z-10 flex w-[clamp(6.5rem,0.35rem+9.6vw,9rem)] flex-col ${ANCHOR_ITEMS[anchor]}`}
             style={{
               left: `${p.x}%`,
               top: `${p.y}%`,
