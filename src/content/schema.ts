@@ -236,16 +236,18 @@ export const caseStudySchema = z.object({
       }),
     )
     .default([]),
-  /** The Operational Decisions cards — Situation → Decision → Outcome.
-      Each one's supporting visual is drawn in code, not stored here. */
+  /** The Operational Decisions cards — an executive-level closing review,
+      Challenge → Decision → Impact. `impact` is 2–3 short, measurable
+      bullets rather than a paragraph. Each one's supporting visual is
+      drawn in code, not stored here. */
   decisions: z
     .array(
       z.object({
         title: z.string(),
         metric: z.string(),
-        situation: z.string(),
+        challenge: z.string(),
         decision: z.string(),
-        outcome: z.string(),
+        impact: z.array(z.string()),
       }),
     )
     .default([]),
