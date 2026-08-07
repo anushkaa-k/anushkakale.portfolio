@@ -351,12 +351,12 @@ html[data-mode="blueprint"] {
   }
   @keyframes hero-light-on {
     0%   { opacity: 0; }
-    55%  { opacity: 0.05; }
-    100% { opacity: 0.09; }
+    55%  { opacity: 0.18; }
+    100% { opacity: 0.28; }
   }
   @keyframes hero-light-shimmer {
-    0%, 100% { opacity: 0.09; }
-    50%      { opacity: 0.075; }
+    0%, 100% { opacity: 0.28; }
+    50%      { opacity: 0.27; }
   }
 
   /* A very soft, narrow throw straight down from each fixture — almost
@@ -381,7 +381,7 @@ html[data-mode="blueprint"] {
     transition: opacity 0.5s ease;
   }
   #top:hover .hero-light-boost {
-    opacity: 0.03;
+    opacity: 0.08;
   }
 
   /* ---- hero: light grazing the top edge of the name ---------------------
@@ -392,9 +392,9 @@ html[data-mode="blueprint"] {
   .hero-lit-name {
     background-image: linear-gradient(
       to bottom,
-      color-mix(in srgb, white 78%, var(--accent-orange)) 0%,
-      color-mix(in srgb, white 78%, var(--accent-orange)) 10%,
-      var(--ink) 26%,
+      color-mix(in srgb, white 22%, var(--accent-orange)) 0%,
+      color-mix(in srgb, white 22%, var(--accent-orange)) 12%,
+      var(--ink) 28%,
       var(--ink) 100%
     );
     background-clip: text;
