@@ -22,6 +22,7 @@ import {
   skillsSchema,
   testimonialsSchema,
   type CaseStudy,
+  type Pair,
   type Photo,
   type SectionId,
   type SectionMeta,
@@ -89,4 +90,4 @@ export const sections: SectionMeta[] = site.sections
   .filter((s) => populated[s.id]())
   .map((s, i) => ({ ...s, sheet: String(i + 1).padStart(2, '0') }))
 
-export type { CaseStudy, Photo, SectionId, SectionMeta }
+export type { CaseStudy, Pair, Photo, SectionId, SectionMeta }

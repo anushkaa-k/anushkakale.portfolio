@@ -11,7 +11,7 @@
    whole sheet shrunk into noise.
    ========================================================================== */
 
-import { Fragment, type ReactElement } from 'react'
+import { Fragment, type CSSProperties, type ReactElement } from 'react'
 import {
   Bubble,
   CenterLine,
@@ -114,18 +114,43 @@ function TrussElevation(): ReactElement {
   const y = 104
   const length = 700
   const depth = 54
+  const scanWidth = 150
 
   return (
     <g className="zone" style={{ animationDelay: '0.42s' }}>
       <Truss x={x} y={y} length={length} depth={depth} bays={15} />
-      <LanternRun
+
+      {/* a slow highlight scanning the truss's length every ~9s — dormant
+          the rest of the time, so it reads as an occasional check rather
+          than continuous motion */}
+      <defs>
+        <linearGradient id="heroTrussScan" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="var(--accent-orange)" stopOpacity="0" />
+          <stop offset="50%" stopColor="var(--accent-orange)" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="var(--accent-orange)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <rect
+        aria-hidden="true"
         x={x}
-        y={y + depth}
-        length={length}
-        count={8}
-        types={['profile', 'fresnel', 'profile', 'par']}
-        scale={1.15}
+        y={y - 8}
+        width={scanWidth}
+        height={depth + 16}
+        fill="url(#heroTrussScan)"
+        className="hero-truss-scan"
+        style={{ '--scan-distance': `${length - scanWidth}px` } as CSSProperties}
       />
+
+      <g className="hero-lanterns">
+        <LanternRun
+          x={x}
+          y={y + depth}
+          length={length}
+          count={8}
+          types={['profile', 'fresnel', 'profile', 'par']}
+          scale={1.15}
+        />
+      </g>
 
       {/* motor chains up to the grid */}
       {[0.14, 0.5, 0.86].map((f, i) => {
@@ -184,14 +209,16 @@ function FrontElevation({ compact }: { compact: boolean }): ReactElement {
       <Hatch id="legR" x={R - 34} y={top + 26} width={34} height={deck - top - 26} gap={8} />
 
       <Truss x={L + 58} y={top + 52} length={R - L - 116} depth={26} bays={10} />
-      <LanternRun
-        x={L + 58}
-        y={top + 78}
-        length={R - L - 116}
-        count={7}
-        types={['profile', 'fresnel']}
-        scale={0.92}
-      />
+      <g className="hero-lanterns">
+        <LanternRun
+          x={L + 58}
+          y={top + 78}
+          length={R - L - 116}
+          count={7}
+          types={['profile', 'fresnel']}
+          scale={0.92}
+        />
+      </g>
 
       {/* line-array hangs flanking the opening */}
       {[L - 26, R + 26].map((sx, n) => (
@@ -403,7 +430,10 @@ export function Banner({ compact }: { compact: boolean }): ReactElement {
         <Grid width={W} height={H} step={50} />
       </g>
       <g className="zone" style={{ animationDelay: '0.15s' }}>
-        <CenterLine x1={1002} y1={0} x2={1002} y2={H} />
+        {/* the sheet's own datum spine — the one line drawn stroke-first
+            rather than faded in with its group, so the sheet reads as
+            struck rather than simply appearing */}
+        <line x1={1002} y1={0} x2={1002} y2={H} pathLength={1} className="l-center hero-draw-in" />
       </g>
       <GroundPlan />
       <TrussElevation />
