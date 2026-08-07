@@ -47,7 +47,7 @@ export function Contact({ meta }: { meta: SectionMeta }): ReactElement {
       </p>
 
       <div ref={ref} data-in={shown} className="reveal grid border-2 border-ink md:grid-cols-[1.5fr_1fr]">
-        <ul className="py-1">
+        <ul className="bg-paper py-1">
           {contact.links.map((link) => {
             const isEmail = link.href.startsWith('mailto:')
             const external = isExternal(link.href)
