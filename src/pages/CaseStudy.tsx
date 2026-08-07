@@ -181,7 +181,7 @@ export function CaseStudy({
                   poster running metres tall in a wide column. Below `lg` the
                   column is full-width and the page stacks, so it keeps the
                   plain width-driven aspect box. */}
-              <div className="relative aspect-[3/4] lg:mx-auto lg:aspect-auto lg:h-[68vh] lg:w-[51vh] lg:max-w-full">
+              <div className="relative aspect-[3/4] lg:mx-auto lg:aspect-auto lg:h-[75vh] lg:w-[56.25vh] lg:max-w-full">
                 {posterOk ? (
                   <>
                     <button

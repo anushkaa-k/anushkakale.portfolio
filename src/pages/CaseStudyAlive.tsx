@@ -299,7 +299,7 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
       <CaseStudyNav backHref={backHref} sections={ALIVE_SECTIONS} mode={mode} onToggle={toggle} />
 
       <div className="flex h-dvh min-h-[36rem] flex-col text-ink">
-        <div className="gutter flex min-h-0 flex-1 flex-col overflow-y-auto py-[clamp(0.75rem,2.5vh,1.5rem)]">
+        <div className="gutter flex min-h-0 flex-1 flex-col py-[clamp(0.75rem,2.5vh,1.5rem)]">
           <CaseStudyHeader title={data.title} role={data.role} org={data.org} year={data.year} />
 
           <hr className="my-[clamp(0.75rem,2.5vh,1.25rem)] shrink-0 border-t-2 border-ink" />
@@ -308,7 +308,7 @@ export function CaseStudyAlive({ data, backHref }: { data: CaseStudy; backHref: 
             <section id="project-overview" className="flex min-h-0 flex-col" style={{ flex: '2 1 0%' }}>
               <h2 className="label mb-2 shrink-0 text-ink-45">Project Overview</h2>
               <div className="grid min-h-0 flex-1 gap-x-8 gap-y-4 lg:grid-cols-[3fr_2fr]">
-                <div className="flex min-h-0 flex-col overflow-y-auto">
+                <div className="flex min-h-0 flex-col">
                   <p className="max-w-[42rem] text-[0.82rem] leading-snug text-ink-70">{data.overview}</p>
                 </div>
 
