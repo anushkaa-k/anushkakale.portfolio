@@ -12,12 +12,99 @@ import { asset, isExternal } from '../lib/asset'
    a bolder title, a "View Case Study" CTA and an optional second outbound
    CTA (e.g. Instagram). The rest are Supporting Productions: same plate,
    quieter treatment, a single plain outbound link. Tier comes from
-   position, not extra content. */
+   position, not extra content.
+
+   Below `md` this desktop grid is replaced outright by MobileProjectList,
+   not shrunk into it — four dense dashboard plates don't compress into a
+   phone width gracefully, so mobile gets its own simpler, spacious card
+   design (no metrics, generous padding) instead of a squeezed version of
+   the desktop one. The two layouts share the same data, nothing else. */
+
+/* The mobile card: plate number + featured badge, title, org/type, year,
+   then whatever link(s) the project actually has — a featured project
+   gets a "View Case Study" button plus an optional Instagram link, a
+   supporting production gets just its one outbound link. No metrics, no
+   forced height — the card is only as tall as its own content. */
+function MobileProjectCard({ project, index }: { project: (typeof projects.items)[number]; index: number }): ReactElement {
+  const featured = index < 2
+
+  return (
+    <article className="flex flex-col gap-4 border border-ink-45 bg-paper p-6">
+      <div className="flex items-baseline justify-between gap-4">
+        <span className="label text-ink-45">
+          Plate {String(index + 1).padStart(2, '0')}
+          {featured && (
+            <>
+              <span className="mx-1.5 text-ink-25">/</span>
+              <span className="font-bold text-redline">Featured</span>
+            </>
+          )}
+        </span>
+        <span className="label text-ink-45">{project.year}</span>
+      </div>
+
+      <div>
+        <h3 className={`font-display text-2xl leading-tight ${featured ? 'font-extrabold' : 'font-semibold'}`}>
+          {project.title}
+        </h3>
+        <p className="mt-1.5 text-[0.95rem] text-ink-70">{project.org}</p>
+      </div>
+
+      {project.link && (
+        <div className="flex flex-wrap items-center gap-3">
+          {featured ? (
+            <a
+              href={isExternal(project.link.href) ? project.link.href : asset(project.link.href)}
+              {...(isExternal(project.link.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              className="label inline-flex items-center gap-2 border-2 border-ink/70 px-5 py-3 font-semibold text-ink no-underline"
+            >
+              View Case Study
+              <span aria-hidden="true">→</span>
+            </a>
+          ) : (
+            <a
+              href={project.link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="label inline-flex items-center gap-2 border border-ink-25 px-5 py-3 text-ink-70 no-underline"
+            >
+              {project.link.label}
+              <span aria-hidden="true">↗</span>
+            </a>
+          )}
+          {featured && project.instagram && (
+            <a
+              href={project.instagram.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="label inline-flex items-center gap-2 border border-ink-25 px-5 py-3 text-ink-70 no-underline"
+            >
+              {project.instagram.label}
+              <span aria-hidden="true">↗</span>
+            </a>
+          )}
+        </div>
+      )}
+    </article>
+  )
+}
+
+function MobileProjectList(): ReactElement {
+  return (
+    <Reveal className="flex flex-col gap-4 md:hidden">
+      {projects.items.map((project, i) => (
+        <MobileProjectCard key={project.title} project={project} index={i} />
+      ))}
+    </Reveal>
+  )
+}
 
 export function Projects({ meta }: { meta: SectionMeta }): ReactElement {
   return (
     <Sheet meta={meta}>
-      <Reveal className="grid grid-cols-4 gap-px border border-ink-45 bg-ink-25">
+      <MobileProjectList />
+
+      <Reveal className="hidden gap-px border border-ink-45 bg-ink-25 md:grid md:grid-cols-4">
         {projects.items.map((project, i) => {
           const featured = i < 2
 
