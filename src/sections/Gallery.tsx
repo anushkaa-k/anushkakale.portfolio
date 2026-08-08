@@ -178,8 +178,13 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
             {GROUP_ORDER.map((group) => {
               const photos = ordered.filter((p) => p.project === group)
               if (photos.length === 0) return null
+              /* The rotated tag runs longer than a photo is tall, so it — not
+                 the photos — sets this row's height. `items-center` keeps the
+                 frames on the tag's centre line rather than letting them ride
+                 up to the top of that taller row; the tag's rails then
+                 overhang the photos evenly at both ends. */
               return (
-                <div key={group} className="flex shrink-0 gap-x-4 md:gap-x-8">
+                <div key={group} className="flex shrink-0 items-center gap-x-4 md:gap-x-8">
                   <div
                     data-group-marker={group}
                     className="flex w-8 shrink-0 flex-col items-center justify-center gap-3 self-stretch border-x border-dashed border-ink-25 md:w-12"
