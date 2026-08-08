@@ -20,6 +20,12 @@ import { asset } from '../lib/asset'
   only appears once you've scrolled past the start; the forward arrow
   hides the same way at the end.
 
+  The arrows are desktop-only, and the strip's padding, gaps and divider
+  tag are all drawn tighter below `md`. That padding exists to hold the
+  arrows off the photos, so on a phone it was costing 44% of the strip to
+  reserve room for controls that touch scrolling already replaces — enough
+  that the first photo was clipped before the second could hint at itself.
+
   Frame numbers are a stable identity (hashed from the filename, not the
   on-screen position), so a photo keeps its number regardless of where it
   falls in the strip. Clicking a frame opens a lightbox with Previous/Next
@@ -167,16 +173,16 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
             tabIndex={0}
             role="group"
             aria-label="Photo strip, scrollable left to right"
-            className="no-scrollbar flex gap-x-8 overflow-x-auto scroll-smooth pt-6 pr-14 pb-8 pl-14"
+            className="no-scrollbar flex gap-x-4 overflow-x-auto scroll-smooth pt-6 pr-4 pb-8 pl-4 md:gap-x-8 md:pr-14 md:pl-14"
           >
             {GROUP_ORDER.map((group) => {
               const photos = ordered.filter((p) => p.project === group)
               if (photos.length === 0) return null
               return (
-                <div key={group} className="flex shrink-0 gap-x-8">
+                <div key={group} className="flex shrink-0 gap-x-4 md:gap-x-8">
                   <div
                     data-group-marker={group}
-                    className="flex w-12 shrink-0 flex-col items-center justify-center gap-3 self-stretch border-x border-dashed border-ink-25"
+                    className="flex w-8 shrink-0 flex-col items-center justify-center gap-3 self-stretch border-x border-dashed border-ink-25 md:w-12"
                   >
                     <span
                       className="label whitespace-nowrap text-ink-45"
@@ -207,7 +213,7 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
             aria-label="Scroll photos back"
             aria-hidden={atStart}
             tabIndex={atStart ? -1 : 0}
-            className={`absolute top-1/2 left-0 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-ink-25 bg-paper/90 text-ink-70 shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[opacity,color,border-color] duration-300 hover:border-accent-orange hover:text-accent-orange ${
+            className={`absolute top-1/2 left-0 hidden size-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-ink-25 bg-paper/90 text-ink-70 shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[opacity,color,border-color] duration-300 hover:border-accent-orange hover:text-accent-orange md:flex ${
               atStart ? 'pointer-events-none opacity-0' : 'opacity-100'
             }`}
           >
@@ -222,7 +228,7 @@ export function Gallery({ meta }: { meta: SectionMeta }): ReactElement | null {
             aria-label="Scroll photos forward"
             aria-hidden={atEnd}
             tabIndex={atEnd ? -1 : 0}
-            className={`absolute top-1/2 right-0 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-ink-25 bg-paper/90 text-ink-70 shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[opacity,color,border-color] duration-300 hover:border-accent-orange hover:text-accent-orange ${
+            className={`absolute top-1/2 right-0 hidden size-10 -translate-y-1/2 cursor-pointer items-center justify-center border border-ink-25 bg-paper/90 text-ink-70 shadow-[0_8px_18px_-10px_var(--ink-45)] transition-[opacity,color,border-color] duration-300 hover:border-accent-orange hover:text-accent-orange md:flex ${
               atEnd ? 'pointer-events-none opacity-0' : 'opacity-100'
             }`}
           >
