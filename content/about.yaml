@@ -26,7 +26,7 @@ body:
 # `k` is the small label, `v` is the value. Add as many rows as you like.
 facts:
   - k: Production Budgets
-    v: "₹50L+"
+    v: "₹80L+"
   - k: Productions
     v: "100+"
   - k: Years
