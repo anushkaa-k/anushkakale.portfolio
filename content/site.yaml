@@ -51,11 +51,11 @@ hero:
     - k: Years
       v: "5+"
     - k: Budgets Managed
-      v: "₹50L+"
+      v: "₹80L+"
     - k: Productions
       v: "100+"
     - k: Audience Reached
-      v: "1200+"
+      v: "10,000+"
 
   cta:
     primary:
