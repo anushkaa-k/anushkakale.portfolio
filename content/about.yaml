@@ -11,16 +11,17 @@ lead: >-
 # Ordinary paragraphs. Add or remove "- >-" blocks to add or remove paragraphs.
 body:
   - >-
-    That curiosity has carried me through theatre, festivals and large-scale
-    live productions from managing budgets and crews to coordinating the
-    hundred small decisions a show depends on. Production management, to me,
-    sits exactly where creativity meets operations: the craft is in making
-    the complicated look effortless.
+    That curiosity has carried me through theatre, festivals and live
+    productions, managing budgets and crews, coordinating collaborators, and
+    making the hundred small decisions a project depends on. I enjoy working
+    where creativity meets execution: taking an idea, figuring out what it needs
+    to work, and bringing the right people and pieces together to make it happen.
   - >-
-    I'm drawn to problems that need both a plan and quick thinking. A
-    schedule that has to bend, a vendor that falls through two days out, a
-    cue that has to land anyway. That mix of structure and improvisation is
-    what keeps me motivated to do this work.
+    I'm drawn to problems that need both a plan and quick thinking. A schedule
+    that has to bend, a vendor that falls through two days out, a creative idea
+    that needs a practical solution. That mix of structure, collaboration and
+    improvisation is what keeps me motivated to build things and see them
+    through.
 
 # The boxed "At a glance" panel beside the text.
 # `k` is the small label, `v` is the value. Add as many rows as you like.
@@ -37,11 +38,11 @@ facts:
 # The grid of competencies under the paragraphs. Keep this list short —
 # it's meant to be scanned at a glance, not read as a full skill inventory.
 owns:
-  label: What I own
+  label: What I bring
   items:
-    - Production Planning
+    - Project Planning
     - Budgeting
-    - Scheduling
+    - Creative Problem-Solving
     - Designing
     - On-ground Execution
     - Technical Coordination
@@ -50,5 +51,5 @@ owns:
 
 # The understated line at the very end of the section.
 status: >-
-  Currently freelancing as a Production Manager — open to opportunities
-  across theatre, entertainment and live experiences.
+  Currently freelancing across live entertainment and creative projects.
+  Open to opportunities across entertainment, events, brands and operations.
