@@ -14,13 +14,13 @@
 
 meta:
   name: Anushka Kale
-  role: Production Manager
+  role: Live Entertainment & Creative Projects
 
   # Shown in the browser tab and in Google results.
-  title: Anushka Kale — Production Manager
+  title: Anushka Kale — Live Entertainment & Creative Projects
   description: >-
-    Production Manager — theatre festivals, performances, shoots and
-    large-scale live experiences. Mumbai.
+    Live entertainment, creative projects and production — bringing together
+    people, ideas and execution from concept to experience. Mumbai.
 
   # The big headline on the banner — the largest thing on the page.
   # The | character is a line break.
@@ -28,8 +28,8 @@ meta:
 
   # The short line underneath the headline and her name.
   standfirst: >-
-    I plan and execute theatre productions, festivals and live experiences, from
-    logistics to collaborative leadership.
+    I work across live entertainment, creative projects and production, bringing
+    together people, ideas and execution to make things happen.
 
   location: Mumbai, India
 
@@ -45,7 +45,7 @@ meta:
 # -----------------------------------------------------------------------------
 
 hero:
-  tagline: Production Manager for|Theatre, Festivals & Live Experiences
+  tagline: I build and manage experiences|from idea to execution
 
   stats:
     - k: Years
