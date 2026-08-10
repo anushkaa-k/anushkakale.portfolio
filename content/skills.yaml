@@ -18,21 +18,21 @@ groups:
   - name: Operations & Delivery
     items:
       - Budget Planning & Tracking
-      - Vendor Management
       - Logistics Coordination
-      - Contract Administration
+      - Resource Allocation
       - Procurement & Reconciliation
       - Risk & Contingency Planning
       - Operational Execution
+      - Social Media Content 
 
-  - name: Leadership & Communication
+  - name: People & Partnerships
     items:
       - Cross-functional Collaboration
       - Stakeholder Management
-      - Calm escalation handling
+      - Contract Administration
       - Conflict Resolution
       - Crew Leadership
-      - Decision Making
+      - Vendor Management
       - Adaptability
 
   - name: Systems & Tools
