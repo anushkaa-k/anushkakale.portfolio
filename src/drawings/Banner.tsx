@@ -17,11 +17,13 @@
    being drafted rather than a static backdrop. All three are well under
    a 20% swing and run 10s+, so nothing registers as "moving" at a glance.
 
-   Five of the truss's fixtures (`FocusLightBeams`) each pan a thin beam
-   onto a different point along the name below, on their own timing —
-   the rig itself slowly finding its focus. */
+   Five theatrical profile-spot fixtures (`FocusLights`) hang off the same
+   truss chord, each panning a tapered beam onto its own point along the
+   name below, on its own timing — the rig itself slowly finding its
+   focus. Targets come from the hero measuring the rendered headline
+   (see `Hero.tsx`), so they track it responsively. */
 
-import { Fragment, type ReactElement } from 'react'
+import { Fragment, useEffect, useRef, useState, type ReactElement } from 'react'
 import {
   Bubble,
   CenterLine,
@@ -33,9 +35,15 @@ import {
   Truss,
   TrussPlan,
 } from '../lib/draft'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 
 const W = 2000
 const H = 960
+
+interface Vec {
+  x: number
+  y: number
+}
 
 /* ---------- centre top: truss elevation ------------------------------------ */
 
@@ -103,64 +111,222 @@ function LanternGlow({
   )
 }
 
-/* Five of the truss's eight fixtures also carry a focus beam — thin,
-   translucent blueprint geometry only, no fill or glow beyond a faint
-   construction-weight wash — that slowly pans from an unfocused angle
-   onto a different point along "Hi, I'm Anushka" and settles there, then
-   holds a barely-there wobble, the way a lighting designer leaves a
-   fixture live once it's found its mark. Every fixture's start angle,
-   settle duration, delay, easing and beam width are different (see the
-   `.focus-light-*` rules in index.css), so the five never move together.
-   `slot` mirrors LanternGlow's own spacing exactly, so a beam's pivot
-   always sits at its fixture's lens. */
-const FOCUS_FIXTURES: { n: number; slot: number; halfWidth: number; beamLength: number }[] = [
-  { n: 1, slot: 2, halfWidth: 5, beamLength: 280 },
-  { n: 2, slot: 3, halfWidth: 7, beamLength: 310 },
-  { n: 3, slot: 4, halfWidth: 4, beamLength: 260 },
-  { n: 4, slot: 5, halfWidth: 8, beamLength: 330 },
-  { n: 5, slot: 6, halfWidth: 6, beamLength: 295 },
+/* ---------- five focus-light fixtures --------------------------------------
+
+   Five theatrical profile-spot fixtures hung on the same truss chord as
+   the plain lanterns (`LanternGlow`/`LanternRun` above), each aimed at
+   its own point along "Hi, I'm Anushka" and slowly panning onto it. Every
+   fixture is two parts, drawn separately on purpose:
+
+   - a fixed yoke: the mounting clamp at the truss, the drop, and the
+     bracket arms with their pivot pins — this half never moves, the way
+     a real yoke stays clamped to the truss while only the barrel inside
+     it tilts.
+   - a rotating barrel + beam: the housing, its lens cap, and a beam
+     tapered from a narrow throat at the lens to a wider spread at the
+     target, sized so its tip lands exactly on the target regardless of
+     the fixture's angle (`beamLength` is the live distance from pivot to
+     target, not a guess).
+
+   `PIVOTS` mirrors LanternGlow's own spacing at slots 2–6 of its 8, so a
+   fixture's pivot always sits at an existing lens position. Targets are
+   supplied by the hero (`Hero.tsx` measures the rendered headline and
+   converts it into this SVG's coordinate space) — `DEFAULT_TARGETS` is
+   only what a fixture aims at for the one frame before that measurement
+   is ready. */
+
+const FOCUS_TRUSS_X = 654
+const FOCUS_TRUSS_LENGTH = 700
+const FOCUS_SCALE = 1.15
+const FOCUS_STEP = FOCUS_TRUSS_LENGTH / 9
+/** The truss fixtures' lens height, in this svg's own viewBox units —
+    exported so Hero.tsx's headline measurement can keep every target
+    comfortably below it (see `MIN_TARGET_DROP` there): the headline sits
+    close enough to the truss, vertically, that an unclamped target can
+    end up level with or above the pivot, spinning a fixture past
+    horizontal to reach it. */
+export const FOCUS_LENS_Y = 104 + 54 + 26 * FOCUS_SCALE
+
+const FOCUS_SLOTS = [2, 3, 4, 5, 6]
+const PIVOTS: Vec[] = FOCUS_SLOTS.map((slot) => ({
+  x: FOCUS_TRUSS_X + slot * FOCUS_STEP,
+  y: FOCUS_LENS_Y,
+}))
+
+/** Where a fixture aims before the headline has been measured — a rough
+    spread across where the title usually sits, close enough that the
+    first paint doesn't show fixtures pointing somewhere strange. */
+const DEFAULT_TARGETS: Vec[] = [
+  { x: 780, y: 520 },
+  { x: 890, y: 520 },
+  { x: 1000, y: 520 },
+  { x: 1110, y: 520 },
+  { x: 1220, y: 520 },
 ]
 
-function FocusLightBeams({
-  x,
-  y,
-  length,
-  scale,
+/** How far the far end of each beam spreads, in viewBox units — different
+    per fixture, same spirit as the old per-fixture beam-width variety. */
+const FOCUS_BEAM_SPREAD = [9, 12, 7, 13, 10]
+
+/** Per-fixture spring: how far off its mark the fixture starts (degrees),
+    how stiff/damped the settle is, and how long it waits before moving
+    at all. Every value is different so the five are never in step. */
+const FOCUS_SPRINGS = [
+  { startOffset: -16, stiffness: 0.052, damping: 0.6, delayMs: 300 },
+  { startOffset: 11, stiffness: 0.044, damping: 0.62, delayMs: 900 },
+  { startOffset: -9, stiffness: 0.06, damping: 0.58, delayMs: 150 },
+  { startOffset: 18, stiffness: 0.04, damping: 0.63, delayMs: 1150 },
+  { startOffset: -7, stiffness: 0.05, damping: 0.6, delayMs: 600 },
+]
+
+const MIN_BEAM_LENGTH = 120
+const MAX_BEAM_LENGTH = 420
+
+/** 0° is straight down; positive rotates the fixture toward +x. */
+function angleTo(pivot: Vec, target: Vec): number {
+  const dx = target.x - pivot.x
+  const dy = target.y - pivot.y
+  return (Math.atan2(dx, dy) * 180) / Math.PI
+}
+
+/** Each fixture's current rotation, in degrees. Not a CSS keyframe: the
+    target angle is derived from the (possibly still-updating) headline
+    measurement, so it has to be computed and sprung toward at runtime.
+    Every fixture starts offset from its mark, waits out its own delay,
+    then eases in on a damped spring — comfortably overdamped for its own
+    stiffness, so it never overshoots or oscillates once it arrives.
+    Fully static (no rAF at all) under reduced motion. */
+function useFocusAngles(targets: Vec[]): number[] {
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const finalAngles = PIVOTS.map((pivot, i) => angleTo(pivot, targets[i]))
+  const finalAnglesRef = useRef(finalAngles)
+  finalAnglesRef.current = finalAngles
+
+  const [angles, setAngles] = useState<number[]>(() =>
+    finalAngles.map((a, i) => a + FOCUS_SPRINGS[i].startOffset),
+  )
+  const angleRef = useRef(angles)
+  const velocityRef = useRef(angles.map(() => 0))
+  const mountedAtRef = useRef(0)
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setAngles(finalAnglesRef.current)
+      return
+    }
+
+    mountedAtRef.current = performance.now()
+    let raf = 0
+    let last = performance.now()
+
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 16.67, 2)
+      last = now
+
+      const next = angleRef.current.map((angle, i) => {
+        const spring = FOCUS_SPRINGS[i]
+        if (now - mountedAtRef.current < spring.delayMs) return angle
+        const target = finalAnglesRef.current[i]
+        const v =
+          velocityRef.current[i] + (spring.stiffness * (target - angle) - spring.damping * velocityRef.current[i]) * dt
+        velocityRef.current[i] = v
+        return angle + v * dt
+      })
+      angleRef.current = next
+      setAngles(next)
+      raf = requestAnimationFrame(tick)
+    }
+
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [reducedMotion])
+
+  return reducedMotion ? finalAngles : angles
+}
+
+function FocusFixture({
+  pivot,
+  angle,
+  target,
+  beamSpread,
 }: {
-  x: number
-  y: number
-  length: number
-  scale: number
+  pivot: Vec
+  angle: number
+  target: Vec
+  beamSpread: number
 }): ReactElement {
-  const clearance = 26 * scale
-  const lensY = y + clearance
-  const step = length / 9
+  const { x: px, y: lensY } = pivot
+  const beamLength = Math.min(
+    Math.max(Math.hypot(target.x - px, target.y - lensY), MIN_BEAM_LENGTH),
+    MAX_BEAM_LENGTH,
+  )
+  const mountY = 104 + 54
+
+  return (
+    <g>
+      {/* fixed yoke: clamped to the truss, never rotates */}
+      <rect x={px - 4} y={mountY} width={8} height={5} className="l-thin" />
+      <line x1={px} y1={mountY + 5} x2={px} y2={lensY - 19} className="l-hair" />
+      <line x1={px - 7} y1={lensY - 17} x2={px - 7} y2={lensY + 2} className="l-thin" />
+      <line x1={px + 7} y1={lensY - 17} x2={px + 7} y2={lensY + 2} className="l-thin" />
+      <line x1={px - 7} y1={lensY - 17} x2={px + 7} y2={lensY - 17} className="l-hair" />
+      <circle cx={px - 7} cy={lensY - 6} r={1} className="l-hair fill-paper" />
+      <circle cx={px + 7} cy={lensY - 6} r={1} className="l-hair fill-paper" />
+
+      {/* rotating barrel, lens and beam — one pivot, at the lens */}
+      <g style={{ transform: `rotate(${angle}deg)`, transformOrigin: `${px}px ${lensY}px` }}>
+        <polygon
+          points={`${px - 1.6},${lensY} ${px - beamSpread},${lensY + beamLength} ${px + beamSpread},${lensY + beamLength} ${px + 1.6},${lensY}`}
+          style={{ fill: 'color-mix(in srgb, var(--accent-orange) 16%, var(--ink))' }}
+          fillOpacity={0.16}
+        />
+        <line
+          x1={px - 1.6}
+          y1={lensY}
+          x2={px - beamSpread}
+          y2={lensY + beamLength}
+          className="l-hair"
+          style={{ opacity: 0.55 }}
+        />
+        <line
+          x1={px + 1.6}
+          y1={lensY}
+          x2={px + beamSpread}
+          y2={lensY + beamLength}
+          className="l-hair"
+          style={{ opacity: 0.55 }}
+        />
+        <rect x={px - 4} y={lensY - 15} width={8} height={11} className="l-thin" />
+        <path
+          d={`M${px - 5} ${lensY - 4} L${px + 5} ${lensY - 4} L${px + 3} ${lensY} L${px - 3} ${lensY} Z`}
+          className="l-thin"
+        />
+        <rect x={px - 2} y={lensY - 19} width={4} height={4} className="l-hair" />
+      </g>
+    </g>
+  )
+}
+
+function FocusLights({ targets }: { targets: Vec[] | null }): ReactElement {
+  const resolvedTargets = targets ?? DEFAULT_TARGETS
+  const angles = useFocusAngles(resolvedTargets)
 
   return (
     <>
-      {FOCUS_FIXTURES.map(({ n, slot, halfWidth, beamLength }) => {
-        const px = x + slot * step
-        const rad = (halfWidth * Math.PI) / 180
-        const leftX = px + beamLength * Math.sin(-rad)
-        const rightX = px + beamLength * Math.sin(rad)
-        const edgeY = lensY + beamLength * Math.cos(rad)
-        return (
-          <g key={n} className={`focus-light-${n}`} style={{ transformOrigin: `${px}px ${lensY}px` }}>
-            <polygon
-              points={`${px},${lensY} ${leftX},${edgeY} ${rightX},${edgeY}`}
-              style={{ fill: 'var(--line-construct)' }}
-              fillOpacity={0.14}
-            />
-            <line x1={px} y1={lensY} x2={leftX} y2={edgeY} className="l-hair" style={{ opacity: 0.55 }} />
-            <line x1={px} y1={lensY} x2={rightX} y2={edgeY} className="l-hair" style={{ opacity: 0.55 }} />
-          </g>
-        )
-      })}
+      {PIVOTS.map((pivot, i) => (
+        <FocusFixture
+          key={i}
+          pivot={pivot}
+          angle={angles[i]}
+          target={resolvedTargets[i]}
+          beamSpread={FOCUS_BEAM_SPREAD[i]}
+        />
+      ))}
     </>
   )
 }
 
-function TrussElevation(): ReactElement {
+function TrussElevation({ targets }: { targets: Vec[] | null }): ReactElement {
   const x = 654
   const y = 104
   const length = 700
@@ -179,7 +345,7 @@ function TrussElevation(): ReactElement {
           <stop offset="100%" stopColor="var(--accent-orange)" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <FocusLightBeams x={x} y={y + depth} length={length} scale={1.15} />
+      <FocusLights targets={targets} />
       <LanternGlow x={x} y={y + depth} length={length} count={8} scale={1.15} />
       <LanternRun
         x={x}
@@ -257,7 +423,16 @@ function Furniture(): ReactElement {
 
 /* ---------- assembly -------------------------------------------------------- */
 
-export function Banner({ compact }: { compact: boolean }): ReactElement {
+export function Banner({
+  compact,
+  targets = null,
+}: {
+  compact: boolean
+  /** Five points, in this SVG's own coordinate space, for the focus
+      fixtures to aim at — see `Hero.tsx`'s `useHeadlineTargets`. `null`
+      (the default) until the headline has been measured. */
+  targets?: Vec[] | null
+}): ReactElement {
   return (
     <svg
       className="absolute inset-0 h-full w-full"
@@ -277,7 +452,7 @@ export function Banner({ compact }: { compact: boolean }): ReactElement {
             struck rather than simply appearing */}
         <line x1={1002} y1={0} x2={1002} y2={H} pathLength={1} className="l-center hero-draw-in" />
       </g>
-      <TrussElevation />
+      <TrussElevation targets={targets} />
       <Furniture />
     </svg>
   )
