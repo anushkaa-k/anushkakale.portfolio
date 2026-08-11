@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState, type ReactElement, type RefObjec
 
 import { sections, site, type Pair } from '../content'
 import { Banner } from '../drawings/Banner'
+import { HeroNodes } from './HeroNodes'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { asset, isExternal } from '../lib/asset'
 
@@ -153,6 +154,8 @@ export function Hero(): ReactElement {
       >
         <Banner compact={compact} />
       </div>
+
+      <HeroNodes />
 
       <div className="relative">
         <div
