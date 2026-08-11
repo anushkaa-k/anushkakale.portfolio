@@ -133,6 +133,20 @@ html[data-mode="blueprint"] {
   svg .fill-ink    { fill: var(--ink); stroke: none; }
   svg .fill-paper  { fill: var(--paper); }
 
+  /* ---- hero node micro-interactions ------------------------------------ */
+  /* Shared by the four hero nodes' icons (src/components/HeroNodes.tsx):
+     one settled easing for whatever property changes when a node becomes
+     the one the cursor's magnet has caught — a weight swap, an opacity
+     lift, a small scale, a line resolving in. */
+  svg .node-anim {
+    transition:
+      stroke-width 0.6s ease,
+      stroke 0.6s ease,
+      opacity 0.6s ease,
+      transform 0.6s ease,
+      stroke-dashoffset 0.6s ease;
+  }
+
   svg text.note {
     font-family: var(--font-mono);
     font-size: 12px;
