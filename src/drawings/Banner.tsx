@@ -10,7 +10,12 @@
    Groups marked `zone-far` are dropped on narrow screens and the viewBox
    crops to the centre, so a phone gets a legible drawing rather than the
    whole sheet shrunk into noise.
-   ========================================================================== */
+
+   The grid, the corner crosshairs and one marginal note each carry a very
+   slow, staggered ambient loop (`.grid-breathe`/`.crosshair-drift`/
+   `.note-breathe`, defined in index.css) — the sheet reading as still
+   being drafted rather than a static backdrop. All three are well under
+   a 20% swing and run 10s+, so nothing registers as "moving" at a glance. */
 
 import { Fragment, type ReactElement } from 'react'
 import {
@@ -137,14 +142,18 @@ function TrussElevation(): ReactElement {
 
       <DimH x1={x} x2={x + length} y={y - 74} from={y - 60} label={`60'-0"`} />
 
-      {/* marginal annotations — outside the phone crop, so dropped with it */}
+      {/* marginal annotations — outside the phone crop, so dropped with it.
+          The LX/trim note breathes very slowly, as if someone were still
+          checking it against the rig; the angle callout stays put. */}
       <g className="zone-far">
-        <Note x={x + length + 22} y={y + 30} anchor="start" size={12}>
-          LX 1
-        </Note>
-        <Note x={x + length + 22} y={y + 48} anchor="start" size={11} tone="dim">
-          {`TRIM 22'-6"`}
-        </Note>
+        <g className="note-breathe" style={{ animationDelay: '2.4s' }}>
+          <Note x={x + length + 22} y={y + 30} anchor="start" size={12}>
+            LX 1
+          </Note>
+          <Note x={x + length + 22} y={y + 48} anchor="start" size={11} tone="dim">
+            {`TRIM 22'-6"`}
+          </Note>
+        </g>
 
         {/* the angle callout from the reference sheet */}
         <Note x={1372} y={44} anchor="start" size={12} tone="dim">
@@ -159,16 +168,27 @@ function TrussElevation(): ReactElement {
 
 /* ---------- sheet furniture ------------------------------------------------- */
 
+/* Every crosshair drifts on the same slow loop, but staggered so they never
+   move in unison — a sheet with several registration marks being checked
+   one at a time, not a pattern blinking together. */
+const CROSSHAIRS: [number, number, number | undefined][] = [
+  [48, 44, undefined],
+  [1952, 44, undefined],
+  [48, 912, undefined],
+  [640, 42, 11],
+  [1420, 42, 11],
+  [1952, 912, undefined],
+  [1002, 826, 13],
+]
+
 function Furniture(): ReactElement {
   return (
     <g className="zone zone-far" style={{ animationDelay: '0.96s' }}>
-      <Crosshair x={48} y={44} />
-      <Crosshair x={1952} y={44} />
-      <Crosshair x={48} y={912} />
-      <Crosshair x={640} y={42} size={11} />
-      <Crosshair x={1420} y={42} size={11} />
-      <Crosshair x={1952} y={912} />
-      <Crosshair x={1002} y={826} size={13} />
+      {CROSSHAIRS.map(([x, y, size], i) => (
+        <g key={i} className="crosshair-drift" style={{ animationDelay: `${i * 1.8}s` }}>
+          <Crosshair x={x} y={y} size={size} />
+        </g>
+      ))}
     </g>
   )
 }
@@ -185,7 +205,9 @@ export function Banner({ compact }: { compact: boolean }): ReactElement {
       aria-label="Blueprint grid with a lighting truss elevation over the title."
     >
       <g className="zone zone-far" style={{ animationDelay: '0.05s' }}>
-        <Grid width={W} height={H} step={50} />
+        <g className="grid-breathe">
+          <Grid width={W} height={H} step={50} />
+        </g>
       </g>
       <g className="zone" style={{ animationDelay: '0.15s' }}>
         {/* the sheet's own datum spine — the one line drawn stroke-first
