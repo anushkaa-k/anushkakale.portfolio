@@ -46,6 +46,14 @@ interface NodeSpec {
     "becoming active" always reads as the same easing, whatever the icon. */
 const anim = 'node-anim'
 
+/* The label/caption read about a quarter too faint against the sheet — a
+   touch stronger than the standard `--ink-70`/`--ink-45` text tokens (not
+   a full step up, which would be a much bigger jump) so the nodes read as
+   deliberate marks rather than background annotation, without darkening
+   past what the rest of the hero's type hierarchy uses. */
+const LABEL_COLOR = 'color-mix(in srgb, var(--ink) 88%, transparent)'
+const CAPTION_COLOR = 'color-mix(in srgb, var(--ink) 58%, transparent)'
+
 /** Stage front, a spotlight throw, three rows of audience. Active: the
     proscenium arc resolves from hairline to a firmer weight and the
     spotlight throw brightens, as if it had just been struck. */
@@ -56,10 +64,10 @@ function LiveIcon({ active }: IconProps): ReactElement {
       <line x1="10" y1="34" x2="46" y2="34" className="l-med" />
       <path
         d="M28 15 L20 34 L36 34 Z"
-        className={`${anim} l-hair ${active ? 'opacity-90' : 'opacity-45'}`}
+        className={`${anim} l-hair ${active ? 'opacity-95' : 'opacity-60'}`}
       />
-      <path d="M17 41 Q28 37 39 41" className="l-hair" />
-      <path d="M14 47 Q28 42 42 47" className="l-hair" />
+      <path d="M17 41 Q28 37 39 41" className="l-thin" />
+      <path d="M14 47 Q28 42 42 47" className="l-thin" />
     </svg>
   )
 }
@@ -83,14 +91,14 @@ function CreativeIcon({ active }: IconProps): ReactElement {
           transform: active ? 'scale(1.08)' : 'scale(1)',
         }}
       />
-      <rect x="40" y="20" width="8" height="16" className="l-hair" />
+      <rect x="40" y="20" width="8" height="16" className="l-thin" />
       <path
         d="M27 32 Q30 24 34 30 T37 24"
         pathLength={1}
         className={`${anim} l-hair`}
         style={{ strokeDasharray: 1, strokeDashoffset: active ? 0 : 1 }}
       />
-      <line x1="8" y1="42" x2="48" y2="42" className="l-hair" />
+      <line x1="8" y1="42" x2="48" y2="42" className="l-thin" />
     </svg>
   )
 }
@@ -110,13 +118,13 @@ function BrandsIcon({ active }: IconProps): ReactElement {
       y1={y1}
       x2={x2}
       y2={y2}
-      className={`${anim} l-hair`}
+      className={`${anim} l-thin`}
       style={{ transform: active ? `translate(${dx}px, ${dy}px)` : 'translate(0, 0)' }}
     />
   )
   return (
     <svg viewBox="0 0 56 56" className="h-10 w-10" aria-hidden="true">
-      <circle cx="28" cy="28" r="18" className={`${anim} l-hair`} style={ringStyle} />
+      <circle cx="28" cy="28" r="18" className={`${anim} l-thin`} style={ringStyle} />
       <circle cx="28" cy="28" r="11" className={`${anim} l-thin`} style={ringStyle} />
       <circle cx="28" cy="28" r="1.6" className="fill-ink" />
       {tick(28, 6, 28, 12, 0, -1.5)}
@@ -161,9 +169,9 @@ function OperationsIcon({ active }: IconProps): ReactElement {
       {node(14)}
       {node(28)}
       {node(42)}
-      <path d="M11.5 20 L14 23 L18.5 16" className="l-hair" />
-      <line x1="28" y1="34" x2="28" y2="40" className="l-hair" />
-      <line x1="42" y1="34" x2="42" y2="38" className="l-hair" />
+      <path d="M11.5 20 L14 23 L18.5 16" className="l-thin" />
+      <line x1="28" y1="34" x2="28" y2="40" className="l-thin" />
+      <line x1="42" y1="34" x2="42" y2="38" className="l-thin" />
     </svg>
   )
 }
@@ -382,8 +390,12 @@ function HeroNode({
       <div className="flex justify-center">
         <Icon active={active} />
       </div>
-      <p className="label mt-1.5 text-ink-70">{node.title}</p>
-      <p className="mt-0.5 text-[0.62rem] leading-snug text-ink-45">{node.caption}</p>
+      <p className="label mt-1.5" style={{ color: LABEL_COLOR }}>
+        {node.title}
+      </p>
+      <p className="mt-0.5 text-[0.62rem] leading-snug" style={{ color: CAPTION_COLOR }}>
+        {node.caption}
+      </p>
     </div>
   )
 }
