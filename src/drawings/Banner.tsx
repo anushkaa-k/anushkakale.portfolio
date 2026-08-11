@@ -15,7 +15,11 @@
    slow, staggered ambient loop (`.grid-breathe`/`.crosshair-drift`/
    `.note-breathe`, defined in index.css) — the sheet reading as still
    being drafted rather than a static backdrop. All three are well under
-   a 20% swing and run 10s+, so nothing registers as "moving" at a glance. */
+   a 20% swing and run 10s+, so nothing registers as "moving" at a glance.
+
+   Five of the truss's fixtures (`FocusLightBeams`) each pan a thin beam
+   onto a different point along the name below, on their own timing —
+   the rig itself slowly finding its focus. */
 
 import { Fragment, type ReactElement } from 'react'
 import {
@@ -99,6 +103,63 @@ function LanternGlow({
   )
 }
 
+/* Five of the truss's eight fixtures also carry a focus beam — thin,
+   translucent blueprint geometry only, no fill or glow beyond a faint
+   construction-weight wash — that slowly pans from an unfocused angle
+   onto a different point along "Hi, I'm Anushka" and settles there, then
+   holds a barely-there wobble, the way a lighting designer leaves a
+   fixture live once it's found its mark. Every fixture's start angle,
+   settle duration, delay, easing and beam width are different (see the
+   `.focus-light-*` rules in index.css), so the five never move together.
+   `slot` mirrors LanternGlow's own spacing exactly, so a beam's pivot
+   always sits at its fixture's lens. */
+const FOCUS_FIXTURES: { n: number; slot: number; halfWidth: number; beamLength: number }[] = [
+  { n: 1, slot: 2, halfWidth: 5, beamLength: 280 },
+  { n: 2, slot: 3, halfWidth: 7, beamLength: 310 },
+  { n: 3, slot: 4, halfWidth: 4, beamLength: 260 },
+  { n: 4, slot: 5, halfWidth: 8, beamLength: 330 },
+  { n: 5, slot: 6, halfWidth: 6, beamLength: 295 },
+]
+
+function FocusLightBeams({
+  x,
+  y,
+  length,
+  scale,
+}: {
+  x: number
+  y: number
+  length: number
+  scale: number
+}): ReactElement {
+  const clearance = 26 * scale
+  const lensY = y + clearance
+  const step = length / 9
+
+  return (
+    <>
+      {FOCUS_FIXTURES.map(({ n, slot, halfWidth, beamLength }) => {
+        const px = x + slot * step
+        const rad = (halfWidth * Math.PI) / 180
+        const leftX = px + beamLength * Math.sin(-rad)
+        const rightX = px + beamLength * Math.sin(rad)
+        const edgeY = lensY + beamLength * Math.cos(rad)
+        return (
+          <g key={n} className={`focus-light-${n}`} style={{ transformOrigin: `${px}px ${lensY}px` }}>
+            <polygon
+              points={`${px},${lensY} ${leftX},${edgeY} ${rightX},${edgeY}`}
+              style={{ fill: 'var(--line-construct)' }}
+              fillOpacity={0.14}
+            />
+            <line x1={px} y1={lensY} x2={leftX} y2={edgeY} className="l-hair" style={{ opacity: 0.55 }} />
+            <line x1={px} y1={lensY} x2={rightX} y2={edgeY} className="l-hair" style={{ opacity: 0.55 }} />
+          </g>
+        )
+      })}
+    </>
+  )
+}
+
 function TrussElevation(): ReactElement {
   const x = 654
   const y = 104
@@ -118,6 +179,7 @@ function TrussElevation(): ReactElement {
           <stop offset="100%" stopColor="var(--accent-orange)" stopOpacity="0" />
         </linearGradient>
       </defs>
+      <FocusLightBeams x={x} y={y + depth} length={length} scale={1.15} />
       <LanternGlow x={x} y={y + depth} length={length} count={8} scale={1.15} />
       <LanternRun
         x={x}

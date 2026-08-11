@@ -375,6 +375,71 @@ html[data-mode="blueprint"] {
     45%      { opacity: 0.3; }
   }
 
+  /* ---- hero: five fixtures slowly finding their focus --------------------
+     Each rule below is one fixture's whole life: it starts turned away
+     from the name (an arbitrary "unfocused" angle), pans once onto its
+     spot along "Hi, I'm Anushka" on its own duration/delay/easing, then
+     holds an almost imperceptible wobble around that mark forever — the
+     same one-shot-then-settle pattern as the lantern glow above, just
+     applied to rotation instead of opacity. `transform-origin` is set
+     per-fixture inline (Banner.tsx, at the lens), so each rotates about
+     its own pivot, not the sheet's. Nothing here is timed the same as
+     its neighbours, so the five never read as one moving unit. */
+  .focus-light-1 {
+    animation-name: focus-pan-1, focus-hold-1;
+    animation-duration: 5.2s, 11s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1), ease-in-out;
+    animation-delay: 0.4s, 5.6s;
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: forwards, none;
+  }
+  @keyframes focus-pan-1  { from { transform: rotate(-22deg); }  to { transform: rotate(-5.1deg); } }
+  @keyframes focus-hold-1 { 0%, 100% { transform: rotate(-5.1deg); } 50% { transform: rotate(-6.4deg); } }
+
+  .focus-light-2 {
+    animation-name: focus-pan-2, focus-hold-2;
+    animation-duration: 6.4s, 9.5s;
+    animation-timing-function: ease-in-out, ease-in-out;
+    animation-delay: 1.1s, 7.5s;
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: forwards, none;
+  }
+  @keyframes focus-pan-2  { from { transform: rotate(14deg); }   to { transform: rotate(0.5deg); } }
+  @keyframes focus-hold-2 { 0%, 100% { transform: rotate(0.5deg); } 50% { transform: rotate(1.7deg); } }
+
+  .focus-light-3 {
+    animation-name: focus-pan-3, focus-hold-3;
+    animation-duration: 4.6s, 13s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1), ease-in-out;
+    animation-delay: 0.2s, 4.8s;
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: forwards, none;
+  }
+  @keyframes focus-pan-3  { from { transform: rotate(-12deg); }  to { transform: rotate(6deg); } }
+  @keyframes focus-hold-3 { 0%, 100% { transform: rotate(6deg); } 50% { transform: rotate(4.8deg); } }
+
+  .focus-light-4 {
+    animation-name: focus-pan-4, focus-hold-4;
+    animation-duration: 7.1s, 10.2s;
+    animation-timing-function: ease-out, ease-in-out;
+    animation-delay: 1.6s, 8.7s;
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: forwards, none;
+  }
+  @keyframes focus-pan-4  { from { transform: rotate(28deg); }   to { transform: rotate(11.4deg); } }
+  @keyframes focus-hold-4 { 0%, 100% { transform: rotate(11.4deg); } 50% { transform: rotate(12.9deg); } }
+
+  .focus-light-5 {
+    animation-name: focus-pan-5, focus-hold-5;
+    animation-duration: 5.8s, 12.4s;
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1), ease-in-out;
+    animation-delay: 0.8s, 6.6s;
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: forwards, none;
+  }
+  @keyframes focus-pan-5  { from { transform: rotate(-3deg); }   to { transform: rotate(16.7deg); } }
+  @keyframes focus-hold-5 { 0%, 100% { transform: rotate(16.7deg); } 50% { transform: rotate(15.4deg); } }
+
   /* ---- hero: the rig over the name powering on ---------------------------
      The fixtures are the only thing that ever emits light here — the
      truss they hang from is left as plain blueprint linework (see
@@ -493,4 +558,14 @@ html[data-mode="blueprint"] {
     opacity: 1;
     transform: none;
   }
+
+  /* Same idea for the five focus lights: each keeps only its one-shot pan
+     (fine at 0.001s — it still lands on the same aimed angle) and drops
+     the infinite hold-wobble that follows it, so every fixture ends up
+     focused on its mark and stays there rather than flashing. */
+  .focus-light-1 { animation: focus-pan-1 0.001s forwards; }
+  .focus-light-2 { animation: focus-pan-2 0.001s forwards; }
+  .focus-light-3 { animation: focus-pan-3 0.001s forwards; }
+  .focus-light-4 { animation: focus-pan-4 0.001s forwards; }
+  .focus-light-5 { animation: focus-pan-5 0.001s forwards; }
 }
