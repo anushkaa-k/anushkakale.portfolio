@@ -9,14 +9,19 @@
    disciplines — deliberately the faintest weight on the sheet, so it
    never competes with the nodes' own linework or the title.
 
-   Cursor is a magnetic field, not a leash: `useMagnet` tracks which node
-   is nearest the pointer and, after it has held that spot for a beat,
-   lets it drift toward the cursor on a damped spring (no bounce, no
-   snapping) while the other three ease a couple of percent away from it.
-   Everything reads from a single rest/offset model shared by the nodes
-   and the lines they're strung between, so the mesh always tracks where
-   the nodes actually are. Off entirely under reduced motion, same as
-   every other moving piece in the hero. */
+   Cursor is a magnetic field, not a leash: `useMagnet` pulls every node
+   within a generous radius toward the cursor, in proportion to how close
+   it is, and lets a small share of each node's pull leak to the nodes
+   it's connected to — so the network visibly answers as a system, not
+   node-by-node. The whole field fades up and down over three-quarters of
+   a second rather than switching on, and every node's position is a
+   damped spring chasing that (constantly moving) target, so the motion
+   trails the cursor instead of tracking it. Everything reads from a
+   single rest/offset model shared by the nodes and the lines they're
+   strung between, so the mesh stretches with wherever the nodes actually
+   are. Off entirely under reduced motion, same as every other moving
+   piece in the hero; never engaged on touch, since nothing fires
+   `mousemove` there. */
 
 import { useEffect, useRef, useState, type ReactElement } from 'react'
 
@@ -224,33 +229,69 @@ const ZERO: Vec = { x: 0, y: 0 }
 const zeroOffsets = (): Record<string, Vec> =>
   Object.fromEntries(HERO_NODES.map((n) => [n.title, { ...ZERO }]))
 
-/* Tuning: how far a magnetised node may wander, how long the pointer has
-   to sit nearest a node before it responds, and a damped-spring pair
-   (stiffness well under the critical-damping line for `damping`) chosen
-   specifically so a step target eases in without ever overshooting it. */
-const MAX_DISPLACE = 9
-const REPEL_NUDGE = 2
-const ATTRACT_DELAY_MS = 1500
-const STIFFNESS = 0.05
-const DAMPING = 0.62
+/* Tuning for the force-directed field:
+   - FIELD_RADIUS is generous on purpose — the pull should start well
+     before the cursor reaches a node, not switch on at its edge.
+   - FALLOFF_POWER > 1 means the field is soft at its rim and steep near
+     its centre, so "closest is strongest" is felt, not just technically
+     true.
+   - NEIGHBOR_PULL is how much of a node's own pull leaks along each edge
+     to the nodes it's connected to — small on purpose: it's what makes
+     the *other* nodes answer through the network rather than staying
+     inert, without ever pulling them as hard as the node the cursor is
+     actually near.
+   - FIELD_RAMP_MS is how long the whole field takes to fade up after the
+     cursor arrives, and fade back down after it leaves — a big part of
+     "delayed" and "gradually disappears" rather than a hard on/off.
+   - MAX_DISPLACE is the hard ceiling in percentage units, well short of
+     the headline/stats/CTA column.
+   - STIFFNESS/DAMPING are the same damped-spring pair as before: damping
+     comfortably past critical for this stiffness, so a step target eases
+     in without ever overshooting or bouncing. */
+const FIELD_RADIUS = 38
+const FALLOFF_POWER = 1.8
+const NEIGHBOR_PULL = 0.16
+const FIELD_RAMP_MS = 750
+const MAX_DISPLACE = 8
+const STIFFNESS = 0.045
+const DAMPING = 0.6
+/** A node counts as "active" only once it's pulling meaningfully harder
+    than the field's own noise floor — otherwise the label/icon boost
+    would flicker on for a node barely inside the radius. */
+const ACTIVE_THRESHOLD = 0.4
+
+/** Every node this one shares a drawn edge with, precomputed once. */
+const NEIGHBORS: Record<string, string[]> = Object.fromEntries(
+  HERO_NODES.map((n) => [
+    n.title,
+    EDGES.filter(([a, b]) => a === n.title || b === n.title).map(([a, b]) =>
+      a === n.title ? b : a,
+    ),
+  ]),
+)
 
 interface Magnet {
   offsets: Record<string, Vec>
   active: string | null
 }
 
-/** Tracks the pointer, decides which node (if any) the field has caught,
-    and steps a damped spring toward that target every frame. Returns a
-    per-node offset (in the same percentage units as `rest`) plus the
-    title of the node currently caught, for the icons' own micro-animations. */
+/** A continuous magnetic field, not a single node the pointer "catches."
+    Every node within `FIELD_RADIUS` of the cursor is pulled toward it in
+    proportion to how close it is; each node also leaks a fraction of its
+    own pull to its network neighbours, so the two nodes not nearest the
+    cursor still visibly answer, through their connection, rather than
+    sitting still. The whole field fades up over `FIELD_RAMP_MS` when the
+    cursor arrives and fades back down when it leaves, and every node's
+    position is a damped spring chasing its (constantly moving) target —
+    between the fade and the spring, the whole system trails the cursor
+    rather than reacting to it instantly. */
 function useMagnet(cursor: Vec | null): Magnet {
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const [offsets, setOffsets] = useState<Record<string, Vec>>(zeroOffsets)
   const [active, setActive] = useState<string | null>(null)
   const offsetsRef = useRef<Record<string, Vec>>(zeroOffsets())
   const velocityRef = useRef<Record<string, Vec>>(zeroOffsets())
-  const pendingRef = useRef<{ title: string | null; since: number }>({ title: null, since: 0 })
-  const attractedRef = useRef<string | null>(null)
+  const fieldStrengthRef = useRef(0)
   const cursorRef = useRef(cursor)
   cursorRef.current = cursor
 
@@ -265,44 +306,57 @@ function useMagnet(cursor: Vec | null): Magnet {
       last = now
       const cur = cursorRef.current
 
-      if (cur) {
-        let nearestTitle: string | null = null
-        let nearestDist = Infinity
-        for (const node of HERO_NODES) {
-          const d = Math.hypot(cur.x - node.rest.x, cur.y - node.rest.y)
-          if (d < nearestDist) {
-            nearestDist = d
-            nearestTitle = node.title
-          }
-        }
-        if (nearestTitle !== pendingRef.current.title) {
-          pendingRef.current = { title: nearestTitle, since: now }
-        }
-        attractedRef.current =
-          nearestTitle && now - pendingRef.current.since >= ATTRACT_DELAY_MS ? nearestTitle : null
-      } else {
-        pendingRef.current = { title: null, since: now }
-        attractedRef.current = null
+      const fieldTarget = cur ? 1 : 0
+      const rampStep = dt / (FIELD_RAMP_MS / 16.67)
+      fieldStrengthRef.current += (fieldTarget - fieldStrengthRef.current) * Math.min(rampStep, 1)
+
+      /* Each node's own raw pull toward the cursor, before any of it leaks
+         to neighbours — a unit vector scaled by a 0–1 falloff over the
+         field radius, quadratic-ish so it's soft at the rim. */
+      const pull: Record<string, Vec> = {}
+      const strength: Record<string, number> = {}
+      for (const node of HERO_NODES) {
+        pull[node.title] = ZERO
+        strength[node.title] = 0
+        if (!cur) continue
+        const dx = cur.x - node.rest.x
+        const dy = cur.y - node.rest.y
+        const dist = Math.hypot(dx, dy)
+        if (dist >= FIELD_RADIUS || dist < 0.01) continue
+        const s = (1 - dist / FIELD_RADIUS) ** FALLOFF_POWER
+        strength[node.title] = s
+        pull[node.title] = { x: (dx / dist) * s, y: (dy / dist) * s }
       }
 
-      const active = attractedRef.current
-      setActive((prev) => (prev === active ? prev : active))
-
+      let nearestTitle: string | null = null
+      let nearestStrength = 0
       for (const node of HERO_NODES) {
-        let target: Vec = ZERO
-        if (active === node.title && cur) {
-          const dx = cur.x - node.rest.x
-          const dy = cur.y - node.rest.y
-          const mag = Math.hypot(dx, dy) || 1
-          const clamped = Math.min(mag, MAX_DISPLACE)
-          target = { x: (dx / mag) * clamped, y: (dy / mag) * clamped }
-        } else if (active) {
-          const activeRest = HERO_NODES.find((n) => n.title === active)!.rest
-          const dx = node.rest.x - activeRest.x
-          const dy = node.rest.y - activeRest.y
-          const mag = Math.hypot(dx, dy) || 1
-          target = { x: (dx / mag) * REPEL_NUDGE, y: (dy / mag) * REPEL_NUDGE }
+        if (strength[node.title] > nearestStrength) {
+          nearestStrength = strength[node.title]
+          nearestTitle = node.title
         }
+      }
+      const nextActive =
+        cur && nearestStrength >= ACTIVE_THRESHOLD && fieldStrengthRef.current > 0.5
+          ? nearestTitle
+          : null
+      setActive((prev) => (prev === nextActive ? prev : nextActive))
+
+      const field = fieldStrengthRef.current
+      for (const node of HERO_NODES) {
+        /* Direct pull, plus a small share of each neighbour's pull — the
+           network answering on the node's behalf even when the cursor
+           isn't near it directly. */
+        let tx = pull[node.title].x
+        let ty = pull[node.title].y
+        for (const neighbor of NEIGHBORS[node.title]) {
+          tx += pull[neighbor].x * NEIGHBOR_PULL
+          ty += pull[neighbor].y * NEIGHBOR_PULL
+        }
+
+        const mag = Math.hypot(tx, ty)
+        const clamped = Math.min(mag, 1) * MAX_DISPLACE * field
+        const target: Vec = mag > 0.001 ? { x: (tx / mag) * clamped, y: (ty / mag) * clamped } : ZERO
 
         const pos = offsetsRef.current[node.title]
         const vel = velocityRef.current[node.title]
