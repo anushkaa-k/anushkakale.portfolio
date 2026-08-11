@@ -1,7 +1,8 @@
 import { Fragment, useEffect, useRef, useState, type ReactElement, type RefObject } from 'react'
 
 import { sections, site, type Pair } from '../content'
-import { Banner } from '../drawings/Banner'
+import { Banner, FOCUS_LENS_Y } from '../drawings/Banner'
+import { HeroNodes } from './HeroNodes'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { asset, isExternal } from '../lib/asset'
 
@@ -125,10 +126,129 @@ function useParallaxDrift(ref: RefObject<HTMLElement | null>): { x: number; y: n
   return drift
 }
 
+/* The cursor's position within the hero, as a percentage of its box — the
+   magnetic field the four nodes respond to (see HeroNodes/useMagnet). Off
+   under reduced motion and inert on touch, same as the drift above; kept
+   separate from it since the nodes need the raw position, not a drift
+   offset. */
+function useHeroCursor(ref: RefObject<HTMLElement | null>): { x: number; y: number } | null {
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const [cursor, setCursor] = useState<{ x: number; y: number } | null>(null)
+
+  useEffect(() => {
+    const node = ref.current
+    if (!node || reducedMotion) return
+
+    const onMove = (e: MouseEvent) => {
+      const rect = node.getBoundingClientRect()
+      setCursor({
+        x: ((e.clientX - rect.left) / rect.width) * 100,
+        y: ((e.clientY - rect.top) / rect.height) * 100,
+      })
+    }
+    const onLeave = () => setCursor(null)
+
+    node.addEventListener('mousemove', onMove)
+    node.addEventListener('mouseleave', onLeave)
+    return () => {
+      node.removeEventListener('mousemove', onMove)
+      node.removeEventListener('mouseleave', onLeave)
+    }
+  }, [ref, reducedMotion])
+
+  return cursor
+}
+
+/* 2000×960 (or, cropped for a phone, 612 20 780 1000) — the two viewBoxes
+   Banner.tsx's svg can be in. Kept here too so the headline measurement
+   below can invert the same `xMidYMid meet` mapping the browser applies
+   to the svg, without either file having to import geometry from the
+   other. */
+const BANNER_VIEWBOX = { minX: 0, minY: 0, width: 2000, height: 960 }
+const BANNER_VIEWBOX_COMPACT = { minX: 612, minY: 20, width: 780, height: 1000 }
+
+/** Five points across the headline — a fraction of its rendered width,
+    not an assumption about the text itself, so this tracks whatever the
+    copy or the viewport does. */
+const FOCUS_TARGET_FRACTIONS = [0.06, 0.3, 0.5, 0.72, 0.94]
+
+/** In this layout the headline sits close above the middle of the hero,
+    and the truss sits close above *that* — close enough that a target
+    read straight off the headline's own top edge can end up level with,
+    or even above, a fixture's pivot. Held at least this far below the
+    truss's lens height (`FOCUS_LENS_Y`, in Banner's viewBox units) so
+    every fixture always has a real downward angle to sweep through,
+    rather than occasionally spinning past horizontal for a target that's
+    barely below it. */
+const MIN_TARGET_DROP = 300
+
+/** Measures the rendered headline against the hero section and converts
+    five points along its top edge into Banner's own SVG coordinate space
+    — what the five focus-light fixtures aim at. Recomputed whenever
+    either box's size changes (a `ResizeObserver` on both, plus a window
+    resize listener for the safety of viewport-driven changes an observer
+    might miss), never by polling. Returns `null` until the first
+    measurement lands, so Banner has an explicit "not measured yet" state
+    rather than a guessed default baked in here. */
+function useHeadlineTargets(
+  sectionRef: RefObject<HTMLElement | null>,
+  headlineRef: RefObject<HTMLElement | null>,
+  compact: boolean,
+): { x: number; y: number }[] | null {
+  const [targets, setTargets] = useState<{ x: number; y: number }[] | null>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    const headline = headlineRef.current
+    if (!section || !headline) return
+
+    const measure = () => {
+      const sectionRect = section.getBoundingClientRect()
+      const headlineRect = headline.getBoundingClientRect()
+      if (sectionRect.width === 0 || sectionRect.height === 0) return
+
+      const vb = compact ? BANNER_VIEWBOX_COMPACT : BANNER_VIEWBOX
+      const scale = Math.min(sectionRect.width / vb.width, sectionRect.height / vb.height)
+      const offsetX = (sectionRect.width - vb.width * scale) / 2
+      const offsetY = (sectionRect.height - vb.height * scale) / 2
+      const toViewBox = (px: number, py: number) => ({
+        x: vb.minX + (px - offsetX) / scale,
+        y: vb.minY + (py - offsetY) / scale,
+      })
+
+      const left = headlineRect.left - sectionRect.left
+      const top = headlineRect.top - sectionRect.top
+      const y = top + headlineRect.height * 0.55
+
+      setTargets(
+        FOCUS_TARGET_FRACTIONS.map((f) => {
+          const point = toViewBox(left + headlineRect.width * f, y)
+          return { ...point, y: Math.max(point.y, FOCUS_LENS_Y + MIN_TARGET_DROP) }
+        }),
+      )
+    }
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(section)
+    observer.observe(headline)
+    window.addEventListener('resize', measure)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [sectionRef, headlineRef, compact])
+
+  return targets
+}
+
 export function Hero(): ReactElement {
   const compact = useMediaQuery('(max-width: 767px)')
   const sectionRef = useRef<HTMLElement>(null)
+  const headlineRef = useRef<HTMLHeadingElement>(null)
   const drift = useParallaxDrift(sectionRef)
+  const cursor = useHeroCursor(sectionRef)
+  const focusTargets = useHeadlineTargets(sectionRef, headlineRef, compact)
   const first = sections[0]?.id ?? 'about'
   const nameLines = site.meta.headline.split('|')
   const taglineLines = site.hero.tagline.split('|')
@@ -151,8 +271,10 @@ export function Hero(): ReactElement {
           willChange: 'transform',
         }}
       >
-        <Banner compact={compact} />
+        <Banner compact={compact} targets={focusTargets} />
       </div>
+
+      <HeroNodes cursor={cursor} />
 
       <div className="relative">
         <div
@@ -168,7 +290,8 @@ export function Hero(): ReactElement {
           <hr className="rule lift mt-5" style={{ animationDelay: '0.36s' }} />
 
           <h1
-            className="hero-lit-name lift mt-3 font-display text-[clamp(2.6rem,7.2vw,4.9rem)] leading-[1.02] font-extrabold tracking-tight"
+            ref={headlineRef}
+            className="hero-lit-name hero-kissed lift mt-3 font-display text-[clamp(2.6rem,7.2vw,4.9rem)] leading-[1.02] font-extrabold tracking-tight"
             style={{ animationDelay: '0.45s' }}
           >
             {nameLines.map((line, i) => (

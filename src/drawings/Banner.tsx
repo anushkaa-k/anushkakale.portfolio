@@ -1,110 +1,49 @@
 /* ==========================================================================
    The hero drawing sheet.
 
-   One 2000 × 960 plate laid out the way a real sheet is: auditorium ground
-   plan on the left, truss elevation above the title, stage front elevation
-   below it, building section on the right, details bottom-right. The middle
-   band is deliberately left empty — that is where the title sits.
+   A quiet 2000 × 960 blueprint plate: the fine setting-out grid, the sheet's
+   datum spine, a lighting truss elevation above the title, and a handful of
+   corner crosshairs for sheet furniture. The large illustrative plans that
+   used to compete with the title have been removed in favour of open field
+   around the typography.
 
    Groups marked `zone-far` are dropped on narrow screens and the viewBox
    crops to the centre, so a phone gets a legible drawing rather than the
    whole sheet shrunk into noise.
-   ========================================================================== */
 
-import { Fragment, type ReactElement } from 'react'
+   The grid, truss and furniture themselves are fully static — what reads
+   as "still being drafted" is a handful of small tick marks
+   (`DraftingReveal`) off in the margins that slowly stroke themselves in,
+   hold, and withdraw again, staggered and looping (`.blueprint-draw`,
+   defined in index.css). Nowhere near the headline, nodes or truss, and
+   nothing else on the sheet moves this way.
+
+   Five theatrical profile-spot fixtures (`FocusLights`) hang off the same
+   truss chord, each panning a tapered beam onto its own point along the
+   name below, on its own timing — the rig itself slowly finding its
+   focus. Targets come from the hero measuring the rendered headline
+   (see `Hero.tsx`), so they track it responsively. */
+
+import { Fragment, useEffect, useRef, useState, type ReactElement } from 'react'
 import {
   Bubble,
   CenterLine,
   Crosshair,
   DimH,
-  DimV,
   Grid,
-  Hatch,
   LanternRun,
   Note,
-  RakeSection,
-  SeatingFan,
-  Tree,
   Truss,
   TrussPlan,
 } from '../lib/draft'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 
 const W = 2000
 const H = 960
 
-/* ---------- left: site + auditorium ground plan ---------------------------- */
-
-const TREES: [number, number][] = [
-  [318, 46], [372, 92], [408, 150], [432, 214], [443, 282],
-  [447, 350], [436, 416], [412, 478], [378, 536], [332, 588],
-  [278, 634], [214, 672], [148, 706], [88, 742],
-  [196, 62], [138, 104], [96, 158],
-]
-
-function GroundPlan(): ReactElement {
-  return (
-    <g className="zone zone-far" transform="translate(0,86)" style={{ animationDelay: '0.28s' }}>
-      {/* site: a road curving past the north-west corner, verge trees along it */}
-      <path
-        d="M-20 130 C 120 60, 210 130, 250 220 S 300 400, 250 520 S 150 700, 20 760"
-        className="l-thin"
-      />
-      <path
-        d="M-20 60 C 140 -10, 270 90, 310 210 S 360 410, 305 545 S 190 760, 60 820"
-        className="l-hair"
-      />
-      {TREES.map(([x, y], i) => (
-        <Tree key={i} x={x} y={y} radius={i % 3 === 0 ? 26 : 21} spokes={i % 2 ? 14 : 11} />
-      ))}
-
-      {/* building footprint — an irregular, angled envelope as built */}
-      <path
-        d="M96 196 L206 118 L392 118 L470 196 L470 470 L404 560 L404 640 L150 640 L96 566 Z"
-        className="l-bold"
-      />
-      <path
-        d="M108 206 L212 130 L386 130 L458 206 L458 466 L396 550 L396 628 L158 628 L108 558 Z"
-        className="l-hair"
-      />
-
-      {/* stage house, with the upstage crossover */}
-      <rect x={148} y={156} width={262} height={116} className="l-med" />
-      <rect x={156} y={164} width={246} height={100} className="l-hair" />
-      <Note x={279} y={216} size={15}>
-        STAGE
-      </Note>
-      <line x1={148} y1={250} x2={410} y2={250} className="l-hair" />
-
-      {/* back of house: dressing rooms, dock, workshop */}
-      <rect x={110} y={274} width={62} height={44} className="l-thin" />
-      <rect x={110} y={318} width={62} height={44} className="l-thin" />
-      <rect x={386} y={274} width={66} height={88} className="l-thin" />
-      <rect x={110} y={132} width={40} height={30} className="l-hair" />
-
-      {/* proscenium wall with the opening, then the apron edge */}
-      <line x1={148} y1={272} x2={200} y2={272} className="l-bold" />
-      <line x1={358} y1={272} x2={410} y2={272} className="l-bold" />
-      <path d="M200 272 Q 279 306, 358 272" className="l-med" />
-
-      <SeatingFan cx={279} cy={150} radius={168} rows={12} rowGap={13} spread={62} seatArc={3.6} />
-
-      {/* rear cross-aisle */}
-      <path d="M170 500 Q 279 546, 388 500" className="l-hair" />
-
-      {/* datum lines with grid bubbles */}
-      <CenterLine x1={279} y1={96} x2={279} y2={664} />
-      <Bubble x={279} y={88} label="A" />
-      <CenterLine x1={78} y1={272} x2={486} y2={272} />
-      <Bubble x={70} y={272} label="1" />
-
-      <Note x={279} y={690} size={13}>
-        GROUND PLAN
-      </Note>
-      <Note x={279} y={710} size={11} tone="dim">
-        SCALE 1:100
-      </Note>
-    </g>
-  )
+interface Vec {
+  x: number
+  y: number
 }
 
 /* ---------- centre top: truss elevation ------------------------------------ */
@@ -173,7 +112,234 @@ function LanternGlow({
   )
 }
 
-function TrussElevation(): ReactElement {
+/* ---------- five focus-light fixtures --------------------------------------
+
+   Five theatrical profile-spot fixtures hung on the same truss chord as
+   the plain lanterns (`LanternGlow`/`LanternRun` above), each aimed at
+   its own point along "Hi, I'm Anushka" and slowly panning onto it. Every
+   fixture is two parts, drawn separately on purpose:
+
+   - a fixed yoke: the mounting clamp at the truss, the drop, and the
+     bracket arms with their pivot pins — this half never moves, the way
+     a real yoke stays clamped to the truss while only the barrel inside
+     it tilts.
+   - a rotating barrel + beam: the housing, its lens cap, and a beam
+     tapered from a narrow throat at the lens to a wider spread at the
+     target, sized so its tip lands exactly on the target regardless of
+     the fixture's angle (`beamLength` is the live distance from pivot to
+     target, not a guess).
+
+   `PIVOTS` mirrors LanternGlow's own spacing at slots 2–6 of its 8, so a
+   fixture's pivot always sits at an existing lens position. Targets are
+   supplied by the hero (`Hero.tsx` measures the rendered headline and
+   converts it into this SVG's coordinate space) — `DEFAULT_TARGETS` is
+   only what a fixture aims at for the one frame before that measurement
+   is ready. */
+
+const FOCUS_TRUSS_X = 654
+const FOCUS_TRUSS_LENGTH = 700
+const FOCUS_SCALE = 1.15
+const FOCUS_STEP = FOCUS_TRUSS_LENGTH / 9
+/** The truss fixtures' lens height, in this svg's own viewBox units —
+    exported so Hero.tsx's headline measurement can keep every target
+    comfortably below it (see `MIN_TARGET_DROP` there): the headline sits
+    close enough to the truss, vertically, that an unclamped target can
+    end up level with or above the pivot, spinning a fixture past
+    horizontal to reach it. */
+export const FOCUS_LENS_Y = 104 + 54 + 26 * FOCUS_SCALE
+
+const FOCUS_SLOTS = [2, 3, 4, 5, 6]
+const PIVOTS: Vec[] = FOCUS_SLOTS.map((slot) => ({
+  x: FOCUS_TRUSS_X + slot * FOCUS_STEP,
+  y: FOCUS_LENS_Y,
+}))
+
+/** Where a fixture aims before the headline has been measured — a rough
+    spread across where the title usually sits, close enough that the
+    first paint doesn't show fixtures pointing somewhere strange. */
+const DEFAULT_TARGETS: Vec[] = [
+  { x: 780, y: 520 },
+  { x: 890, y: 520 },
+  { x: 1000, y: 520 },
+  { x: 1110, y: 520 },
+  { x: 1220, y: 520 },
+]
+
+/** How far the far end of each beam spreads, in viewBox units — different
+    per fixture, same spirit as the old per-fixture beam-width variety. */
+const FOCUS_BEAM_SPREAD = [12, 16, 9, 17, 13]
+
+/** Half-width of the lens the beam actually leaves from — keeps the
+    throat of every beam matched to the fixture's own front aperture
+    below, rather than an arbitrary sliver. */
+const FOCUS_LENS_RADIUS = 3.6
+
+/** Per-fixture spring: how far off its mark the fixture starts (degrees),
+    how stiff/damped the settle is, and how long it waits before moving
+    at all. Every value is different so the five are never in step. */
+const FOCUS_SPRINGS = [
+  { startOffset: -16, stiffness: 0.052, damping: 0.6, delayMs: 300 },
+  { startOffset: 11, stiffness: 0.044, damping: 0.62, delayMs: 900 },
+  { startOffset: -9, stiffness: 0.06, damping: 0.58, delayMs: 150 },
+  { startOffset: 18, stiffness: 0.04, damping: 0.63, delayMs: 1150 },
+  { startOffset: -7, stiffness: 0.05, damping: 0.6, delayMs: 600 },
+]
+
+const MIN_BEAM_LENGTH = 120
+const MAX_BEAM_LENGTH = 420
+
+/** 0° is straight down; positive rotates the fixture toward +x. */
+function angleTo(pivot: Vec, target: Vec): number {
+  const dx = target.x - pivot.x
+  const dy = target.y - pivot.y
+  return (Math.atan2(dx, dy) * 180) / Math.PI
+}
+
+/** Each fixture's current rotation, in degrees. Not a CSS keyframe: the
+    target angle is derived from the (possibly still-updating) headline
+    measurement, so it has to be computed and sprung toward at runtime.
+    Every fixture starts offset from its mark, waits out its own delay,
+    then eases in on a damped spring — comfortably overdamped for its own
+    stiffness, so it never overshoots or oscillates once it arrives.
+    Fully static (no rAF at all) under reduced motion. */
+function useFocusAngles(targets: Vec[]): number[] {
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const finalAngles = PIVOTS.map((pivot, i) => angleTo(pivot, targets[i]))
+  const finalAnglesRef = useRef(finalAngles)
+  finalAnglesRef.current = finalAngles
+
+  const [angles, setAngles] = useState<number[]>(() =>
+    finalAngles.map((a, i) => a + FOCUS_SPRINGS[i].startOffset),
+  )
+  const angleRef = useRef(angles)
+  const velocityRef = useRef(angles.map(() => 0))
+  const mountedAtRef = useRef(0)
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setAngles(finalAnglesRef.current)
+      return
+    }
+
+    mountedAtRef.current = performance.now()
+    let raf = 0
+    let last = performance.now()
+
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 16.67, 2)
+      last = now
+
+      const next = angleRef.current.map((angle, i) => {
+        const spring = FOCUS_SPRINGS[i]
+        if (now - mountedAtRef.current < spring.delayMs) return angle
+        const target = finalAnglesRef.current[i]
+        const v =
+          velocityRef.current[i] + (spring.stiffness * (target - angle) - spring.damping * velocityRef.current[i]) * dt
+        velocityRef.current[i] = v
+        return angle + v * dt
+      })
+      angleRef.current = next
+      setAngles(next)
+      raf = requestAnimationFrame(tick)
+    }
+
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [reducedMotion])
+
+  return reducedMotion ? finalAngles : angles
+}
+
+function FocusFixture({
+  pivot,
+  angle,
+  target,
+  beamSpread,
+}: {
+  pivot: Vec
+  angle: number
+  target: Vec
+  beamSpread: number
+}): ReactElement {
+  const { x: px, y: lensY } = pivot
+  const beamLength = Math.min(
+    Math.max(Math.hypot(target.x - px, target.y - lensY), MIN_BEAM_LENGTH),
+    MAX_BEAM_LENGTH,
+  )
+  const mountY = 104 + 54
+
+  return (
+    <g>
+      {/* fixed yoke: clamped to the truss, never rotates — the bracket a
+          real moving-head/profile fixture's barrel pivots inside. */}
+      <rect x={px - 7} y={mountY} width={14} height={6} className="l-thin" />
+      <line x1={px} y1={mountY + 6} x2={px} y2={lensY - 30} className="l-hair" />
+      <line x1={px - 11} y1={lensY - 30} x2={px + 11} y2={lensY - 30} className="l-hair" />
+      <line x1={px - 11} y1={lensY - 30} x2={px - 11} y2={lensY + 3} className="l-med" />
+      <line x1={px + 11} y1={lensY - 30} x2={px + 11} y2={lensY + 3} className="l-med" />
+      <circle cx={px - 11} cy={lensY - 11} r={1.6} className="l-thin fill-paper" />
+      <circle cx={px + 11} cy={lensY - 11} r={1.6} className="l-thin fill-paper" />
+
+      {/* rotating barrel, lens and beam — one pivot, at the lens itself,
+          so the whole assembly tilts the way a real barrel does inside
+          its yoke. */}
+      <g style={{ transform: `rotate(${angle}deg)`, transformOrigin: `${px}px ${lensY}px` }}>
+        <polygon
+          points={`${px - FOCUS_LENS_RADIUS},${lensY} ${px - beamSpread},${lensY + beamLength} ${px + beamSpread},${lensY + beamLength} ${px + FOCUS_LENS_RADIUS},${lensY}`}
+          style={{ fill: 'color-mix(in srgb, var(--accent-orange) 18%, var(--ink))' }}
+          fillOpacity={0.2}
+        />
+        <line
+          x1={px - FOCUS_LENS_RADIUS}
+          y1={lensY}
+          x2={px - beamSpread}
+          y2={lensY + beamLength}
+          className="l-hair"
+          style={{ opacity: 0.6 }}
+        />
+        <line
+          x1={px + FOCUS_LENS_RADIUS}
+          y1={lensY}
+          x2={px + beamSpread}
+          y2={lensY + beamLength}
+          className="l-hair"
+          style={{ opacity: 0.6 }}
+        />
+        {/* main housing */}
+        <rect x={px - 6} y={lensY - 26} width={12} height={17} className="l-med" />
+        {/* control-panel ticks on the housing face */}
+        <line x1={px - 3.5} y1={lensY - 22} x2={px + 3.5} y2={lensY - 22} className="l-hair" />
+        <line x1={px - 3.5} y1={lensY - 19} x2={px + 3.5} y2={lensY - 19} className="l-hair" />
+        {/* neck down to the lens */}
+        <rect x={px - 3} y={lensY - 9} width={6} height={9} className="l-thin" />
+        {/* front lens: the fixture's actual aperture, where the beam leaves from */}
+        <circle cx={px} cy={lensY} r={FOCUS_LENS_RADIUS} className="l-thin" />
+        <circle cx={px} cy={lensY} r={1.4} className="l-hair" />
+      </g>
+    </g>
+  )
+}
+
+function FocusLights({ targets }: { targets: Vec[] | null }): ReactElement {
+  const resolvedTargets = targets ?? DEFAULT_TARGETS
+  const angles = useFocusAngles(resolvedTargets)
+
+  return (
+    <>
+      {PIVOTS.map((pivot, i) => (
+        <FocusFixture
+          key={i}
+          pivot={pivot}
+          angle={angles[i]}
+          target={resolvedTargets[i]}
+          beamSpread={FOCUS_BEAM_SPREAD[i]}
+        />
+      ))}
+    </>
+  )
+}
+
+function TrussElevation({ targets }: { targets: Vec[] | null }): ReactElement {
   const x = 654
   const y = 104
   const length = 700
@@ -192,6 +358,7 @@ function TrussElevation(): ReactElement {
           <stop offset="100%" stopColor="var(--accent-orange)" stopOpacity="0" />
         </linearGradient>
       </defs>
+      <FocusLights targets={targets} />
       <LanternGlow x={x} y={y + depth} length={length} count={8} scale={1.15} />
       <LanternRun
         x={x}
@@ -216,7 +383,7 @@ function TrussElevation(): ReactElement {
 
       <DimH x1={x} x2={x + length} y={y - 74} from={y - 60} label={`60'-0"`} />
 
-      {/* marginal annotations — outside the phone crop, so dropped with it */}
+      {/* marginal annotations — outside the phone crop, so dropped with it. */}
       <g className="zone-far">
         <Note x={x + length + 22} y={y + 30} anchor="start" size={12}>
           LX 1
@@ -236,245 +403,87 @@ function TrussElevation(): ReactElement {
   )
 }
 
-/* ---------- centre bottom: stage front elevation --------------------------- */
-
-function FrontElevation({ compact }: { compact: boolean }): ReactElement {
-  const L = 566
-  const R = 1074
-  const top = 686
-  const deck = 872
-  const floor = 906
-
-  return (
-    <g
-      className="zone"
-      transform={compact ? 'translate(182,60)' : undefined}
-      style={{ animationDelay: '0.56s' }}
-    >
-      <line x1={L - 40} y1={floor} x2={R + 40} y2={floor} className="l-bold" />
-      <rect x={L} y={top} width={R - L} height={deck - top} className="l-med" />
-
-      <Hatch id="border" x={L} y={top} width={R - L} height={26} gap={8} />
-      <Hatch id="legL" x={L} y={top + 26} width={34} height={deck - top - 26} gap={8} />
-      <Hatch id="legR" x={R - 34} y={top + 26} width={34} height={deck - top - 26} gap={8} />
-
-      <Truss x={L + 58} y={top + 52} length={R - L - 116} depth={26} bays={10} />
-      <g className="hero-lanterns">
-        <LanternRun
-          x={L + 58}
-          y={top + 78}
-          length={R - L - 116}
-          count={7}
-          types={['profile', 'fresnel']}
-          scale={0.92}
-        />
-      </g>
-
-      {/* line-array hangs flanking the opening */}
-      {[L - 26, R + 26].map((sx, n) => (
-        <Fragment key={n}>
-          <line x1={sx} y1={top + 4} x2={sx} y2={top + 24} className="l-hair" />
-          {Array.from({ length: 6 }, (_, i) => (
-            <path
-              key={i}
-              d={
-                `M${sx - 13 - i} ${top + 24 + i * 15}H${sx + 13 + i}` +
-                `l-3 13H${sx - 10 - i}Z`
-              }
-              className="l-thin"
-            />
-          ))}
-        </Fragment>
-      ))}
-
-      {/* deck, apron edge, pit rail */}
-      <line x1={L + 10} y1={deck} x2={R - 10} y2={deck} className="l-bold" />
-      <line x1={L + 10} y1={deck} x2={L + 10} y2={floor} className="l-thin" />
-      <line x1={R - 10} y1={deck} x2={R - 10} y2={floor} className="l-thin" />
-      {Array.from({ length: Math.floor((R - L - 54) / 46) }, (_, i) => {
-        const px = L + 34 + i * 46
-        return (
-          <line key={i} x1={px} y1={deck + 6} x2={px} y2={floor - 6} className="l-hair" />
-        )
-      })}
-
-      <DimV y1={top} y2={deck} x={L - 74} from={L} label={`24'-0"`} />
-      <Note x={(L + R) / 2} y={floor + 26} size={13}>
-        FRONT ELEVATION
-      </Note>
-    </g>
-  )
-}
-
-/* ---------- right: section A-A --------------------------------------------- */
-
-function SectionAA(): ReactElement {
-  /* Held clear of the right-hand sheet edge so the dimension strings and
-     their labels stay inside the drawing. */
-  const L = 1360
-  const R = 1830
-  const ridge = 1595
-  const eave = 176
-  const apex = 62
-  const deck = 396
-  const base = 512
-  const pros = 1570
-
-  return (
-    <g className="zone zone-far" transform="translate(0,44)" style={{ animationDelay: '0.7s' }}>
-      {/* envelope: gable roof over fly tower and house */}
-      <path d={`M${L} ${eave}L${ridge} ${apex}L${R} ${eave}`} className="l-bold" />
-      <path
-        d={`M${L + 14} ${eave + 6}L${ridge} ${apex + 14}L${R - 14} ${eave + 6}`}
-        className="l-hair"
-      />
-      <line x1={L} y1={eave} x2={L} y2={base} className="l-bold" />
-      <line x1={R} y1={eave} x2={R} y2={base} className="l-bold" />
-      <line x1={L} y1={base} x2={R} y2={base} className="l-bold" />
-      <line x1={L + 20} y1={eave} x2={R - 20} y2={eave} className="l-thin" />
-
-      {/* fly floor over the stage, truss hung off it */}
-      <line x1={L + 16} y1={214} x2={pros} y2={214} className="l-thin" />
-      {Array.from({ length: 9 }, (_, j) => (
-        <line
-          key={j}
-          x1={L + 30 + j * 22}
-          y1={214}
-          x2={L + 30 + j * 22}
-          y2={226}
-          className="l-hair"
-        />
-      ))}
-      <line x1={1430} y1={226} x2={1430} y2={262} className="l-hair" />
-      <line x1={1520} y1={226} x2={1520} y2={262} className="l-hair" />
-      <Truss x={1400} y={262} length={150} depth={22} bays={6} nodes={false} />
-      <LanternRun
-        x={1400}
-        y={284}
-        length={150}
-        count={5}
-        types={['profile', 'fresnel']}
-        scale={0.72}
-      />
-
-      {/* flown goods upstage */}
-      <line x1={L + 24} y1={240} x2={L + 24} y2={deck} className="l-hair" />
-      <Hatch id="sect-border" x={L + 30} y={232} width={10} height={60} gap={6} />
-
-      {/* proscenium wall, deck, understage */}
-      <line x1={pros} y1={214} x2={pros} y2={deck} className="l-bold" />
-      <line x1={L} y1={deck} x2={pros} y2={deck} className="l-bold" />
-      <line x1={L} y1={deck + 44} x2={pros} y2={deck + 44} className="l-hair" />
-
-      {/* apron, then the house stepping up to the back wall */}
-      <line x1={pros} y1={deck} x2={pros + 40} y2={deck} className="l-med" />
-      <RakeSection x={pros + 40} y={deck} steps={11} run={22} rise={9} />
-      {Array.from({ length: 11 }, (_, k) => (
-        <path
-          key={k}
-          d={`M${pros + 46 + k * 22} ${deck - k * 9}v-14h11v14`}
-          className="l-hair"
-        />
-      ))}
-
-      <DimV y1={eave} y2={deck} x={R + 48} from={R} flat label={`36'-0"`} />
-      <DimV y1={deck} y2={base} x={R + 48} from={R} flat label={`40'-0"`} />
-      <Note x={R - 4} y={apex + 46} anchor="end" size={13}>
-        SECTION A-A
-      </Note>
-    </g>
-  )
-}
-
-/* ---------- bottom right: details ------------------------------------------ */
-
-function Details(): ReactElement {
-  const x = 1216
-  const y = 716
-  const length = 420
-  const dx = 1760
-  const dy = 712
-
-  return (
-    <g className="zone zone-far" style={{ animationDelay: '0.84s' }}>
-      <TrussPlan x={x} y={y} length={length} width={42} bays={10} />
-      <TrussPlan x={x + 14} y={y + 62} length={length - 28} width={42} bays={9} />
-      <DimH x1={x} x2={x + length} y={y - 34} from={y} label={`40'-0"`} />
-      <DimH
-        x1={x + 14}
-        x2={x + length - 14}
-        y={y + 138}
-        from={y + 104}
-        below
-        label={`28'-0"`}
-      />
-
-      {/* base plates under the plan */}
-      {Array.from({ length: 6 }, (_, i) => (
-        <Fragment key={i}>
-          <circle cx={x + 40 + i * 72} cy={y + 132} r={6} className="l-thin" />
-          <line
-            x1={x + 34 + i * 72}
-            y1={y + 126}
-            x2={x + 46 + i * 72}
-            y2={y + 138}
-            className="l-hair"
-          />
-        </Fragment>
-      ))}
-
-      {/* flown line-array, elevation */}
-      {Array.from({ length: 9 }, (_, b) => (
-        <path
-          key={b}
-          d={`M${dx - 16 - b} ${dy + b * 17}H${dx + 16 + b}l-4 15H${dx - 12 - b}Z`}
-          className="l-thin"
-        />
-      ))}
-      <line x1={dx} y1={dy - 22} x2={dx} y2={dy} className="l-hair" />
-      <DimH x1={dx - 24} x2={dx + 24} y={dy - 34} from={dy - 22} label={`4'-0"`} size={11} />
-      <DimV
-        y1={dy}
-        y2={dy + 168}
-        x={dx + 62}
-        from={dx + 26}
-        flat
-        label={`12'-0"`}
-        size={11}
-      />
-    </g>
-  )
-}
-
 /* ---------- sheet furniture ------------------------------------------------- */
+
+const CROSSHAIRS: [number, number, number | undefined][] = [
+  [48, 44, undefined],
+  [1952, 44, undefined],
+  [48, 912, undefined],
+  [640, 42, 11],
+  [1420, 42, 11],
+  [1952, 912, undefined],
+  [1002, 826, 13],
+]
 
 function Furniture(): ReactElement {
   return (
     <g className="zone zone-far" style={{ animationDelay: '0.96s' }}>
-      <Crosshair x={48} y={44} />
-      <Crosshair x={1952} y={44} />
-      <Crosshair x={48} y={912} />
-      <Crosshair x={640} y={42} size={11} />
-      <Crosshair x={1420} y={42} size={11} />
-      <Crosshair x={1952} y={912} />
-      <Crosshair x={1002} y={826} size={13} />
+      {CROSSHAIRS.map(([x, y, size], i) => (
+        <Crosshair key={i} x={x} y={y} size={size} />
+      ))}
+    </g>
+  )
+}
+
+/* ---------- the sheet still being drafted ----------------------------------
+
+   A handful of small tick marks — the kind of thing a draughtsperson jots
+   in the margin while checking a measurement — that stroke themselves in,
+   hold, then withdraw again, on a slow, staggered, endless loop. This is
+   the whole of the "still being drafted" effect: nothing else on the
+   sheet moves. Deliberately not the shared `Grid` (every line of that
+   would be expensive to animate individually, and isn't the point — a
+   few marks read as active drafting; a breathing grid reads as a UI
+   effect) and deliberately kept off to the sides, clear of the headline,
+   nodes and truss. `pathLength={1}` normalises every mark's dash units to
+   1 regardless of its real length, the same trick the datum spine uses. */
+const DRAFT_MARKS: { x1: number; y1: number; x2: number; y2: number; duration: number; delay: number }[] = [
+  { x1: 130, y1: 300, x2: 168, y2: 300, duration: 11, delay: 0 },
+  { x1: 150, y1: 282, x2: 150, y2: 318, duration: 11, delay: 0 },
+  { x1: 1870, y1: 620, x2: 1908, y2: 620, duration: 13, delay: 2.4 },
+  { x1: 1889, y1: 602, x2: 1889, y2: 638, duration: 13, delay: 2.4 },
+  { x1: 232, y1: 780, x2: 270, y2: 780, duration: 9.5, delay: 4.8 },
+  { x1: 1730, y1: 150, x2: 1768, y2: 150, duration: 12.5, delay: 7.2 },
+]
+
+function DraftingReveal(): ReactElement {
+  return (
+    <g className="zone-far" aria-hidden="true">
+      {DRAFT_MARKS.map((m, i) => (
+        <line
+          key={i}
+          x1={m.x1}
+          y1={m.y1}
+          x2={m.x2}
+          y2={m.y2}
+          pathLength={1}
+          className="l-hair blueprint-draw"
+          style={{ animationDuration: `${m.duration}s`, animationDelay: `${m.delay}s` }}
+        />
+      ))}
     </g>
   )
 }
 
 /* ---------- assembly -------------------------------------------------------- */
 
-export function Banner({ compact }: { compact: boolean }): ReactElement {
+export function Banner({
+  compact,
+  targets = null,
+}: {
+  compact: boolean
+  /** Five points, in this SVG's own coordinate space, for the focus
+      fixtures to aim at — see `Hero.tsx`'s `useHeadlineTargets`. `null`
+      (the default) until the headline has been measured. */
+  targets?: Vec[] | null
+}): ReactElement {
   return (
     <svg
       className="absolute inset-0 h-full w-full"
       viewBox={compact ? '612 20 780 1000' : `0 0 ${W} ${H}`}
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      aria-label={
-        'Architectural drawing sheet of a theatre: auditorium ground plan, ' +
-        'lighting truss elevation, stage front elevation and building section.'
-      }
+      aria-label="Blueprint grid with a lighting truss elevation over the title."
     >
       <g className="zone zone-far" style={{ animationDelay: '0.05s' }}>
         <Grid width={W} height={H} step={50} />
@@ -485,12 +494,9 @@ export function Banner({ compact }: { compact: boolean }): ReactElement {
             struck rather than simply appearing */}
         <line x1={1002} y1={0} x2={1002} y2={H} pathLength={1} className="l-center hero-draw-in" />
       </g>
-      <GroundPlan />
-      <TrussElevation />
-      <FrontElevation compact={compact} />
-      <SectionAA />
-      <Details />
+      <TrussElevation targets={targets} />
       <Furniture />
+      <DraftingReveal />
     </svg>
   )
 }

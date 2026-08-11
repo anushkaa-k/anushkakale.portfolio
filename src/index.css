@@ -133,6 +133,20 @@ html[data-mode="blueprint"] {
   svg .fill-ink    { fill: var(--ink); stroke: none; }
   svg .fill-paper  { fill: var(--paper); }
 
+  /* ---- hero node micro-interactions ------------------------------------ */
+  /* Shared by the four hero nodes' icons (src/components/HeroNodes.tsx):
+     one settled easing for whatever property changes when a node becomes
+     the one the cursor's magnet has caught — a weight swap, an opacity
+     lift, a small scale, a line resolving in. */
+  svg .node-anim {
+    transition:
+      stroke-width 0.6s ease,
+      stroke 0.6s ease,
+      opacity 0.6s ease,
+      transform 0.6s ease,
+      stroke-dashoffset 0.6s ease;
+  }
+
   svg text.note {
     font-family: var(--font-mono);
     font-size: 12px;
@@ -327,6 +341,27 @@ html[data-mode="blueprint"] {
     50%      { opacity: 0.93; }
   }
 
+  /* ---- hero: the sheet still being drafted --------------------------------
+     A handful of small tick marks (`DraftingReveal` in Banner.tsx, off in
+     the margins, clear of the headline/nodes/truss) stroke themselves in,
+     hold, then withdraw — `pathLength={1}` on each normalises the dash
+     units to 1 regardless of the mark's real length, same trick as the
+     datum spine's `.hero-draw-in`. Each mark sets its own
+     animation-duration/delay inline, so the six never move in step. */
+  .blueprint-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation-name: blueprint-draw;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  @keyframes blueprint-draw {
+    0%   { stroke-dashoffset: 1; }
+    35%  { stroke-dashoffset: 0; }
+    65%  { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 1; }
+  }
+
   /* ---- hero: the rig over the name powering on ---------------------------
      The fixtures are the only thing that ever emits light here — the
      truss they hang from is left as plain blueprint linework (see
@@ -401,6 +436,31 @@ html[data-mode="blueprint"] {
     -webkit-background-clip: text;
     color: transparent;
   }
+
+  /* ---- hero: the five beams "kiss" the headline's top edge --------------
+     Five small masks along the top of the name, at the same fractional
+     x-positions the focus-light fixtures in Banner.tsx aim at (0.06, 0.3,
+     0.5, 0.72, 0.94 of the headline's own width) — not fixed pixels, so
+     it stays lined up with the beams at any viewport or copy length.
+     Each is a soft ellipse hugging the upper ~20% of the letters there,
+     dipping opacity only partway (0.62), never to zero: the letters stay
+     legible, just slightly washed, as if actual light were grazing that
+     one spot rather than the whole word dimming. `mask-composite:
+     intersect` combines the five independent dips without the layers
+     adding into one solid haze. Font, weight and the gradient above are
+     untouched — this only ever affects how much of the glyph shows
+     through, not what it's made of. */
+  .hero-kissed {
+    --kiss-1: radial-gradient(ellipse 8% 45% at 6% 12%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 1) 100%);
+    --kiss-2: radial-gradient(ellipse 8% 45% at 30% 12%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 1) 100%);
+    --kiss-3: radial-gradient(ellipse 8% 45% at 50% 12%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 1) 100%);
+    --kiss-4: radial-gradient(ellipse 8% 45% at 72% 12%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 1) 100%);
+    --kiss-5: radial-gradient(ellipse 8% 45% at 94% 12%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 1) 100%);
+    mask-image: var(--kiss-1), var(--kiss-2), var(--kiss-3), var(--kiss-4), var(--kiss-5);
+    -webkit-mask-image: var(--kiss-1), var(--kiss-2), var(--kiss-3), var(--kiss-4), var(--kiss-5);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-over, source-in, source-in, source-in, source-in;
+  }
 }
 
 /* On a phone the sheet crops to its centre column (see Banner.tsx), so the
@@ -434,4 +494,17 @@ html[data-mode="blueprint"] {
   .hero-light-base {
     animation: hero-light-on 0.001s forwards;
   }
+
+  /* Same reasoning again: the margin tick marks loop forever, so they're
+     switched off outright and left fully drawn (a calmer resting state
+     than fully withdrawn) rather than flashing at 0.001s. */
+  .blueprint-draw {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+
+  /* The five focus-light fixtures aren't CSS-animated at all any more —
+     `useFocusAngles` in Banner.tsx reads this same media query directly
+     and skips its rAF loop entirely, rendering every fixture straight at
+     its resting (fully-focused) angle with no motion. Nothing to do here. */
 }
