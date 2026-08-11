@@ -4,9 +4,12 @@
    Not cards — small drafting marks that sit in the quiet field the banner
    simplification opened up, each answering one line of work with its own
    motif but the same line language (`l-hair`/`l-thin`, the mono `.label`
-   type) as the rest of the sheet. Static for now: no cursor interaction
-   yet, just the linework and the fade-in every other hero element already
-   uses.
+   type) as the rest of the sheet. A loose mesh of construction-weight
+   lines (`NetworkLines`) ties the four together as interconnected
+   disciplines — deliberately the faintest weight on the sheet, so it
+   never competes with the nodes' own linework or the title. Static for
+   now: no cursor interaction yet, just the linework and the fade-in
+   every other hero element already uses.
    ========================================================================== */
 
 import type { ReactElement } from 'react'
@@ -76,6 +79,20 @@ function OperationsIcon(): ReactElement {
   )
 }
 
+/** Where each node's icon roughly sits, as a percentage of the hero box —
+    used only to strike the connecting lines beneath them. */
+interface Anchor {
+  x: number
+  y: number
+}
+
+const ANCHORS: Record<string, Anchor> = {
+  'Live Experiences': { x: 9, y: 18 },
+  Creative: { x: 91, y: 18 },
+  Brands: { x: 11, y: 82 },
+  Operations: { x: 89, y: 82 },
+}
+
 export const HERO_NODES: NodeSpec[] = [
   {
     title: 'Live Experiences',
@@ -107,6 +124,50 @@ export const HERO_NODES: NodeSpec[] = [
   },
 ]
 
+/** Every pair, once — a loose mesh rather than a hub-and-spoke diagram, so
+    the four disciplines read as interconnected, not as feeding one centre. */
+const EDGES: [string, string][] = [
+  ['Live Experiences', 'Creative'],
+  ['Creative', 'Operations'],
+  ['Operations', 'Brands'],
+  ['Brands', 'Live Experiences'],
+  ['Live Experiences', 'Operations'],
+  ['Creative', 'Brands'],
+]
+
+/** The network itself: construction-weight lines only, well under the
+    nodes' own linework, so it reads as a faint graph rather than a diagram. */
+function NetworkLines(): ReactElement {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      className="lift absolute inset-0 h-full w-full"
+      style={{ animationDelay: '1.3s' }}
+      aria-hidden="true"
+    >
+      {EDGES.map(([a, b]) => {
+        const p1 = ANCHORS[a]
+        const p2 = ANCHORS[b]
+        return (
+          <line
+            key={`${a}-${b}`}
+            x1={p1.x}
+            y1={p1.y}
+            x2={p2.x}
+            y2={p2.y}
+            vectorEffect="non-scaling-stroke"
+            className="l-construct"
+          />
+        )
+      })}
+      {Object.values(ANCHORS).map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={0.5} style={{ fill: 'var(--line-construct)' }} />
+      ))}
+    </svg>
+  )
+}
+
 function HeroNode({ node }: { node: NodeSpec }): ReactElement {
   const Icon = node.icon
   return (
@@ -129,6 +190,7 @@ function HeroNode({ node }: { node: NodeSpec }): ReactElement {
 export function HeroNodes(): ReactElement {
   return (
     <div className="pointer-events-none absolute inset-0 hidden lg:block">
+      <NetworkLines />
       {HERO_NODES.map((node) => (
         <HeroNode key={node.title} node={node} />
       ))}
