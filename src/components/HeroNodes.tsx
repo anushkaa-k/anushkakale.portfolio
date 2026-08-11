@@ -6,19 +6,21 @@
    motif but the same line language (`l-hair`/`l-thin`, the mono `.label`
    type) as the rest of the sheet. A loose mesh of construction-weight
    lines (`NetworkLines`) ties the four together as interconnected
-   disciplines — deliberately the faintest weight on the sheet, so it
-   never competes with the nodes' own linework or the title.
+   disciplines, visually — deliberately the faintest weight on the sheet,
+   so it never competes with the nodes' own linework or the title, and
+   purely decorative: it draws a readout of wherever the nodes currently
+   are, but has no say in where that is.
 
-   Cursor is a magnetic field, not a leash: `useMagnet` pulls every node
-   toward the cursor from essentially anywhere in the hero, in proportion
-   to how close it is, and lets a share of each node's pull leak to the
-   nodes it's connected to — so the network visibly answers as a system,
-   not node-by-node. The whole field fades up and down over ~650ms rather
-   than switching on, and every node's position is a damped spring chasing
-   that (constantly moving) target, so the motion trails the cursor
-   instead of tracking it. `CursorMagnet` renders the field's own source —
-   a small circle exactly on the pointer, no lag — so the relationship
-   reads as nodes-answering-to-a-point rather than nodes-following-a-mouse.
+   Cursor is a magnetic field, not a leash, and it is the *only*
+   attractor: `useMagnet` pulls every node toward the cursor from
+   essentially anywhere in the hero, in proportion to how close that node
+   itself is — nodes never pull on one another. The whole field fades up
+   and down over ~650ms rather than switching on, and every node's
+   position is a damped spring chasing that (constantly moving) target,
+   so the motion trails the cursor instead of tracking it. `CursorMagnet`
+   renders the field's own source — a small circle exactly on the
+   pointer, no lag — so the relationship reads as nodes-answering-to-a-
+   point rather than nodes-following-a-mouse.
 
    Everything reads from a single rest/offset model shared by the nodes
    and the lines they're strung between, so the mesh stretches with
@@ -243,11 +245,11 @@ const zeroOffsets = (): Record<string, Vec> =>
    - FALLOFF_POWER > 1 means the field is soft at its rim and steep near
      its centre, so "closest is strongest" is felt everywhere, not just
      technically true at the extremes.
-   - NEIGHBOR_PULL is how much of a node's own pull leaks along each edge
-     to the nodes it's connected to — smaller than the direct pull on
-     purpose: it's what makes the *other* nodes answer through the
-     network rather than staying inert, without ever pulling them as hard
-     as the node the cursor is actually near.
+   - The cursor is the only attractor: each node's pull depends solely on
+     its own distance from the cursor, never on where another node is.
+     `NetworkLines` still draws the four perimeter edges between live
+     node positions, but purely as a readout of where the nodes already
+     are — it has no say in the physics.
    - FIELD_RAMP_MS is how long the whole field takes to fade up after the
      cursor arrives, and fade back down after it leaves — a big part of
      "delayed" and "gradually disappears" rather than a hard on/off.
@@ -258,7 +260,6 @@ const zeroOffsets = (): Record<string, Vec> =>
      in without ever overshooting or bouncing. */
 const FIELD_RADIUS = 85
 const FALLOFF_POWER = 1.5
-const NEIGHBOR_PULL = 0.22
 const FIELD_RAMP_MS = 650
 const MAX_DISPLACE = 10
 const STIFFNESS = 0.045
@@ -268,31 +269,20 @@ const DAMPING = 0.6
     would flicker on for a node barely inside the radius. */
 const ACTIVE_THRESHOLD = 0.4
 
-/** Every node this one shares a drawn edge with, precomputed once. */
-const NEIGHBORS: Record<string, string[]> = Object.fromEntries(
-  HERO_NODES.map((n) => [
-    n.title,
-    EDGES.filter(([a, b]) => a === n.title || b === n.title).map(([a, b]) =>
-      a === n.title ? b : a,
-    ),
-  ]),
-)
-
 interface Magnet {
   offsets: Record<string, Vec>
   active: string | null
 }
 
 /** A continuous magnetic field, not a single node the pointer "catches."
-    Every node within `FIELD_RADIUS` of the cursor is pulled toward it in
-    proportion to how close it is; each node also leaks a fraction of its
-    own pull to its network neighbours, so the two nodes not nearest the
-    cursor still visibly answer, through their connection, rather than
-    sitting still. The whole field fades up over `FIELD_RAMP_MS` when the
-    cursor arrives and fades back down when it leaves, and every node's
-    position is a damped spring chasing its (constantly moving) target —
-    between the fade and the spring, the whole system trails the cursor
-    rather than reacting to it instantly. */
+    Every node within `FIELD_RADIUS` of the cursor is pulled toward it,
+    independently, in proportion to how close *that node itself* is — the
+    cursor is the only attractor; nodes never pull on each other. The
+    whole field fades up over `FIELD_RAMP_MS` when the cursor arrives and
+    fades back down when it leaves, and every node's position is a damped
+    spring chasing its (constantly moving) target — between the fade and
+    the spring, the whole system trails the cursor rather than reacting
+    to it instantly. */
 function useMagnet(cursor: Vec | null): Magnet {
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const [offsets, setOffsets] = useState<Record<string, Vec>>(zeroOffsets)
@@ -352,16 +342,9 @@ function useMagnet(cursor: Vec | null): Magnet {
 
       const field = fieldStrengthRef.current
       for (const node of HERO_NODES) {
-        /* Direct pull, plus a small share of each neighbour's pull — the
-           network answering on the node's behalf even when the cursor
-           isn't near it directly. */
-        let tx = pull[node.title].x
-        let ty = pull[node.title].y
-        for (const neighbor of NEIGHBORS[node.title]) {
-          tx += pull[neighbor].x * NEIGHBOR_PULL
-          ty += pull[neighbor].y * NEIGHBOR_PULL
-        }
-
+        /* This node's pull toward the cursor, and nothing else — no
+           neighbour ever contributes to another node's target. */
+        const { x: tx, y: ty } = pull[node.title]
         const mag = Math.hypot(tx, ty)
         const clamped = Math.min(mag, 1) * MAX_DISPLACE * field
         const target: Vec = mag > 0.001 ? { x: (tx / mag) * clamped, y: (ty / mag) * clamped } : ZERO
@@ -391,7 +374,8 @@ function useMagnet(cursor: Vec | null): Magnet {
     nodes' own linework, so it reads as a faint graph rather than a diagram.
     Drawn from each node's live (rest + magnet offset) position, so the
     mesh flexes with the nodes rather than staying pinned to their rest
-    spots. */
+    spots — purely a visual readout, though: nothing here feeds back into
+    `useMagnet`, so the lines never affect how a node moves. */
 function NetworkLines({ offsets }: { offsets: Record<string, Vec> }): ReactElement {
   const at = (title: string): Vec => {
     const rest = HERO_NODES.find((n) => n.title === title)!.rest
