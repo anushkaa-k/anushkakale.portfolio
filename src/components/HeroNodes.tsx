@@ -10,20 +10,26 @@
    never competes with the nodes' own linework or the title.
 
    Cursor is a magnetic field, not a leash: `useMagnet` pulls every node
-   within a generous radius toward the cursor, in proportion to how close
-   it is, and lets a small share of each node's pull leak to the nodes
-   it's connected to — so the network visibly answers as a system, not
-   node-by-node. The whole field fades up and down over three-quarters of
-   a second rather than switching on, and every node's position is a
-   damped spring chasing that (constantly moving) target, so the motion
-   trails the cursor instead of tracking it. Everything reads from a
-   single rest/offset model shared by the nodes and the lines they're
-   strung between, so the mesh stretches with wherever the nodes actually
-   are. Off entirely under reduced motion, same as every other moving
-   piece in the hero; never engaged on touch, since nothing fires
+   toward the cursor from essentially anywhere in the hero, in proportion
+   to how close it is, and lets a share of each node's pull leak to the
+   nodes it's connected to — so the network visibly answers as a system,
+   not node-by-node. The whole field fades up and down over ~650ms rather
+   than switching on, and every node's position is a damped spring chasing
+   that (constantly moving) target, so the motion trails the cursor
+   instead of tracking it. `CursorMagnet` renders the field's own source —
+   a small circle exactly on the pointer, no lag — so the relationship
+   reads as nodes-answering-to-a-point rather than nodes-following-a-mouse.
+
+   Everything reads from a single rest/offset model shared by the nodes
+   and the lines they're strung between, so the mesh stretches with
+   wherever the nodes actually are. Each node's *position* only ever
+   changes as a `translate3d` (rest `left`/`top` are set once, at mount,
+   and never touched again), so the 60fps physics loop never forces a
+   layout pass. Off entirely under reduced motion, same as every other
+   moving piece in the hero; never engaged on touch, since nothing fires
    `mousemove` there. */
 
-import { useEffect, useRef, useState, type ReactElement } from 'react'
+import { useEffect, useRef, useState, type ReactElement, type RefObject } from 'react'
 
 import { useMediaQuery } from '../hooks/useMediaQuery'
 
@@ -230,16 +236,18 @@ const zeroOffsets = (): Record<string, Vec> =>
   Object.fromEntries(HERO_NODES.map((n) => [n.title, { ...ZERO }]))
 
 /* Tuning for the force-directed field:
-   - FIELD_RADIUS is generous on purpose — the pull should start well
-     before the cursor reaches a node, not switch on at its edge.
+   - FIELD_RADIUS covers essentially the whole hero (the box is a 0–100
+     unit square in this coordinate system): the field should be felt
+     from anywhere the cursor moves, not just once it nears a corner,
+     even though it's strongest close in.
    - FALLOFF_POWER > 1 means the field is soft at its rim and steep near
-     its centre, so "closest is strongest" is felt, not just technically
-     true.
+     its centre, so "closest is strongest" is felt everywhere, not just
+     technically true at the extremes.
    - NEIGHBOR_PULL is how much of a node's own pull leaks along each edge
-     to the nodes it's connected to — small on purpose: it's what makes
-     the *other* nodes answer through the network rather than staying
-     inert, without ever pulling them as hard as the node the cursor is
-     actually near.
+     to the nodes it's connected to — smaller than the direct pull on
+     purpose: it's what makes the *other* nodes answer through the
+     network rather than staying inert, without ever pulling them as hard
+     as the node the cursor is actually near.
    - FIELD_RAMP_MS is how long the whole field takes to fade up after the
      cursor arrives, and fade back down after it leaves — a big part of
      "delayed" and "gradually disappears" rather than a hard on/off.
@@ -248,11 +256,11 @@ const zeroOffsets = (): Record<string, Vec> =>
    - STIFFNESS/DAMPING are the same damped-spring pair as before: damping
      comfortably past critical for this stiffness, so a step target eases
      in without ever overshooting or bouncing. */
-const FIELD_RADIUS = 38
-const FALLOFF_POWER = 1.8
-const NEIGHBOR_PULL = 0.16
-const FIELD_RAMP_MS = 750
-const MAX_DISPLACE = 8
+const FIELD_RADIUS = 85
+const FALLOFF_POWER = 1.5
+const NEIGHBOR_PULL = 0.22
+const FIELD_RAMP_MS = 650
+const MAX_DISPLACE = 10
 const STIFFNESS = 0.045
 const DAMPING = 0.6
 /** A node counts as "active" only once it's pulling meaningfully harder
@@ -422,22 +430,53 @@ function NetworkLines({ offsets }: { offsets: Record<string, Vec> }): ReactEleme
   )
 }
 
+/** The wrapper's pixel size, kept only so a node's percentage-space magnet
+    offset can be turned into a pixel `translate3d`. Re-measured on resize
+    via `ResizeObserver`, never polled. */
+function useElementSize(ref: RefObject<HTMLElement | null>): { width: number; height: number } {
+  const [size, setSize] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const update = () => setSize({ width: el.clientWidth, height: el.clientHeight })
+    update()
+
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [ref])
+
+  return size
+}
+
 function HeroNode({
   node,
   offset,
   active,
+  containerSize,
 }: {
   node: NodeSpec
   offset: Vec
   active: boolean
+  containerSize: { width: number; height: number }
 }): ReactElement {
   const Icon = node.icon
+  /* Rest position is a plain, unchanging `left`/`top` — it never moves
+     after mount, so it never costs a layout pass. Only the magnet offset,
+     applied purely as a `translate3d`, changes every frame; that's a
+     compositor-only update, not a layout one. */
+  const offsetX = (offset.x / 100) * containerSize.width
+  const offsetY = (offset.y / 100) * containerSize.height
+
   return (
     <div
-      className="lift absolute w-28 -translate-x-1/2 -translate-y-1/2 text-center"
+      className="lift absolute w-28 text-center"
       style={{
-        left: `${node.rest.x + offset.x}%`,
-        top: `${node.rest.y + offset.y}%`,
+        left: `${node.rest.x}%`,
+        top: `${node.rest.y}%`,
+        transform: `translate3d(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px), 0)`,
         animationDelay: node.delay,
       }}
     >
@@ -454,16 +493,52 @@ function HeroNode({
   )
 }
 
-/** The four nodes, laid out in the hero's quiet corners and drifting
-    toward the cursor on a damped spring when the field catches one of
-    them. Hidden below `lg` — there isn't room beside the title once the
-    drawing crops for phones, and these are an addition to the quiet
-    field, not something to cram in. */
-export function HeroNodes({ cursor }: { cursor: Vec | null }): ReactElement {
-  const { offsets, active } = useMagnet(cursor)
+/** The small circle the cursor itself is represented as inside the hero —
+    the visible "magnet," not a replacement for the real pointer. Tracks
+    the actual mouse position exactly (no spring, unlike the nodes it
+    influences) and only fades/scales in and out at the edges of the hero,
+    via a plain CSS transition. Rendered last so it sits above the nodes
+    and the network, and — like them — never under a real cursor, since
+    `pointer-events: none` runs all the way up through this layer. */
+function CursorMagnet({ cursor }: { cursor: Vec | null }): ReactElement {
+  const shown = cursor !== null
+  const at = cursor ?? { x: 50, y: 50 }
 
   return (
-    <div className="pointer-events-none absolute inset-0 hidden lg:block">
+    <div
+      className="absolute h-5 w-5 transition-[opacity,transform] duration-300 ease-out"
+      style={{
+        left: `${at.x}%`,
+        top: `${at.y}%`,
+        opacity: shown ? 1 : 0,
+        transform: `translate(-50%, -50%) scale(${shown ? 1 : 0.5})`,
+      }}
+    >
+      <svg viewBox="0 0 20 20" className="h-full w-full" aria-hidden="true">
+        <circle cx="10" cy="10" r="7" className="l-thin" />
+        <line x1="10" y1="1" x2="10" y2="5" className="l-hair" />
+        <line x1="10" y1="15" x2="10" y2="19" className="l-hair" />
+        <line x1="1" y1="10" x2="5" y2="10" className="l-hair" />
+        <line x1="15" y1="10" x2="19" y2="10" className="l-hair" />
+        <circle cx="10" cy="10" r="1.3" className="fill-ink" />
+      </svg>
+    </div>
+  )
+}
+
+/** The four nodes, laid out in the hero's quiet corners and drifting
+    toward the cursor on a damped spring when the field catches one of
+    them, plus the small marker standing in for the cursor's own position.
+    Hidden below `lg` — there isn't room beside the title once the drawing
+    crops for phones, and none of this is meant to be reproduced without a
+    real cursor to drive it. */
+export function HeroNodes({ cursor }: { cursor: Vec | null }): ReactElement {
+  const { offsets, active } = useMagnet(cursor)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const containerSize = useElementSize(wrapperRef)
+
+  return (
+    <div ref={wrapperRef} className="pointer-events-none absolute inset-0 hidden lg:block">
       <NetworkLines offsets={offsets} />
       {HERO_NODES.map((node) => (
         <HeroNode
@@ -471,8 +546,10 @@ export function HeroNodes({ cursor }: { cursor: Vec | null }): ReactElement {
           node={node}
           offset={offsets[node.title] ?? ZERO}
           active={active === node.title}
+          containerSize={containerSize}
         />
       ))}
+      <CursorMagnet cursor={cursor} />
     </div>
   )
 }

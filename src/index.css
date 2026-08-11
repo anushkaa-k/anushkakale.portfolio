@@ -341,38 +341,25 @@ html[data-mode="blueprint"] {
     50%      { opacity: 0.93; }
   }
 
-  /* ---- hero: the sheet quietly staying "in progress" ---------------------
-     Three long, barely-there loops on the plain blueprint field — the grid,
-     the corner crosshairs, the truss's marginal notes — so the sheet reads
-     as a drawing still being worked rather than a static backdrop. Each is
-     under a 20% swing at its extreme and runs 12–20s, well past anything a
-     glance would register as "moving." Grid and crosshairs never touch
-     opacity/position at the same time as each other (staggered delays,
-     Banner.tsx), so nothing reads as synchronised blinking. */
-  .grid-breathe {
-    animation: grid-breathe 16s ease-in-out infinite;
+  /* ---- hero: the sheet still being drafted --------------------------------
+     A handful of small tick marks (`DraftingReveal` in Banner.tsx, off in
+     the margins, clear of the headline/nodes/truss) stroke themselves in,
+     hold, then withdraw — `pathLength={1}` on each normalises the dash
+     units to 1 regardless of the mark's real length, same trick as the
+     datum spine's `.hero-draw-in`. Each mark sets its own
+     animation-duration/delay inline, so the six never move in step. */
+  .blueprint-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation-name: blueprint-draw;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
-  @keyframes grid-breathe {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.82; }
-  }
-
-  .crosshair-drift {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: crosshair-drift 13s ease-in-out infinite;
-  }
-  @keyframes crosshair-drift {
-    0%, 100% { transform: translate(0, 0); }
-    50%      { transform: translate(1.1px, -0.8px); }
-  }
-
-  .note-breathe {
-    animation: note-breathe 10s ease-in-out infinite;
-  }
-  @keyframes note-breathe {
-    0%, 100% { opacity: 1; }
-    45%      { opacity: 0.3; }
+  @keyframes blueprint-draw {
+    0%   { stroke-dashoffset: 1; }
+    35%  { stroke-dashoffset: 0; }
+    65%  { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 1; }
   }
 
   /* ---- hero: the rig over the name powering on ---------------------------
@@ -508,15 +495,12 @@ html[data-mode="blueprint"] {
     animation: hero-light-on 0.001s forwards;
   }
 
-  /* Same reasoning again: the ambient sheet loops (grid breathing,
-     crosshair drift, note fading) are all infinite, so they're switched
-     off outright rather than left to flash at 0.001s. */
-  .grid-breathe,
-  .crosshair-drift,
-  .note-breathe {
+  /* Same reasoning again: the margin tick marks loop forever, so they're
+     switched off outright and left fully drawn (a calmer resting state
+     than fully withdrawn) rather than flashing at 0.001s. */
+  .blueprint-draw {
     animation: none !important;
-    opacity: 1;
-    transform: none;
+    stroke-dashoffset: 0;
   }
 
   /* The five focus-light fixtures aren't CSS-animated at all any more —

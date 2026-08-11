@@ -11,11 +11,12 @@
    crops to the centre, so a phone gets a legible drawing rather than the
    whole sheet shrunk into noise.
 
-   The grid, the corner crosshairs and one marginal note each carry a very
-   slow, staggered ambient loop (`.grid-breathe`/`.crosshair-drift`/
-   `.note-breathe`, defined in index.css) — the sheet reading as still
-   being drafted rather than a static backdrop. All three are well under
-   a 20% swing and run 10s+, so nothing registers as "moving" at a glance.
+   The grid, truss and furniture themselves are fully static — what reads
+   as "still being drafted" is a handful of small tick marks
+   (`DraftingReveal`) off in the margins that slowly stroke themselves in,
+   hold, and withdraw again, staggered and looping (`.blueprint-draw`,
+   defined in index.css). Nowhere near the headline, nodes or truss, and
+   nothing else on the sheet moves this way.
 
    Five theatrical profile-spot fixtures (`FocusLights`) hang off the same
    truss chord, each panning a tapered beam onto its own point along the
@@ -166,7 +167,12 @@ const DEFAULT_TARGETS: Vec[] = [
 
 /** How far the far end of each beam spreads, in viewBox units — different
     per fixture, same spirit as the old per-fixture beam-width variety. */
-const FOCUS_BEAM_SPREAD = [9, 12, 7, 13, 10]
+const FOCUS_BEAM_SPREAD = [12, 16, 9, 17, 13]
+
+/** Half-width of the lens the beam actually leaves from — keeps the
+    throat of every beam matched to the fixture's own front aperture
+    below, rather than an arbitrary sliver. */
+const FOCUS_LENS_RADIUS = 3.6
 
 /** Per-fixture spring: how far off its mark the fixture starts (degrees),
     how stiff/damped the settle is, and how long it waits before moving
@@ -264,44 +270,51 @@ function FocusFixture({
 
   return (
     <g>
-      {/* fixed yoke: clamped to the truss, never rotates */}
-      <rect x={px - 4} y={mountY} width={8} height={5} className="l-thin" />
-      <line x1={px} y1={mountY + 5} x2={px} y2={lensY - 19} className="l-hair" />
-      <line x1={px - 7} y1={lensY - 17} x2={px - 7} y2={lensY + 2} className="l-thin" />
-      <line x1={px + 7} y1={lensY - 17} x2={px + 7} y2={lensY + 2} className="l-thin" />
-      <line x1={px - 7} y1={lensY - 17} x2={px + 7} y2={lensY - 17} className="l-hair" />
-      <circle cx={px - 7} cy={lensY - 6} r={1} className="l-hair fill-paper" />
-      <circle cx={px + 7} cy={lensY - 6} r={1} className="l-hair fill-paper" />
+      {/* fixed yoke: clamped to the truss, never rotates — the bracket a
+          real moving-head/profile fixture's barrel pivots inside. */}
+      <rect x={px - 7} y={mountY} width={14} height={6} className="l-thin" />
+      <line x1={px} y1={mountY + 6} x2={px} y2={lensY - 30} className="l-hair" />
+      <line x1={px - 11} y1={lensY - 30} x2={px + 11} y2={lensY - 30} className="l-hair" />
+      <line x1={px - 11} y1={lensY - 30} x2={px - 11} y2={lensY + 3} className="l-med" />
+      <line x1={px + 11} y1={lensY - 30} x2={px + 11} y2={lensY + 3} className="l-med" />
+      <circle cx={px - 11} cy={lensY - 11} r={1.6} className="l-thin fill-paper" />
+      <circle cx={px + 11} cy={lensY - 11} r={1.6} className="l-thin fill-paper" />
 
-      {/* rotating barrel, lens and beam — one pivot, at the lens */}
+      {/* rotating barrel, lens and beam — one pivot, at the lens itself,
+          so the whole assembly tilts the way a real barrel does inside
+          its yoke. */}
       <g style={{ transform: `rotate(${angle}deg)`, transformOrigin: `${px}px ${lensY}px` }}>
         <polygon
-          points={`${px - 1.6},${lensY} ${px - beamSpread},${lensY + beamLength} ${px + beamSpread},${lensY + beamLength} ${px + 1.6},${lensY}`}
-          style={{ fill: 'color-mix(in srgb, var(--accent-orange) 16%, var(--ink))' }}
-          fillOpacity={0.16}
+          points={`${px - FOCUS_LENS_RADIUS},${lensY} ${px - beamSpread},${lensY + beamLength} ${px + beamSpread},${lensY + beamLength} ${px + FOCUS_LENS_RADIUS},${lensY}`}
+          style={{ fill: 'color-mix(in srgb, var(--accent-orange) 18%, var(--ink))' }}
+          fillOpacity={0.2}
         />
         <line
-          x1={px - 1.6}
+          x1={px - FOCUS_LENS_RADIUS}
           y1={lensY}
           x2={px - beamSpread}
           y2={lensY + beamLength}
           className="l-hair"
-          style={{ opacity: 0.55 }}
+          style={{ opacity: 0.6 }}
         />
         <line
-          x1={px + 1.6}
+          x1={px + FOCUS_LENS_RADIUS}
           y1={lensY}
           x2={px + beamSpread}
           y2={lensY + beamLength}
           className="l-hair"
-          style={{ opacity: 0.55 }}
+          style={{ opacity: 0.6 }}
         />
-        <rect x={px - 4} y={lensY - 15} width={8} height={11} className="l-thin" />
-        <path
-          d={`M${px - 5} ${lensY - 4} L${px + 5} ${lensY - 4} L${px + 3} ${lensY} L${px - 3} ${lensY} Z`}
-          className="l-thin"
-        />
-        <rect x={px - 2} y={lensY - 19} width={4} height={4} className="l-hair" />
+        {/* main housing */}
+        <rect x={px - 6} y={lensY - 26} width={12} height={17} className="l-med" />
+        {/* control-panel ticks on the housing face */}
+        <line x1={px - 3.5} y1={lensY - 22} x2={px + 3.5} y2={lensY - 22} className="l-hair" />
+        <line x1={px - 3.5} y1={lensY - 19} x2={px + 3.5} y2={lensY - 19} className="l-hair" />
+        {/* neck down to the lens */}
+        <rect x={px - 3} y={lensY - 9} width={6} height={9} className="l-thin" />
+        {/* front lens: the fixture's actual aperture, where the beam leaves from */}
+        <circle cx={px} cy={lensY} r={FOCUS_LENS_RADIUS} className="l-thin" />
+        <circle cx={px} cy={lensY} r={1.4} className="l-hair" />
       </g>
     </g>
   )
@@ -370,18 +383,14 @@ function TrussElevation({ targets }: { targets: Vec[] | null }): ReactElement {
 
       <DimH x1={x} x2={x + length} y={y - 74} from={y - 60} label={`60'-0"`} />
 
-      {/* marginal annotations — outside the phone crop, so dropped with it.
-          The LX/trim note breathes very slowly, as if someone were still
-          checking it against the rig; the angle callout stays put. */}
+      {/* marginal annotations — outside the phone crop, so dropped with it. */}
       <g className="zone-far">
-        <g className="note-breathe" style={{ animationDelay: '2.4s' }}>
-          <Note x={x + length + 22} y={y + 30} anchor="start" size={12}>
-            LX 1
-          </Note>
-          <Note x={x + length + 22} y={y + 48} anchor="start" size={11} tone="dim">
-            {`TRIM 22'-6"`}
-          </Note>
-        </g>
+        <Note x={x + length + 22} y={y + 30} anchor="start" size={12}>
+          LX 1
+        </Note>
+        <Note x={x + length + 22} y={y + 48} anchor="start" size={11} tone="dim">
+          {`TRIM 22'-6"`}
+        </Note>
 
         {/* the angle callout from the reference sheet */}
         <Note x={1372} y={44} anchor="start" size={12} tone="dim">
@@ -396,9 +405,6 @@ function TrussElevation({ targets }: { targets: Vec[] | null }): ReactElement {
 
 /* ---------- sheet furniture ------------------------------------------------- */
 
-/* Every crosshair drifts on the same slow loop, but staggered so they never
-   move in unison — a sheet with several registration marks being checked
-   one at a time, not a pattern blinking together. */
 const CROSSHAIRS: [number, number, number | undefined][] = [
   [48, 44, undefined],
   [1952, 44, undefined],
@@ -413,9 +419,47 @@ function Furniture(): ReactElement {
   return (
     <g className="zone zone-far" style={{ animationDelay: '0.96s' }}>
       {CROSSHAIRS.map(([x, y, size], i) => (
-        <g key={i} className="crosshair-drift" style={{ animationDelay: `${i * 1.8}s` }}>
-          <Crosshair x={x} y={y} size={size} />
-        </g>
+        <Crosshair key={i} x={x} y={y} size={size} />
+      ))}
+    </g>
+  )
+}
+
+/* ---------- the sheet still being drafted ----------------------------------
+
+   A handful of small tick marks — the kind of thing a draughtsperson jots
+   in the margin while checking a measurement — that stroke themselves in,
+   hold, then withdraw again, on a slow, staggered, endless loop. This is
+   the whole of the "still being drafted" effect: nothing else on the
+   sheet moves. Deliberately not the shared `Grid` (every line of that
+   would be expensive to animate individually, and isn't the point — a
+   few marks read as active drafting; a breathing grid reads as a UI
+   effect) and deliberately kept off to the sides, clear of the headline,
+   nodes and truss. `pathLength={1}` normalises every mark's dash units to
+   1 regardless of its real length, the same trick the datum spine uses. */
+const DRAFT_MARKS: { x1: number; y1: number; x2: number; y2: number; duration: number; delay: number }[] = [
+  { x1: 130, y1: 300, x2: 168, y2: 300, duration: 11, delay: 0 },
+  { x1: 150, y1: 282, x2: 150, y2: 318, duration: 11, delay: 0 },
+  { x1: 1870, y1: 620, x2: 1908, y2: 620, duration: 13, delay: 2.4 },
+  { x1: 1889, y1: 602, x2: 1889, y2: 638, duration: 13, delay: 2.4 },
+  { x1: 232, y1: 780, x2: 270, y2: 780, duration: 9.5, delay: 4.8 },
+  { x1: 1730, y1: 150, x2: 1768, y2: 150, duration: 12.5, delay: 7.2 },
+]
+
+function DraftingReveal(): ReactElement {
+  return (
+    <g className="zone-far" aria-hidden="true">
+      {DRAFT_MARKS.map((m, i) => (
+        <line
+          key={i}
+          x1={m.x1}
+          y1={m.y1}
+          x2={m.x2}
+          y2={m.y2}
+          pathLength={1}
+          className="l-hair blueprint-draw"
+          style={{ animationDuration: `${m.duration}s`, animationDelay: `${m.delay}s` }}
+        />
       ))}
     </g>
   )
@@ -442,9 +486,7 @@ export function Banner({
       aria-label="Blueprint grid with a lighting truss elevation over the title."
     >
       <g className="zone zone-far" style={{ animationDelay: '0.05s' }}>
-        <g className="grid-breathe">
-          <Grid width={W} height={H} step={50} />
-        </g>
+        <Grid width={W} height={H} step={50} />
       </g>
       <g className="zone" style={{ animationDelay: '0.15s' }}>
         {/* the sheet's own datum spine — the one line drawn stroke-first
@@ -454,6 +496,7 @@ export function Banner({
       </g>
       <TrussElevation targets={targets} />
       <Furniture />
+      <DraftingReveal />
     </svg>
   )
 }
