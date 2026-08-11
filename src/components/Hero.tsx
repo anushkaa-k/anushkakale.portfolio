@@ -126,10 +126,44 @@ function useParallaxDrift(ref: RefObject<HTMLElement | null>): { x: number; y: n
   return drift
 }
 
+/* The cursor's position within the hero, as a percentage of its box — the
+   magnetic field the four nodes respond to (see HeroNodes/useMagnet). Off
+   under reduced motion and inert on touch, same as the drift above; kept
+   separate from it since the nodes need the raw position, not a drift
+   offset. */
+function useHeroCursor(ref: RefObject<HTMLElement | null>): { x: number; y: number } | null {
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const [cursor, setCursor] = useState<{ x: number; y: number } | null>(null)
+
+  useEffect(() => {
+    const node = ref.current
+    if (!node || reducedMotion) return
+
+    const onMove = (e: MouseEvent) => {
+      const rect = node.getBoundingClientRect()
+      setCursor({
+        x: ((e.clientX - rect.left) / rect.width) * 100,
+        y: ((e.clientY - rect.top) / rect.height) * 100,
+      })
+    }
+    const onLeave = () => setCursor(null)
+
+    node.addEventListener('mousemove', onMove)
+    node.addEventListener('mouseleave', onLeave)
+    return () => {
+      node.removeEventListener('mousemove', onMove)
+      node.removeEventListener('mouseleave', onLeave)
+    }
+  }, [ref, reducedMotion])
+
+  return cursor
+}
+
 export function Hero(): ReactElement {
   const compact = useMediaQuery('(max-width: 767px)')
   const sectionRef = useRef<HTMLElement>(null)
   const drift = useParallaxDrift(sectionRef)
+  const cursor = useHeroCursor(sectionRef)
   const first = sections[0]?.id ?? 'about'
   const nameLines = site.meta.headline.split('|')
   const taglineLines = site.hero.tagline.split('|')
@@ -155,7 +189,7 @@ export function Hero(): ReactElement {
         <Banner compact={compact} />
       </div>
 
-      <HeroNodes />
+      <HeroNodes cursor={cursor} />
 
       <div className="relative">
         <div

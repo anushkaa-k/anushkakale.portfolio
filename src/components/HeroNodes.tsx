@@ -7,19 +7,33 @@
    type) as the rest of the sheet. A loose mesh of construction-weight
    lines (`NetworkLines`) ties the four together as interconnected
    disciplines — deliberately the faintest weight on the sheet, so it
-   never competes with the nodes' own linework or the title. Static for
-   now: no cursor interaction yet, just the linework and the fade-in
-   every other hero element already uses.
-   ========================================================================== */
+   never competes with the nodes' own linework or the title.
 
-import type { ReactElement } from 'react'
+   Cursor is a magnetic field, not a leash: `useMagnet` tracks which node
+   is nearest the pointer and, after it has held that spot for a beat,
+   lets it drift toward the cursor on a damped spring (no bounce, no
+   snapping) while the other three ease a couple of percent away from it.
+   Everything reads from a single rest/offset model shared by the nodes
+   and the lines they're strung between, so the mesh always tracks where
+   the nodes actually are. Off entirely under reduced motion, same as
+   every other moving piece in the hero. */
+
+import { useEffect, useRef, useState, type ReactElement } from 'react'
+
+import { useMediaQuery } from '../hooks/useMediaQuery'
+
+interface Vec {
+  x: number
+  y: number
+}
 
 interface NodeSpec {
   title: string
   caption: string
   icon: () => ReactElement
-  /** Tailwind position classes, desktop only — nodes sit out in the gutters. */
-  className: string
+  /** Rest position, as a percentage of the hero box — shared by the node
+      markup and the lines struck between them. */
+  rest: Vec
   delay: string
 }
 
@@ -79,47 +93,33 @@ function OperationsIcon(): ReactElement {
   )
 }
 
-/** Where each node's icon roughly sits, as a percentage of the hero box —
-    used only to strike the connecting lines beneath them. */
-interface Anchor {
-  x: number
-  y: number
-}
-
-const ANCHORS: Record<string, Anchor> = {
-  'Live Experiences': { x: 9, y: 18 },
-  Creative: { x: 91, y: 18 },
-  Brands: { x: 11, y: 82 },
-  Operations: { x: 89, y: 82 },
-}
-
 export const HERO_NODES: NodeSpec[] = [
   {
     title: 'Live Experiences',
     caption: 'Production · Events · Artist Management',
     icon: LiveIcon,
-    className: 'left-[2%] top-[8%] xl:left-[7%]',
+    rest: { x: 9, y: 18 },
     delay: '0.9s',
   },
   {
     title: 'Creative',
     caption: 'Content · Story · Concept',
     icon: CreativeIcon,
-    className: 'right-[2%] top-[8%] xl:right-[7%]',
+    rest: { x: 91, y: 18 },
     delay: '1.0s',
   },
   {
     title: 'Brands',
     caption: 'Experiences · Campaigns · Audience',
     icon: BrandsIcon,
-    className: 'left-[2%] bottom-[6%] xl:left-[9%]',
+    rest: { x: 11, y: 82 },
     delay: '1.1s',
   },
   {
     title: 'Operations',
     caption: 'Planning · People · Delivery',
     icon: OperationsIcon,
-    className: 'right-[2%] bottom-[6%] xl:right-[9%]',
+    rest: { x: 89, y: 82 },
     delay: '1.2s',
   },
 ]
@@ -135,9 +135,115 @@ const EDGES: [string, string][] = [
   ['Creative', 'Brands'],
 ]
 
+const ZERO: Vec = { x: 0, y: 0 }
+const zeroOffsets = (): Record<string, Vec> =>
+  Object.fromEntries(HERO_NODES.map((n) => [n.title, { ...ZERO }]))
+
+/* Tuning: how far a magnetised node may wander, how long the pointer has
+   to sit nearest a node before it responds, and a damped-spring pair
+   (stiffness well under the critical-damping line for `damping`) chosen
+   specifically so a step target eases in without ever overshooting it. */
+const MAX_DISPLACE = 9
+const REPEL_NUDGE = 2
+const ATTRACT_DELAY_MS = 1500
+const STIFFNESS = 0.05
+const DAMPING = 0.62
+
+/** Tracks the pointer, decides which node (if any) the field has caught,
+    and steps a damped spring toward that target every frame. Returns a
+    per-node offset, in the same percentage units as `rest`. */
+function useMagnet(cursor: Vec | null): Record<string, Vec> {
+  const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const [offsets, setOffsets] = useState<Record<string, Vec>>(zeroOffsets)
+  const offsetsRef = useRef<Record<string, Vec>>(zeroOffsets())
+  const velocityRef = useRef<Record<string, Vec>>(zeroOffsets())
+  const pendingRef = useRef<{ title: string | null; since: number }>({ title: null, since: 0 })
+  const attractedRef = useRef<string | null>(null)
+  const cursorRef = useRef(cursor)
+  cursorRef.current = cursor
+
+  useEffect(() => {
+    if (reducedMotion) return
+
+    let raf = 0
+    let last = performance.now()
+
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 16.67, 2)
+      last = now
+      const cur = cursorRef.current
+
+      if (cur) {
+        let nearestTitle: string | null = null
+        let nearestDist = Infinity
+        for (const node of HERO_NODES) {
+          const d = Math.hypot(cur.x - node.rest.x, cur.y - node.rest.y)
+          if (d < nearestDist) {
+            nearestDist = d
+            nearestTitle = node.title
+          }
+        }
+        if (nearestTitle !== pendingRef.current.title) {
+          pendingRef.current = { title: nearestTitle, since: now }
+        }
+        attractedRef.current =
+          nearestTitle && now - pendingRef.current.since >= ATTRACT_DELAY_MS ? nearestTitle : null
+      } else {
+        pendingRef.current = { title: null, since: now }
+        attractedRef.current = null
+      }
+
+      const active = attractedRef.current
+
+      for (const node of HERO_NODES) {
+        let target: Vec = ZERO
+        if (active === node.title && cur) {
+          const dx = cur.x - node.rest.x
+          const dy = cur.y - node.rest.y
+          const mag = Math.hypot(dx, dy) || 1
+          const clamped = Math.min(mag, MAX_DISPLACE)
+          target = { x: (dx / mag) * clamped, y: (dy / mag) * clamped }
+        } else if (active) {
+          const activeRest = HERO_NODES.find((n) => n.title === active)!.rest
+          const dx = node.rest.x - activeRest.x
+          const dy = node.rest.y - activeRest.y
+          const mag = Math.hypot(dx, dy) || 1
+          target = { x: (dx / mag) * REPEL_NUDGE, y: (dy / mag) * REPEL_NUDGE }
+        }
+
+        const pos = offsetsRef.current[node.title]
+        const vel = velocityRef.current[node.title]
+        vel.x += (STIFFNESS * (target.x - pos.x) - DAMPING * vel.x) * dt
+        vel.y += (STIFFNESS * (target.y - pos.y) - DAMPING * vel.y) * dt
+        pos.x += vel.x * dt
+        pos.y += vel.y * dt
+      }
+
+      setOffsets({
+        ...Object.fromEntries(HERO_NODES.map((n) => [n.title, { ...offsetsRef.current[n.title] }])),
+      })
+      raf = requestAnimationFrame(tick)
+    }
+
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [reducedMotion])
+
+  return reducedMotion ? zeroOffsets() : offsets
+}
+
 /** The network itself: construction-weight lines only, well under the
-    nodes' own linework, so it reads as a faint graph rather than a diagram. */
-function NetworkLines(): ReactElement {
+    nodes' own linework, so it reads as a faint graph rather than a diagram.
+    Drawn from each node's live (rest + magnet offset) position, so the
+    mesh flexes with the nodes rather than staying pinned to their rest
+    spots. */
+function NetworkLines({ offsets }: { offsets: Record<string, Vec> }): ReactElement {
+  const at = (title: string): Vec => {
+    const rest = HERO_NODES.find((n) => n.title === title)!.rest
+    const o = offsets[title] ?? ZERO
+    return { x: rest.x + o.x, y: rest.y + o.y }
+  }
+
   return (
     <svg
       viewBox="0 0 100 100"
@@ -147,8 +253,8 @@ function NetworkLines(): ReactElement {
       aria-hidden="true"
     >
       {EDGES.map(([a, b]) => {
-        const p1 = ANCHORS[a]
-        const p2 = ANCHORS[b]
+        const p1 = at(a)
+        const p2 = at(b)
         return (
           <line
             key={`${a}-${b}`}
@@ -161,19 +267,24 @@ function NetworkLines(): ReactElement {
           />
         )
       })}
-      {Object.values(ANCHORS).map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={0.5} style={{ fill: 'var(--line-construct)' }} />
-      ))}
+      {HERO_NODES.map((node) => {
+        const p = at(node.title)
+        return <circle key={node.title} cx={p.x} cy={p.y} r={0.5} style={{ fill: 'var(--line-construct)' }} />
+      })}
     </svg>
   )
 }
 
-function HeroNode({ node }: { node: NodeSpec }): ReactElement {
+function HeroNode({ node, offset }: { node: NodeSpec; offset: Vec }): ReactElement {
   const Icon = node.icon
   return (
     <div
-      className={`lift absolute w-28 text-center ${node.className}`}
-      style={{ animationDelay: node.delay }}
+      className="lift absolute w-28 -translate-x-1/2 -translate-y-1/2 text-center"
+      style={{
+        left: `${node.rest.x + offset.x}%`,
+        top: `${node.rest.y + offset.y}%`,
+        animationDelay: node.delay,
+      }}
     >
       <div className="flex justify-center">
         <Icon />
@@ -184,15 +295,19 @@ function HeroNode({ node }: { node: NodeSpec }): ReactElement {
   )
 }
 
-/** The four nodes, laid out in the hero's quiet corners. Hidden below `lg`
-    — there isn't room beside the title once the drawing crops for phones,
-    and these are an addition to the quiet field, not something to cram in. */
-export function HeroNodes(): ReactElement {
+/** The four nodes, laid out in the hero's quiet corners and drifting
+    toward the cursor on a damped spring when the field catches one of
+    them. Hidden below `lg` — there isn't room beside the title once the
+    drawing crops for phones, and these are an addition to the quiet
+    field, not something to cram in. */
+export function HeroNodes({ cursor }: { cursor: Vec | null }): ReactElement {
+  const offsets = useMagnet(cursor)
+
   return (
     <div className="pointer-events-none absolute inset-0 hidden lg:block">
-      <NetworkLines />
+      <NetworkLines offsets={offsets} />
       {HERO_NODES.map((node) => (
-        <HeroNode key={node.title} node={node} />
+        <HeroNode key={node.title} node={node} offset={offsets[node.title] ?? ZERO} />
       ))}
     </div>
   )
