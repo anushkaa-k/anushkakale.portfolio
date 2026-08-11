@@ -199,15 +199,17 @@ export const HERO_NODES: NodeSpec[] = [
   },
 ]
 
-/** Every pair, once — a loose mesh rather than a hub-and-spoke diagram, so
-    the four disciplines read as interconnected, not as feeding one centre. */
+/** The perimeter loop only — a ring rather than a hub-and-spoke diagram, so
+    the four disciplines read as interconnected without a centre. The two
+    diagonals (Live↔Operations, Creative↔Brands) are deliberately left out:
+    they'd cross straight through the headline, stats and CTAs, and no
+    amount of opacity keeps a line that long from reading as clutter over
+    the hero's primary content. */
 const EDGES: [string, string][] = [
   ['Live Experiences', 'Creative'],
   ['Creative', 'Operations'],
   ['Operations', 'Brands'],
   ['Brands', 'Live Experiences'],
-  ['Live Experiences', 'Operations'],
-  ['Creative', 'Brands'],
 ]
 
 const ZERO: Vec = { x: 0, y: 0 }
